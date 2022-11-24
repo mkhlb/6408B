@@ -192,20 +192,27 @@ void opcontrol() {
 
   cata_intake.cata_hold();
 
-  double interpolator_end = 65;
+  double interpolator_end = 67.1;
 
   while (true) {
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      interpolator_end -= 1;
+      interpolator_end -= 5;
       master.print(0, 0, "%f", interpolator_end);
     }
     else if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-      interpolator_end += 1;
+      interpolator_end += 5;
       master.print(0, 0, "%f", interpolator_end);
     }
 
-    chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      chassis.arcade_standard(ez::SPLIT);
+    }
+    else {
+      // chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
+      chassis.arcade_normalized_standard(ez::SPLIT);
+    }
+    
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       
