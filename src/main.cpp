@@ -20,7 +20,7 @@
 Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
-    {-19, -10, 9}
+    {-19, -10, 8}
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
@@ -68,9 +68,9 @@ Drive chassis(
 
 mkhlib::CatapultIntakeController cata_intake(
   // Port of the catapult motor
-  {-11, 2}, 
+  -11, 
   // Port of the intake motor
-  12, 
+  -12, 
   // Port of the limit switch
   1, 
   // Ratio of roller revolutions / intake revolutions, intake revolution * this ratio should = roller revolutions

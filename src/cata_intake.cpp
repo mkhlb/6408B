@@ -12,7 +12,7 @@ using namespace mkhlib;
 
 CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double intake_to_roller_ratio)
     : limit(limit_switch_port),
-      intake(intake_port, pros::motor_gearset_e::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES),
+      intake(intake_port, pros::motor_gearset_e::E_MOTOR_GEARSET_06, ez::util::is_reversed(intake_port), pros::E_MOTOR_ENCODER_DEGREES),
       INTAKE_TO_ROLLER(intake_to_roller_ratio),
       cata_loop([this] { this->master_cata_task(); }),
       intake_loop([this] { this->master_intake_task(); }) {
