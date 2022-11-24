@@ -192,6 +192,7 @@ void opcontrol() {
 
   cata_intake.cata_hold();
 
+  chassis.set_active_brake(.1);
   chassis.set_drive_slew(2, 1);
 
   while (true) {
