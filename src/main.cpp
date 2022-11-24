@@ -193,7 +193,7 @@ void opcontrol() {
   cata_intake.cata_hold();
 
   chassis.set_active_brake(.1);
-  chassis.set_drive_slew(2, 1);
+  chassis.set_drive_slew(127.0/2.0, 127.0/1.0); // 127 (0 to full) / seconds to accel
 
   while (true) {
 
