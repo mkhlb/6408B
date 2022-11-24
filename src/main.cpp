@@ -193,11 +193,13 @@ void opcontrol() {
   cata_intake.cata_hold();
 
   chassis.set_active_brake(.1);
-  chassis.set_drive_slew(127.0/2.0, 127.0/1.0); // 127 (0 to full) / seconds to accel
+  chassis.set_drive_slew(127.0/2.0, 127.0/1.0); // 127 (0 to full) / 2 or 1 seconds to accel
 
   while (true) {
 
-    chassis.arcade_mkhl_standard(ez::SPLIT, 5, 65); // Mkhl special split arcade
+    //chassis.arcade_mkhl_standard(ez::SPLIT, 5, 65); // Mkhl special split arcade
+
+    chassis.arcade_standard(ez::SPLIT);
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       
