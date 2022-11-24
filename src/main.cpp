@@ -192,9 +192,20 @@ void opcontrol() {
 
   cata_intake.cata_hold();
 
+  double interpolator_end = 65;
+
   while (true) {
 
-    chassis.arcade_mkhl_standard(ez::SPLIT, 5, 65); // Mkhl special split arcade
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      interpolator_end -= 1;
+      master.print(0, 0, "%f", interpolator_end);
+    }
+    else if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      interpolator_end += 1;
+      master.print(0, 0, "%f", interpolator_end);
+    }
+
+    chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       
