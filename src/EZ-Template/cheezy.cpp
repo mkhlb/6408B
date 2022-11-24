@@ -114,39 +114,3 @@ void Drive::joy_thresh_opcontrol(int l_stick, int r_stick) {
     set_tank((0 - left_sensor()) * active_brake_kp, (0 - right_sensor()) * active_brake_kp);
   }
 }
-
-void Drive::set_defaults() {
-  // PID Constants
-  headingPID = {11, 0, 20, 0};
-  forward_drivePID = {0.45, 0, 5, 0};
-  backward_drivePID = {0.45, 0, 5, 0};
-  turnPID = {5, 0.003, 35, 15};
-  swingPID = {7, 0, 45, 0};
-  leftPID = {0.45, 0, 5, 0};
-  rightPID = {0.45, 0, 5, 0};
-  set_turn_min(30);
-  set_swing_min(30);
-
-  // Slew constants
-  set_slew_min_power(80, 80);
-  set_slew_distance(7, 7);
-
-  // Exit condition constants
-  set_exit_condition(turn_exit, 100, 3, 500, 7, 500, 500);
-  set_exit_condition(swing_exit, 100, 3, 500, 7, 500, 500);
-  set_exit_condition(drive_exit, 80, 50, 300, 150, 500, 500);
-
-  // Modify joystick curve on controller (defaults to disabled)
-  toggle_modify_curve_with_controller(true);
-
-  // Left / Right modify buttons
-  set_left_curve_buttons(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);
-  set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
-
-  // Enable auto printing and drive motors moving
-  toggle_auto_drive(true);
-  toggle_auto_print(true);
-
-  // Disables limit switch for auto selector
-  as::limit_switch_lcd_initialize(nullptr, nullptr);
-}
