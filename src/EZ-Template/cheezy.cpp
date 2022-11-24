@@ -86,31 +86,51 @@ void Drive::set_drive_slew(double accel, double decel) {
   deceleration = decel;
 }
 
-void Drive::joy_thresh_opcontrol(int l_stick, int r_stick) {
+void Drive::joy_thresh_opcontrol(int l_stick, int r_stick) { //l_stick and r_stick are the target speeds
+  double left_delta;
+  double right_delta;
   // Threshold if joysticks don't come back to perfect 0
   if (abs(l_stick) > JOYSTICK_THRESHOLD || abs(r_stick) > JOYSTICK_THRESHOLD) {
-    //slew!
-    double left_delta = l_stick - last_left_speed;
-    double right_delta = r_stick - last_right_speed;
-
-    // acceleration in percents per second, we need it per ticks
-
-    //clamp delta
-    left_delta = util::sgn(left_delta) * util::clip_num(fabs(left_delta), acceleration * ez::util::DELAY_TIME / 1000, deceleration * ez::util::DELAY_TIME / 1000);
-    right_delta = util::sgn(right_delta) * util::clip_num(fabs(right_delta), acceleration * ez::util::DELAY_TIME / 1000, deceleration * ez::util::DELAY_TIME / 1000);
-
-    double left_speed = l_stick + left_delta;
-    double right_speed = r_stick + right_delta;
-
-    set_tank(l_stick, r_stick);
-
-    last_left_speed = left_speed;
-    last_right_speed = right_speed;
+    //set the delta to use the stick
+    left_delta = l_stick - last_left_speed;
+    right_delta = r_stick - last_right_speed;
 
     if (active_brake_kp != 0) reset_drive_sensor();
   }
   // When joys are released, run active brake (P) on drive
   else {
-    set_tank((0 - left_sensor()) * active_brake_kp, (0 - right_sensor()) * active_brake_kp);
+    left_delta = (0 - left_sensor()) * active_brake_kp - last_left_speed;
+    right_delta = (0 - right_sensor()) * active_brake_kp - last_left_speed;
   }
+  //slew!
+
+  // acceleration in percents per second, we need it per ticks
+
+  //clamp delta, wont work right now as delta will never be negative!
+  double left_max_delta;
+  double right_max_delta;
+  if(util::sgn(left_delta) == util::sgn(l_stick)) { //moving up to target
+    left_max_delta = acceleration * ez::util::DELAY_TIME / 1000;
+  }
+  else {
+    left_max_delta = deceleration * ez::util::DELAY_TIME / 1000;
+  }
+  if(util::sgn(right_delta) == util::sgn(r_stick)) { //moving up to target
+    right_max_delta = acceleration * ez::util::DELAY_TIME / 1000;
+  }
+  else {
+    right_max_delta = deceleration * ez::util::DELAY_TIME / 1000;
+  }
+  
+  left_delta = util::sgn(left_delta) * min(fabs(left_delta), left_max_delta);
+  right_delta = util::sgn(right_delta) * min(fabs(right_delta), right_max_delta);
+  
+
+  double left_speed = l_stick + left_delta;
+  double right_speed = r_stick + right_delta;
+
+  set_tank(left_speed, right_speed);
+
+  last_left_speed = left_speed;
+  last_right_speed = right_speed;
 }

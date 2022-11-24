@@ -734,8 +734,8 @@ class Drive {
   double acceleration = 127.0 * 1000.0/ez::util::DELAY_TIME; // acceleration in 127 percents per second
   double deceleration = 127.0 * 1000.0/ez::util::DELAY_TIME; // deceleration in 127 percents per second
 
-  int last_left_speed = 0;
-  int last_right_speed = 0;
+  double last_left_speed = 0;
+  double last_right_speed = 0;
 
   /**
    * Tick per inch calculation.
