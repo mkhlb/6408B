@@ -10,7 +10,8 @@ class CatapultIntakeController {
 public:
   enum e_cata_state { HOLD = 0, PRIME = 1, SHOOT = 2, CLEAR = 3 };
 
-  pros::Motor cata;
+  
+  std::vector<pros::Motor> cata_motors;
 
   pros::Motor intake;
 
@@ -29,8 +30,9 @@ public:
    *        Wether or not to reverse the catapult motor. Position should be up,
    * true by default.
    */
-  CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double intake_to_roller_ratio,
-                     bool reverse = true);
+  CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double intake_to_roller_ratio);
+  
+  CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double intake_to_roller_ratio);
 
   /**
    * @brief Sets the catapult state to HOLD.

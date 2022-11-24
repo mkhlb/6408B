@@ -67,15 +67,13 @@ Drive chassis(
 
 mkhlib::CatapultIntakeController cata_intake(
   // Port of the catapult motor
-  11, 
+  -11, 
   // Port of the intake motor
   12, 
   // Port of the limit switch
   1, 
   // Ratio of roller revolutions / intake revolutions, intake revolution * this ratio should = roller revolutions
-  1.0f/3.0f, 
-  // Wether or not to reverse the catapult motor, the cata should shoot in reverse
-  true
+  1.0f/3.0f
 );
 
 pros::ADIDigitalOut poonamic(8);

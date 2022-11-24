@@ -10,16 +10,17 @@
 
 using namespace mkhlib;
 
-CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double intake_to_roller_ratio,
-                                       bool reverse)
+CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double intake_to_roller_ratio)
     : limit(limit_switch_port),
-      cata(cata_port, pros::motor_gearset_e::E_MOTOR_GEARSET_36, reverse),
       intake(intake_port, pros::motor_gearset_e::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES),
       INTAKE_TO_ROLLER(intake_to_roller_ratio),
       cata_loop([this] { this->master_cata_task(); }),
       intake_loop([this] { this->master_intake_task(); }) {
 
-  cata.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
+  pros::Motor temp(cata_port, pros::motor_gearset_e::E_MOTOR_GEARSET_36, ez::util::is_reversed(cata_port));
+  temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
+
+  cata_motors.push_back(temp);
 
   // Default states
   cata_state = e_cata_state::HOLD; 
@@ -36,16 +37,50 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
   roller_pid = PID(.5, 0, 5, 0);
 }
 
+CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double intake_to_roller_ratio)
+    : limit(limit_switch_port),
+      intake(intake_port, pros::motor_gearset_e::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES),
+      INTAKE_TO_ROLLER(intake_to_roller_ratio),
+      cata_loop([this] { this->master_cata_task(); }),
+      intake_loop([this] { this->master_intake_task(); }) {
+  
+  for (auto i : cata_ports) {
+    pros::Motor temp(i, pros::motor_gearset_e::E_MOTOR_GEARSET_36, ez::util::is_reversed(i));
+    temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
+
+    cata_motors.push_back(temp);
+  }
+
+  // Default states
+  cata_state = e_cata_state::HOLD; 
+  roller_state = e_roller_state::IDLE;
+
+  max_speed = 600; // Max speed internally is in terms of the intake motor, but when set you pass it in terms of the roller
+
+  roller_interfered = false;
+
+  // Default internal timer for e_roller_state::TIME_MOVE
+  _roller_timer = 0;
+
+  // Default PID for e_roller_state::PID_MOVE
+  roller_pid = PID(.5, 0, 5, 0);
+  
+}
+
 void CatapultIntakeController::master_cata_task() {
   while (true) {
 
     if( cata_state == e_cata_state::HOLD)
     {
-      cata.move_velocity(0);
+      for (auto i : cata_motors) {
+        i.move_velocity(0);
+      }
     }
     else if( cata_state == e_cata_state::CLEAR)
     {
-      cata.move_velocity(90);
+      for (auto i : cata_motors) {
+        i.move_velocity(90);
+      }
     }
     else if( cata_state == e_cata_state::PRIME)
     {
@@ -65,7 +100,9 @@ void CatapultIntakeController::master_cata_task() {
 
 void CatapultIntakeController::cata_prime_task() {
   
-  cata.move_velocity(-100);
+  for (auto i : cata_motors) {
+    i.move_velocity(-100);
+  }
     
   if(limit.get_value())
   {
@@ -76,7 +113,9 @@ void CatapultIntakeController::cata_prime_task() {
 
 void CatapultIntakeController::cata_shoot_task() {
 
-  cata.move_velocity(-100);
+  for (auto i : cata_motors) {
+    i.move_velocity(-100);
+  }
   if(!limit.get_value())
   {
     pros::delay(100);
