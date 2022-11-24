@@ -229,6 +229,10 @@ class Drive {
    */
   void arcade_mkhl_flipped(e_type stick_type, double interpolator_start=1, double interpolator_end=2);
 
+  void arcade_normalized_standard(e_type stick_type);
+
+  void arcade_normalized_flipped(e_type stick_type);
+
   /**
    * Sets the chassis to controller joysticks using standard arcade control.  Run is usercontrol.
    * This passes the controller through the curve functions, but is disabled by default.  Use toggle_controller_curve_modifier() to enable it.

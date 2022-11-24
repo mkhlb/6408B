@@ -79,3 +79,68 @@ void Drive::mkhl(int forward_stick, int turn_stick, double interpolator) {
   // set to drive motors
   joy_thresh_opcontrol(left_speed * 127, right_speed * 127);
 }
+
+void Drive::arcade_normalized_standard(e_type stick_type) {
+  is_tank = false;
+  reset_drive_sensors_opcontrol();
+
+  // Toggle for controller curve
+  modify_curve_with_controller();
+
+  int fwd_stick, turn_stick;
+  // Check arcade type (split vs single, normal vs flipped)
+  if (stick_type == SPLIT) {
+    // Put the joysticks through the curve function
+    fwd_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+    turn_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+  } else if (stick_type == SINGLE) {
+    // Put the joysticks through the curve function
+    fwd_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+    turn_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
+  }
+
+  int left_power = fwd_stick + turn_stick;
+  int right_power = fwd_stick - turn_stick;
+  int max_power = max(fabs(fwd_stick), fabs(turn_stick));
+
+  if(max_power > 127){
+    left_power /= max_power;
+    right_power /= max_power;
+  }
+
+  joy_thresh_opcontrol(left_power, right_power);
+}
+
+void Drive::arcade_normalized_flipped(e_type stick_type) {
+  is_tank = false;
+  reset_drive_sensors_opcontrol();
+
+  // Toggle for controller curve
+  modify_curve_with_controller();
+
+  int turn_stick, fwd_stick;
+  // Check arcade type (split vs single, normal vs flipped)
+  if (stick_type == SPLIT) {
+    // Put the joysticks through the curve function
+    fwd_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+    turn_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
+  } else if (stick_type == SINGLE) {
+    // Put the joysticks through the curve function
+    fwd_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+    turn_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+  }
+
+  int left_power = fwd_stick + turn_stick;
+  int right_power = fwd_stick - turn_stick;
+  int max_power = max(fabs(fwd_stick), fabs(turn_stick));
+
+  if(max_power > 127){
+    left_power /= max_power;
+    right_power /= max_power;
+  }
+
+  joy_thresh_opcontrol(left_power, right_power);
+}
+
+
+
