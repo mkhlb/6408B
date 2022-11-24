@@ -20,12 +20,12 @@
 Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
-    {-19, -10, 8}
+    {10, 20}
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {1, 17, -2}
+    {-3, -5}
 
     // IMU Port
     ,
@@ -68,9 +68,9 @@ Drive chassis(
 
 mkhlib::CatapultIntakeController cata_intake(
   // Port of the catapult motor
-  -11, 
+  {-12, 19}, 
   // Port of the intake motor
-  -12, 
+  11, 
   // Port of the limit switch
   1, 
   // Ratio of roller revolutions / intake revolutions, intake revolution * this ratio should = roller revolutions
@@ -210,7 +210,7 @@ void opcontrol() {
     }
     else {
       // chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
-      chassis.arcade_normalized_standard(ez::SPLIT);
+      chassis.arcade_mkhl_standard(ez::SPLIT);
     }
     
 
