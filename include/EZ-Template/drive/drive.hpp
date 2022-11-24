@@ -216,7 +216,7 @@ class Drive {
   void tank();
 
   
-  void mkhl(double forward_stick, double turn_stick, double interpolator);
+  void mkhl(int forward_stick, int turn_stick, double interpolator);
   /**
    * Sets the chassis to do mkhl drive, the interpolation between tank drives for low forward speed and cheezy for high speeds
    * Pass in minimum deadzone value where all tank is used and maximum where full cheezy is reached

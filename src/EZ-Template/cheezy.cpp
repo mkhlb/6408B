@@ -15,7 +15,6 @@ void Drive::arcade_mkhl_standard(e_type stick_type, double interpolator_start, d
   // Check arcade type (split vs single, normal vs flipped)
   if (stick_type == SPLIT) {
     // Put the joysticks through the curve function
-    
     fwd_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
     turn_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
   } else if (stick_type == SINGLE) {
@@ -53,7 +52,7 @@ void Drive::arcade_mkhl_flipped(e_type stick_type, double interpolator_start, do
   mkhl(fwd_stick, fwd_stick, interpolator);
 }
 
-void Drive::mkhl(double forward_stick, double turn_stick, double interpolator) {
+void Drive::mkhl(int forward_stick, int turn_stick, double interpolator) {
   //scale between -1.0 and 1.0
   forward_stick = forward_stick / 127;
   turn_stick = turn_stick / 127;
