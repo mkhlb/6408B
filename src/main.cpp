@@ -192,6 +192,8 @@ void opcontrol() {
 
   cata_intake.cata_hold();
 
+  chassis.set_drive_slew(2, 1);
+
   while (true) {
 
     chassis.arcade_mkhl_standard(ez::SPLIT, 5, 65); // Mkhl special split arcade

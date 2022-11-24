@@ -713,6 +713,8 @@ class Drive {
    */
   double slew_calculate(slew_ &input, double current);
 
+  void set_drive_slew(double accel, double decel);  
+
  private:  // !Auton
   bool drive_toggle = true;
   bool print_toggle = true;
@@ -728,6 +730,12 @@ class Drive {
    * Active brake kp constant.
    */
   double active_brake_kp = 0;
+
+  double acceleration = 127.0 * 1000.0/ez::util::DELAY_TIME; // acceleration in 127 percents per second
+  double deceleration = 127.0 * 1000.0/ez::util::DELAY_TIME; // deceleration in 127 percents per second
+
+  int last_left_speed = 0;
+  int last_right_speed = 0;
 
   /**
    * Tick per inch calculation.
