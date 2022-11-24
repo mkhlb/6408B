@@ -215,6 +215,20 @@ class Drive {
    */
   void tank();
 
+  
+  void mkhl(double forward_stick, double turn_stick, double interpolator);
+  /**
+   * Sets the chassis to do mkhl drive, the interpolation between tank drives for low forward speed and cheezy for high speeds
+   * Pass in minimum deadzone value where all tank is used and maximum where full cheezy is reached
+   */
+  void arcade_mkhl_standard(e_type stick_type, double interpolator_start=1, double interpolator_end=2);
+
+  /**
+   * Sets the chassis to do mkhl drive, the interpolation between tank drives for low forward speed and cheezy for high speeds
+   * Pass in minimum deadzone value where all tank is used and maximum where full cheezy is reached
+   */
+  void arcade_mkhl_flipped(e_type stick_type, double interpolator_start=1, double interpolator_end=2);
+
   /**
    * Sets the chassis to controller joysticks using standard arcade control.  Run is usercontrol.
    * This passes the controller through the curve functions, but is disabled by default.  Use toggle_controller_curve_modifier() to enable it.

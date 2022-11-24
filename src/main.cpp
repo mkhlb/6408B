@@ -196,43 +196,11 @@ void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
-  bool upPressed = false;
-
-  int expansion_timer = 60000 - 10 * 1000; // 1:00 - 0:10 in ms
-
-  //int expansion_timer = 105000 - 10 * 1000; // 1:45 - 0:10 in ms
-
   cata_intake.cata_hold();
 
   while (true) {
 
-    // chassis.tank(); // Tank control
-    chassis.arcade_standard(ez::SPLIT); // Standard split arcade
-    // chassis.arcade_standard(ez::SINGLE); // Standard single arcade
-    // chassis.arcade_flipped(ez::SPLIT); // Flipped split arcade
-    // chassis.arcade_flipped(ez::SINGLE); // Flipped single arcade
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      // autonomous();
-      ez::as::auton_selector.print_selected_auton();
-    }
-
-    // . . .
-    // Put more user control code here!
-    // . . .
-
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-
-      cata_intake.cata_clear();
-      upPressed = true;
-    } else if (upPressed) {
-      upPressed = false;
-      cata_intake.cata_hold();
-    }
-
-    // if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      
-    //   cata_intake.cata_prime(); //moves cata_intake until contact with the limit switch
-    // }
+    chassis.arcade_mkhl_standard(ez::SPLIT, 5, 65); // Mkhl special split arcade
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       
@@ -248,38 +216,12 @@ void opcontrol() {
     else {
       cata_intake.intake_velocity(0); //else to keep intake at 0
     }
-    
-    // only move intake if cata_intake is primed
-    // if (cata_intake.cata_primed) 
-    // {
-    //   if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-    //     cata_intake.intake_velocity(0.6*600); //intake
-    //   }
-    //   else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-    //     cata_intake.intake_velocity(-300); //outake
-    //   } 
-    //   else {
-    //     cata_intake.intake_velocity(0); //else to keep intake at 0
-    //   }
-    // }
-    // else if(!master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
-    //   cata_intake.intake_velocity(0);
-    // }
-    // if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) { //backup intaking button
 
-    //   cata_intake.intake_velocity(0.6*600); //intake
-
-    // } 
-
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X) &&
-        (expansion_timer <= 0 || !pros::competition::is_connected())) {
-
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       poonamic.set_value(true); // Laucnhes Pneumatics expansion
     }
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!
                                        // Keep this ez::util::DELAY_TIME
-
-    expansion_timer -= ez::util::DELAY_TIME;
   }
 }
