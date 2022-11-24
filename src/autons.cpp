@@ -73,216 +73,31 @@ void modified_exit_condition() {
 }
 
 
-void sensitive_exit_condition() {
+void exit_condition_sensitive() {
   chassis.set_exit_condition(chassis.drive_exit, 100, 3, 500, 7, 30, 10);
 }
 
-///
-// Drive Example
-///
-void drive_example() {
-  // The first parameter is target inches
-  // The second parameter is max speed the robot will drive at
-  // The third parameter is a boolean (true or false) for enabling/disabling a
-  // slew at the start of drive motions for slew, only enable it when the drive
-  // distance is greater then the slew distance + a few inches
-
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-12, DRIVE_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-12, DRIVE_SPEED);
-  chassis.wait_drive();
-}
-
-///
-// Turn Example
-///
-void turn_example() {
-  // The first parameter is target degrees
-  // The second parameter is max speed the robot will drive at
-
-  chassis.set_turn_pid(90, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-}
-
-///
-// Combining Turn + Drive
-///
-void drive_and_turn() {
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(-45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-}
-
-void intake_and_drive() {
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  cata_intake.intake_velocity(.85 * 600);
-  chassis.wait_drive();
-  cata_intake.intake_velocity(0);
-}
-
-void cata_swing() {
-  chassis.set_swing_pid(ez::LEFT_SWING, 90, SWING_SPEED);
-  cata_intake.cata_prime();
-  cata_intake.wait_cata_idle();
-  chassis.wait_drive();
-  chassis.set_drive_pid(-12, DRIVE_SPEED, true);
-  cata_intake.cata_shoot();
-  cata_intake.wait_cata_idle();
-}
-
-///
-// Wait Until and Changing Max Speed
-///
-void wait_until_change_speed() {
-  // wait_until will wait until the robot gets to a desired position
-
-  // When the robot gets to 6 inches, the robot will travel the remaining
-  // distance at a max speed of 40
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_until(6);
-  chassis.set_max_speed(40); // After driving 6 inches at DRIVE_SPEED, the robot
-                             // will go the remaining distance at 40 speed
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(-45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-
-  // When the robot gets to -6 inches, the robot will travel the remaining
-  // distance at a max speed of 40
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
-  chassis.wait_until(-6);
-  chassis.set_max_speed(40); // After driving 6 inches at DRIVE_SPEED, the robot
-                             // will go the remaining distance at 40 speed
-  chassis.wait_drive();
-}
-
-///
-// Swing Example
-///
-void swing_example() {
-  // The first parameter is ez::LEFT_SWING or ez::RIGHT_SWING
-  // The second parameter is target degrees
-  // The third parameter is speed of the moving side of the drive
-
-  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_until(12);
-
-  chassis.set_swing_pid(ez::RIGHT_SWING, 0, SWING_SPEED);
-  chassis.wait_drive();
-}
-
-///
-// Auto that tests everything
-///
-void combining_movements() {
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_swing_pid(ez::RIGHT_SWING, -45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-}
-
-///
-// Interference example
-///
-void tug(int attempts) {
-  for (int i = 0; i < attempts - 1; i++) {
-    // Attempt to drive backwards
-    printf("i - %i", i);
-    chassis.set_drive_pid(-12, 127);
-    chassis.wait_drive();
-
-    // If failsafed...
-    if (chassis.interfered) {
-      chassis.reset_drive_sensor();
-      chassis.set_drive_pid(-2, 20);
-      pros::delay(1000);
-    }
-    // If robot successfully drove back, return
-    else {
-      return;
-    }
-  }
-}
-
-// If there is no interference, robot will drive forward and turn 90 degrees.
-// If interfered, robot will drive forward and then attempt to drive backwards.
-void interfered_example() {
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-
-  if (chassis.interfered) {
-    tug(3);
-    return;
-  }
-
-  chassis.set_turn_pid(90, TURN_SPEED);
-  chassis.wait_drive();
-}
-
-// 6409N code
+// 6408B code
 // __________________________________________________________________________________________________________________________________________________________________________________________________________
 
 void roll(double max_dist, double speed, double roll_amount) // roll_amount is degrees
 {
-  sensitive_exit_condition(); // set exit conditions to conditions very sensitive to interference
+  exit_condition_sensitive(); // set exit conditions to conditions very sensitive to interference
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
   chassis.set_drive_pid(-.3, speed);
-  //SHOULD USE NEW intake.set_pid HERE
 
   cata_intake.roller_pid_move(roll_amount, 500);
   cata_intake.wait_roller();
 }
 
 void roll_time(double max_dist, double speed, double roll_time) { //roll time can be negative or positive
-  sensitive_exit_condition(); // set exit conditions to conditions very sensitive to interference
+  exit_condition_sensitive(); // set exit conditions to conditions very sensitive to interference
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
   chassis.set_drive_pid(-.3, speed);
-  //SHOULD USE NEW intake.set_pid HERE
 
   cata_intake.roller_time(fabs(roll_time), 500 * util::sgn(roll_time));
   cata_intake.wait_roller();

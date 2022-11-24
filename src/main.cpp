@@ -1,6 +1,7 @@
 #include "main.h"
 #include "EZ-Template/sdcard.hpp"
 #include "EZ-Template/util.hpp"
+#include "autons.hpp"
 #include "pros/adi.h"
 #include "pros/adi.hpp"
 #include "pros/misc.h"
@@ -112,10 +113,7 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("Full win point", winpoint_full),
-    Auton("half win point (only first roller and shot)", winpoint_half),
-    Auton("single shot pre match for bad side", farside_roller),
-    Auton("Auto skills", auto_skills),
+    Auton("Full win point", roll_test)
   });
 
   // Initialize chassis and auton selector
@@ -166,15 +164,11 @@ void autonomous() {
 
   cata_intake.cata_hold();
 
-  //ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
+  ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
 
   // auto selection
 
   //roll_test();
-  auto_skills();
-  //winpoint_half();
-  //winpoint_full();
-  //farside_roller();
 }
 
 /**
