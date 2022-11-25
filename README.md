@@ -23,11 +23,15 @@ $L = Y + X$ and $R = Y - X$
 
 The above equations elegantly combine the forward and backward motion of the $Y$ axis with a differential turning of the $X$
 
-So, given $Y = .40$ and $X = .25$, $L = .65$ and $R = .15$
+So, given $Y = .20$ and $X = .10$: $L = .30$ and $R = .10$
 
-Note how the ratio ${L \over R} = {13 \over 3}$.
+Note how the ratio ${L \over R} = {3 \over 1}$.
 
-Now suppose we double $Y$ and $X$, giving $.80$ and $.50$ respectfully. Now $L = 1.30$ and $R = .3$.
+The ratio $L \over R$ describes the slope the robot will curve, while the size of this curve can vary the ratio $L \over R$ tells how much the robot will turn for how much it goes forward.
 
-This makes sense, if we double the input stick values, the output motor power should double too.
+This ratio will stay the same if the stick values are both multiplied by the same number, as if they're both bigger by the same amount only the magnitude speed should change, not the slope of the curve
+
+For instance suppose we double $Y$ and $X$, giving $.40$ and $.20$ respectfully. Now $L = .60$ and $R = .20$.
+
+Note how both motor powers double, and cancel out to the same ratio $3 \over 1$.
 ### Spervature Arcade
