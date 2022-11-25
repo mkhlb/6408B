@@ -39,7 +39,7 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
 
 CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double intake_to_roller_ratio)
     : limit(limit_switch_port),
-      intake(abs(intake_port), pros::motor_gearset_e::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES),
+      intake(abs(intake_port), pros::motor_gearset_e::E_MOTOR_GEARSET_06, ez::util::is_reversed(intake_port), pros::E_MOTOR_ENCODER_DEGREES),
       INTAKE_TO_ROLLER(intake_to_roller_ratio),
       cata_loop([this] { this->master_cata_task(); }),
       intake_loop([this] { this->master_intake_task(); }) {
@@ -91,7 +91,7 @@ void CatapultIntakeController::master_cata_task() {
       cata_shoot_task();
     }
 
-    cata_primed = limit.get_value();
+    cata_primed = cata_state == e_cata_state::HOLD;
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!
                                        // Keep this ez::util::DELAY_TIME
@@ -106,6 +106,7 @@ void CatapultIntakeController::cata_prime_task() {
     
   if(limit.get_value())
   {
+    pros::delay(40);
     cata_state = e_cata_state::HOLD;
   }
   

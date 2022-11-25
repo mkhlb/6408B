@@ -209,8 +209,8 @@ void opcontrol() {
       chassis.arcade_standard(ez::SPLIT);
     }
     else {
-      // chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
-      chassis.arcade_mkhl_standard(ez::SPLIT);
+      chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
+      //chassis.arcade_mkhl_standard(ez::SPLIT);
     }
     
 
@@ -220,7 +220,7 @@ void opcontrol() {
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(0.6*600); //intake
+      cata_intake.intake_velocity(0.9*600); //intake
     }
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       cata_intake.intake_velocity(-300); //outake

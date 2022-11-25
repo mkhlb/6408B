@@ -73,11 +73,11 @@ void Drive::mkhl(int forward_stick, int turn_stick, double interpolator) {
   double right_tank = util::clip_num(forward_stick_clamped - turn_stick_clamped, 1.0, -1.0);
 
   //interpolate so that at high speeds (high interpolator values) rely more on cheezy and low speeds rely more on tank
-  double left_speed = left_curvature * interpolator + left_tank*(1-interpolator);
-  double right_speed = right_curvature * interpolator + right_tank*(1-interpolator);
+  double left_speed = left_curvature * interpolator + left_tank*(1.0-interpolator);
+  double right_speed = right_curvature * interpolator + right_tank*(1.0-interpolator);
 
   // set to drive motors
-  joy_thresh_opcontrol(left_speed * 127, right_speed * 127);
+  joy_thresh_opcontrol(left_speed * 127.0, right_speed * 127.0);
 }
 
 void Drive::arcade_normalized_standard(e_type stick_type) {
