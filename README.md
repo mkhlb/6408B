@@ -15,6 +15,19 @@ MKHLib implements 2 new custom driver control schemes:
 
 ### Normalized Arcade
 
+#### The Problem
 
+Given $R$ and $L$ as motor powers (ranging between -1 and 1), and $Y$ and $X$ (also ranging between -1 and 1) as stick values, the classic arcade swerve drive formula is as follows:
 
+$L = Y + X$ and $R = Y - X$
+
+The above equations elegantly combine the forward and backward motion of the $Y$ axis with a differential turning of the $X$
+
+So, given $Y = .40$ and $X = .25$, $L = .65$ and $R = .15$
+
+Note how the ratio ${L \over R} = {13 \over 3}$.
+
+Now suppose we double $Y$ and $X$, giving $.80$ and $.50$ respectfully. Now $L = 1.30$ and $R = .3$.
+
+This makes sense, if we double the input stick values, the output motor power should double too.
 ### Spervature Arcade
