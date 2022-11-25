@@ -35,7 +35,7 @@ For instance suppose we double $Y$ and $X$, giving $.40$ and $.20$ respectfully.
 
 Note how both motor powers double, and cancel out to the same ratio $3 \over 1$.
 
-So the ratio should grow and be consistent as long as relative magnitudes of inputs are the same, but this math breaks down at higher speeds.
+So the ratio should grow consistently as long as relative magnitudes of inputs are the same, but this math breaks down at higher speeds.
 
 Let's double the previously doubled stick values once more. 
 
@@ -49,5 +49,20 @@ This is fine and dandy. However, how can 120% power be applied to the left motor
 
 This is a less aggressive turn (as ${5 \over 2} < {3 \over 1}$), and so <b>at higher speeds it's harder for the robot to turn.</b>
 
+#### The Solution
 
-### Spervature Arcade
+Instead of rounding when $L$ or $R$ are higher than $1.0$, normalized Arcade brings them both down proportionally with division.
+
+So $L = 1.2 / 1.2 = 1.0$, $R = .4 / 1.2 = {1 \over 3}$ and most importantly the ratio is preserved with ${L \over R} = {3 \over 1}$.
+
+The normalized Arcade retains the classic arcade feel while still performing well on turns at high speeds.
+
+### Curvatherp Arcade
+
+(Curvature throttle interp)
+
+#### Curvature
+
+#### The Problem
+
+#### The Solution
