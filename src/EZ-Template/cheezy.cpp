@@ -109,13 +109,13 @@ void Drive::joy_thresh_opcontrol(int l_stick, int r_stick) { //l_stick and r_sti
   //clamp delta, wont work right now as delta will never be negative!
   double left_max_delta;
   double right_max_delta;
-  if(util::sgn(left_delta) == util::sgn(l_stick)) { //moving up to target
+  if(util::sgn(left_delta) == util::sgn(last_left_speed)) { //moving up to target
     left_max_delta = acceleration * ez::util::DELAY_TIME / 1000;
   }
   else {
     left_max_delta = deceleration * ez::util::DELAY_TIME / 1000;
   }
-  if(util::sgn(right_delta) == util::sgn(r_stick)) { //moving up to target
+  if(util::sgn(right_delta) == util::sgn(last_right_speed)) { //moving up to target
     right_max_delta = acceleration * ez::util::DELAY_TIME / 1000;
   }
   else {
