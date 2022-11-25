@@ -34,4 +34,20 @@ This ratio will stay the same if the stick values are both multiplied by the sam
 For instance suppose we double $Y$ and $X$, giving $.40$ and $.20$ respectfully. Now $L = .60$ and $R = .20$.
 
 Note how both motor powers double, and cancel out to the same ratio $3 \over 1$.
+
+So the ratio should grow and be consistent as long as relative magnitudes of inputs are the same, but this math breaks down at higher speeds.
+
+Let's double the previously doubled stick values once more. 
+
+$Y = .80$ and $X = .40$.
+
+$L = 1.2$ and $R = .40$.
+
+${L \over R} = {3 \over 1}$.
+
+This is fine and dandy. However, how can 120% power be applied to the left motor? It can't. In the classical arcade skid drive $L$ is rounded down to $1.0$. With the rounded $L$, the ratio $L \over R$ is now $5 \over 2$.
+
+This is a less aggressive turn (as ${5 \over 2} < {3 \over 1}$), and so <b>at higher speeds it's harder for the robot to turn.</b>
+
+
 ### Spervature Arcade
