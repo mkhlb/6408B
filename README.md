@@ -93,6 +93,36 @@ ${L \over R} {{1 - X} \over {1 + X}}$
 
 In both versions, the simplified ratio $L \over R$ is independent of the $Y$ variable.
 
+This means super high performance and intuitive control on turns at high speeds.
+
 #### The Problem
 
+What about point turning? 
+
+Generally when $Y = 0$ (there is no forward/backwards movement), we want to engage in a point turn on the spot. With the previous curvature function a $Y = 0$ would always give an $L$ and $R$ of $0$. This is obviously undesirable.
+
+Most implementations fix this by swapping to tank controls sharply (by way of a deadzone) under very low speeds (of the orders of $Y < 2$ or even $Y < .5$). Having tried this, it feels clunky and imperfect. Additionally to the point turn issue, the curvature drive doesn't work well under low $Y$ values in general, as it spits out swing movements too slow to really be useful. 
+
+So curvature drive performs well at high speeds, but bad at low ones, and a hard deadzone switch feels unnatural. 
+
 #### The Solution
+
+Normal tank drive feels great at low speeds, but bad at high ones.
+
+The curvatherp algorithm smoothly linearly interpolates between tank drive for the slow speeds, and curvature for the high speeds. This means the point turns and tight low speed performance of tank drive, and the intuitive high speed turning of curvature, without the clunky discrete switch.
+
+The interpolation is done simply with linear weighting:
+
+Let $I$ be the amount of curvature drive you wish to use. $0 \leq I \leq 1$ where $I = 0$ means that only the tank function ( $T_L$ and $T_R$ ) will be used, $I = 1$ means that only curvature ( $C_R$ and $C_L$ ) will be used, and $I = 0.5$ means that half curvature and half tank will be used ( respective averages of the two sides of $T$ s and two sides of $C$ s )
+
+Power $P = CI + T(1-I)$
+
+Boilerplate linear weighting. The issue is finding $I$. You could simply make $I = X$, but that offers little control to tune the lerp to your preferences. Instead it's advantageous to have an interpolation that is some linear function of $X$ (clamping it between $0$ and $1$), as it allows larger ranges of $X$ values to be eintirely tank drive or entirely curvature drive.
+
+The user inputs 2 values
+
+$I_s$: the $|Y|$ value to start the interpolation at ( $0 \leq I_s < 1$ ).
+
+$I_f$: the $|Y|$ value to end the interpolation at ( $0 < I_f \leq 1$ ).
+
+($I_f > I_s$)
