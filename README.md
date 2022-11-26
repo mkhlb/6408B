@@ -43,7 +43,7 @@ $Y = .80$ and $X = .40$.
 
 $L = 1.2$ and $R = .40$.
 
-${L \over R} = {3 \over 1}$.
+{L \over R} = {3 \over 1}.
 
 This is fine and dandy. However, how can 120% power be applied to the left motor? It can't. In the classical arcade skid drive $L$ is rounded down to $1.0$. With the rounded $L$, the ratio $L \over R$ is now $5 \over 2$.
 
@@ -62,6 +62,36 @@ The normalized Arcade retains the classic arcade feel while still performing wel
 (Curvature throttle interp)
 
 #### Curvature
+
+The ratio $L/R$ gives curvature. The idea with curvature drive is to have the $X$ stick control curvature, with larger values of $X$ having ${L \over R} \to \infty$, and smaller values having ${L \over R} \to 1$ ($L = R$ and there is no curvature).
+
+The formulae
+
+$L = Y + |Y| \times X$
+
+$R = Y - |Y| \times X$
+
+With the above equations the ratio $L \over R$ is independent to the $Y$.
+
+${L \over R} = {{Y + |Y|X} \over {Y - |Y|X}}$
+
+Positive Y version:
+
+${L \over R} {{Y + YX} \over {Y - YX}}$
+
+${L \over R} {{Y(1 + X)} \over {Y(1 - X)}}$
+
+${L \over R} {{1 + X} \over {1 - X}}$
+
+Negative Y version:
+
+${L \over R} {{Y - YX} \over {Y + YX}}$
+
+${L \over R} {{Y(1 - X)} \over {Y(1 + X)}}$
+
+${L \over R} {{1 - X} \over {1 + X}}$
+
+In both versions, the simplified ratio $L \over R$ is independent of the $Y$ variable.
 
 #### The Problem
 
