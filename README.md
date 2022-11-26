@@ -57,6 +57,10 @@ So $L = 1.2 / 1.2 = 1.0$, $R = .4 / 1.2 = {1 \over 3}$ and most importantly the 
 
 The normalized Arcade retains the classic arcade feel while still performing well on turns at high speeds.
 
+#### The Implementation
+
+The MKHLib normalized arcade is built on top of EZ-Template. This means you get your input curving and active brake, just with an alternate control method. Simply call the new ```Drive.arcade_normalized_standard(ez::e_type stick_type)``` and ```Drive.arcade_normalized_reversed(ez::e_type stick_type)``` functions just as you would use any other Ez Template drive function in `opcontrol()`.
+
 ### Curvatherp Arcade
 
 (Curvature throttle interp)
@@ -113,7 +117,7 @@ The curvatherp algorithm smoothly linearly interpolates between tank drive for t
 
 The interpolation is done simply with linear weighting:
 ,
-Let $I$ be the amount of curvature drive you wish to use. $0 \leq I \leq 1$ where $I = 0$ means that only the tank function ( $T_L$ and $T_R$ ) will be used, $I = 1$ means that only curvature ( $C_R$ and $C_L$ ) will be used, and $I = 0.5$ means that half curvature and half tank will be used ( respective averages of the two sides of $T$ s and two sides of $C$ s )
+Let $I$ be the amount of curvature drive you wish to use. $0 \leq I \leq 1$ where $I = 0$ means that only the tank function ( $T_L$ and $T_R$ ) will be used, $I = 1$ means that only curvature ( $C_R$ and $C_L$ ) will be used, and $I = 0.5$ means that half curvature and half tank will be used ( $P_L$ and $P_R$ are the respective averages of the two sides of $T$ s and two sides of $C$ s )
 
 Power $P = CI + T(1-I)$
 
@@ -166,3 +170,7 @@ First start with $I = |Y|$
 $I_s$ is an $x$-intercept. It gives the value that $I = 0$. To make $I = |Y|$'s $x$-intercept (which is normally 0) equal $I_s$, simply transform it to the right by $I_s$. to do that you subtract it from $|Y|$, giving the equation $I = |Y| - I_s$.
 
 Now we must make the equation rise to $1.0$ by $I_e$. This is done by applying a slope, multiplying $|Y| - I_s$ by some number $m$. A slope $m$ is defined as $m = {rise \over run}$. We know the rise is $1.0$, and the run can be given as the distance from the start of the iterpolation to the end: $I_e - I_s$. Apply slope $1 \over {I_e - I_s}$ to get $I = {{|Y| - I_s} \over {I_e - I_s}}$, which intercepts $x$ at $I_s$ thanks to a tranformation of $I_s$ and intercepts $I_e$ thanks to a slope if run $I_e - I_s$.
+
+#### The Implementation
+
+Again the curvatherp is built on top of Ez Template. Unlike normalized arcade, `Drive::arcade_curvatherp_standard(e_type stick_type, double interpolator_start, double interpolator_end)` and `Drive::arcade_reversed_standard(e_type stick_type, double interpolator_start, double interpolator_end)` need 2 special parameters for the start and end of the interpolation. These parameters are between 0 and 127, as the max value of the controller stick is 127 in practice.
