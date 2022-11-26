@@ -29,7 +29,7 @@ Note how the ratio ${L \over R} = {3 \over 1}$.
 
 The ratio $L \over R$ describes the slope the robot will curve, while the size of this curve can vary the ratio $L \over R$ tells how much the robot will turn for how much it goes forward.
 
-This ratio will stay the same if the stick values are both multiplied by the same number, as if they're both bigger by the same amount only the magnitude speed should change, not the slope of the curve
+This ratio will stay the same if the stick values are both multiplied by the same number, as multiplying every term in both the bottom and top of a fraction by the same number is like multiplying the fraction by $1$.
 
 For instance suppose we double $Y$ and $X$, giving $.40$ and $.20$ respectfully. Now $L = .60$ and $R = .20$.
 
@@ -75,7 +75,7 @@ With the above equations the ratio $L \over R$ is independent to the $Y$.
 
 ${L \over R} = {{Y + |Y|X} \over {Y - |Y|X}}$
 
-Positive Y version:
+$Y \geq 0$:
 
 ${L \over R} {{Y + YX} \over {Y - YX}}$
 
@@ -83,7 +83,7 @@ ${L \over R} {{Y(1 + X)} \over {Y(1 - X)}}$
 
 ${L \over R} {{1 + X} \over {1 - X}}$
 
-Negative Y version:
+$Y \leq 0$:
 
 ${L \over R} {{Y - YX} \over {Y + YX}}$
 
@@ -112,7 +112,7 @@ Normal tank drive feels great at low speeds, but bad at high ones.
 The curvatherp algorithm smoothly linearly interpolates between tank drive for the slow speeds, and curvature for the high speeds. This means the point turns and tight low speed performance of tank drive, and the intuitive high speed turning of curvature, without the clunky discrete switch.
 
 The interpolation is done simply with linear weighting:
-
+,
 Let $I$ be the amount of curvature drive you wish to use. $0 \leq I \leq 1$ where $I = 0$ means that only the tank function ( $T_L$ and $T_R$ ) will be used, $I = 1$ means that only curvature ( $C_R$ and $C_L$ ) will be used, and $I = 0.5$ means that half curvature and half tank will be used ( respective averages of the two sides of $T$ s and two sides of $C$ s )
 
 Power $P = CI + T(1-I)$
@@ -127,9 +127,9 @@ $I_e$: the $|Y|$ value to end the interpolation at ( $0 < I_e \leq 1$ ).
 
 ( $I_e > I_s$ )
 
-I is defined as:
+$I$ is defined as:
 
-$I = m|Y| + b$ ($I$ is a linear function of $Y$)
+$I = m|Y| + b$ ( $I$ is a linear function of $Y$)
 
 Substituting:
 
@@ -137,7 +137,7 @@ $1 = mI_e + b$ (At $|Y| = I_e$ $I = 1$, its max value exactly)
 
 $0 = mI_s + b$ (At $|Y| = I_s$ $I = 0$, its min value exactly)
 
-2 unknowns, 2 equations. First solve for m:
+2 unknowns, 2 equations. First solve for $m$:
 
 $b = -mI_s$
 
@@ -145,7 +145,7 @@ $1 = mI_e - mI_s$
 
 $m = {1 \over {I_e - I_s}}$
 
-Now solve for b:
+Now solve for $b$:
 
 $0 = mI_s + b$
 
@@ -153,7 +153,7 @@ $0 = {I_s \over {I_e - I_s}} + b$
 
 $b = -{I_s \over {I_e - I_s}}$
 
-Plug back into original defenition of I and simplify:
+Plug back into original defenition of $I$ and simplify:
 
 $I = {|Y| \over {I_e - I_s}} - {I_s \over {I_e - I_s}}$
 
