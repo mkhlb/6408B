@@ -117,12 +117,52 @@ Let $I$ be the amount of curvature drive you wish to use. $0 \leq I \leq 1$ wher
 
 Power $P = CI + T(1-I)$
 
-Boilerplate linear weighting. The issue is finding $I$. You could simply make $I = X$, but that offers little control to tune the lerp to your preferences. Instead it's advantageous to have an interpolation that is some linear function of $X$ (clamping it between $0$ and $1$), as it allows larger ranges of $X$ values to be eintirely tank drive or entirely curvature drive.
+Boilerplate linear weighting. The issue is finding $I$. You could simply make $I = Y$, but that offers little control to tune the lerp to your preferences. Instead it's advantageous to have an interpolation that is some linear function of $Y$ (clamping it between $0$ and $1$), as it allows larger ranges of $Y$ values to be eintirely tank drive or entirely curvature drive.
 
 The user inputs 2 values
 
 $I_s$: the $|Y|$ value to start the interpolation at ( $0 \leq I_s < 1$ ).
 
-$I_f$: the $|Y|$ value to end the interpolation at ( $0 < I_f \leq 1$ ).
+$I_e$: the $|Y|$ value to end the interpolation at ( $0 < I_e \leq 1$ ).
 
-($I_f > I_s$)
+( $I_e > I_s$ )
+
+I is defined as:
+
+$I = m|Y| + b$ ($I$ is a linear function of $Y$)
+
+Substituting:
+
+$1 = mI_e + b$ (At $|Y| = I_e$ $I = 1$, its max value exactly)
+
+$0 = mI_s + b$ (At $|Y| = I_s$ $I = 0$, its min value exactly)
+
+2 unknowns, 2 equations. First solve for m:
+
+$b = -mI_s$
+
+$1 = mI_e - mI_s$
+
+$m = {1 \over {I_e - I_s}}$
+
+Now solve for b:
+
+$0 = mI_s + b$
+
+$0 = {I_s \over {I_e - I_s}} + b$
+
+$b = -{I_s \over {I_e - I_s}}$
+
+Plug back into original defenition of I and simplify:
+
+$I = {|Y| \over {I_e - I_s}} - {I_s \over {I_e - I_s}}$
+
+$\therefore I = {{|Y| - I_s} \over {I_e - I_s}}$
+
+If the maths proof isn't enough, it can be explained intuitively:
+
+First start with $I = |Y|$
+
+$I_s$ is an $x$-intercept. It gives the value that $I = 0$. To make $I = |Y|$'s $x$-intercept (which is normally 0) equal $I_s$, simply transform it to the right by $I_s$. to do that you subtract it from $|Y|$, giving the equation $I = |Y| - I_s$.
+
+Now we must make the equation rise to $1.0$ by $I_e$. This is done by applying a slope, multiplying $|Y| - I_s$ by some number $m$. A slope $m$ is defined as $m = {rise \over run}$. We know the rise is $1.0$, and the run can be given as the distance from the start of the iterpolation to the end: $I_e - I_s$. Apply slope $1 \over {I_e - I_s}$ to get $I = {{|Y| - I_s} \over {I_e - I_s}}$, which intercepts $x$ at $I_s$ thanks to a tranformation of $I_s$ and intercepts $I_e$ thanks to a slope if run $I_e - I_s$.
