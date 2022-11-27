@@ -43,7 +43,7 @@ $Y = .80$ and $X = .40$.
 
 $L = 1.2$ and $R = .40$.
 
-{L \over R} = {3 \over 1}.
+${L \over R} = {3 \over 1}$.
 
 This is fine and dandy. However, how can 120% power be applied to the left motor? It can't. In the classical arcade skid drive $L$ is rounded down to $1.0$. With the rounded $L$, the ratio $L \over R$ is now $5 \over 2$.
 
