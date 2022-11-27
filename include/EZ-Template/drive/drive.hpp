@@ -535,6 +535,16 @@ class Drive {
   void set_turn_pid(double target, int speed);
 
   /**
+  * Sets the robot to turn relative to current heading using PID.
+  * 
+  * \param target
+  *        target in degrees relative to current heading
+  * \param speed
+  *        0 to 127, max speed during motion
+  */
+  void set_relative_turn_pid(double target, int speed);
+
+  /**
    * Turn using only the left or right side.
    *
    * \param type
@@ -729,9 +739,9 @@ class Drive {
 
   // MOTION PLANNER
 
-  void turn_to_point(Vector2 target, Angle offset = Angle());
+  void set_point_turn_pid(Vector2 target, int speed, Angle offset = Angle());
 
-  void straight_drive_to_point(Vector2 target);
+  void set_straight_point_drive_pid(Vector2 target, int speed);
 
   //void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 

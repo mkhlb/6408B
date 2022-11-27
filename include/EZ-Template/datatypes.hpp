@@ -14,18 +14,18 @@ public:
   //Angle(double value) { SetDeg(value); }
 
   static Angle FromDegrees(double deg) {Angle a; a.SetDeg(deg); return a;}
-  static Angle FromRad(double deg) {Angle a; a.SetRad(deg); return a;}
+  static Angle FromRad(double rad) {Angle a; a.SetRad(rad); return a;}
 
   void SetDeg(double value) {
     _deg = value;
     _rad = 3.1415926 / 180 * value;
 
     if (_deg >= 360.0f) {
-      SetDeg(_deg - (floorf(_deg / 360.0f) * 360));
+      SetDeg(_deg - (floor(_deg / 360.0f) * 360));
     }
 
     if (_deg < 0) {
-      SetDeg(360 + _deg - (ceilf(_deg / 360.0f) * 360));
+      SetDeg(360 + _deg - (ceil(_deg / 360.0f) * 360));
     }
   }
   void SetRad(double value) {
@@ -33,11 +33,11 @@ public:
     _deg = 180 / 3.1415926 * value;
 
     if (_deg >= 360.0f) {
-      SetDeg(_deg - (floorf(_deg / 360.0f) * 360));
+      SetDeg(_deg - (floor(_deg / 360.0f) * 360));
     }
 
     if (_deg < 0) {
-      SetDeg(360 + _deg - (ceilf(_deg / 360.0f) * 360));
+      SetDeg(360 + _deg - (ceil(_deg / 360.0f) * 360));
     }
   }
   double GetDeg() { return _deg; }
@@ -56,6 +56,11 @@ public:
     x = xValue;
     y = yValue;
   }
+
+  static Vector2 FromPolar(double magnitude, Angle angle) {
+    return Vector2(magnitude * cos(angle.GetRad()), magnitude * sin(angle.GetRad()));
+  }
+
   double x;
   double y;
 
@@ -73,8 +78,14 @@ public:
 
   Vector2 operator*(double const &obj) { return Vector2(x * obj, y * obj); }
 
+  double operator*(Vector2 const &obj) {return x * obj.x + y * obj.y;}
+
   Vector2 operator+(Vector2 const &obj) {
     return Vector2(x + obj.x, y + obj.y);
+  }
+
+  Vector2 operator-(Vector2 const &obj) {
+    return Vector2(x - obj.x, y - obj.y);
   }
 
   // private:

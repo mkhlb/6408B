@@ -4,20 +4,20 @@
 
 using namespace ez;
 
-double Vector2::GetMagnitude() { return sqrtf(x * x + y * y); }
+double Vector2::GetMagnitude() { return sqrt(x * x + y * y); }
 Angle Vector2::GetAngleDirection() {
   Angle angle = Angle::FromRad(atan(y / x));
   Angle out;
 
   if (x < 0) {
     if (y < 0) {
-      out.SetDeg(180.0f + angle.GetDeg());
+      out.SetDeg(180.0 + angle.GetDeg());
     } else {
-      out.SetDeg(180.0f + angle.GetDeg());
+      out.SetDeg(180.0 + angle.GetDeg());
     }
   } else {
     if (y < 0) {
-      out.SetDeg(360.0f + angle.GetDeg());
+      out.SetDeg(360.0 + angle.GetDeg());
     } else {
       out.SetRad(angle.GetRad());
     }
@@ -38,9 +38,9 @@ void Vector2::SetMagnitude(double value) {
 void Vector2::SetAngleDirection(double value) {
   double mag = GetMagnitude();
 
-  x = mag * cosf(value);
+  x = mag * cos(value);
 
-  y = mag * sinf(value);
+  y = mag * sin(value);
 }
 
 double Angle::ShortestError(Angle from,
