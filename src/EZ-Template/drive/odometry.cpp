@@ -26,6 +26,8 @@ void Drive::ez_odometry_task() {
     double orientation_average =
         last_orientation.get_rad() + orientation_delta / 2;
 
+    last_orientation.set_rad(orientation.get_rad());
+
     if (orientation_delta == 0) {
       local_move = Vector2((left_distance + right_distance) / 2, 0);
     } else {

@@ -43,7 +43,7 @@ public:
   double get_deg() { return _deg; }
   double get_rad() { return _rad; }
 
-  static double shortest_error(Angle from, Angle to);
+  static Angle shortest_error(Angle from, Angle to);
 
   Angle operator+(const Angle &obj) {return from_rad(_rad + obj._rad);}
   Angle operator-(const Angle &obj) {return from_rad(_rad - obj._rad);}

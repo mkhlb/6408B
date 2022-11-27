@@ -36,3 +36,9 @@ void Drive::set_straight_point_drive_pid(Vector2 target, int speed) {
 
   set_drive_pid(projected, speed);
 }
+
+void Drive::set_orientation_turn_pid(Angle target, int speed) {
+  Angle error = Angle::shortest_error(orientation, target);
+
+  set_relative_turn_pid(error.get_deg(), speed);
+}

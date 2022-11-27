@@ -739,6 +739,8 @@ class Drive {
 
   // MOTION PLANNER
 
+  void set_orientation_turn_pid(Angle target, int speed);
+
   void set_point_turn_pid(Vector2 target, int speed, Angle offset = Angle());
 
   void set_straight_point_drive_pid(Vector2 target, int speed);
