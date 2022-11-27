@@ -20,12 +20,12 @@
 Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
-    {-19, -10, 9}
+    {10, 20}
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {1, 17, -2}
+    {-3, -5}
 
     // IMU Port
     ,
@@ -68,9 +68,9 @@ Drive chassis(
 
 mkhlib::CatapultIntakeController cata_intake(
   // Port of the catapult motor
-  {-11, 2}, 
+  {-12, 19}, 
   // Port of the intake motor
-  12, 
+  11, 
   // Port of the limit switch
   1, 
   // Ratio of roller revolutions / intake revolutions, intake revolution * this ratio should = roller revolutions
@@ -100,7 +100,7 @@ void initialize() {
               // joysticks
   chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
   chassis.set_curve_default(
-      0.1, 0.1); // Defaults for curve. If using tank, only the first parameter
+      1, 2); // Defaults for curve. If using tank, only the first parameter
                  // is used. (Comment this line out if you have an SD card!)
   default_constants(); // Set the drive to your own constants from autons.cpp!
 
@@ -192,20 +192,27 @@ void opcontrol() {
 
   cata_intake.cata_hold();
 
-  double interpolator_end = 65;
+  double interpolator_end = 67.1;
 
   while (true) {
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      interpolator_end -= 1;
+      interpolator_end -= 5;
       master.print(0, 0, "%f", interpolator_end);
     }
     else if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-      interpolator_end += 1;
+      interpolator_end += 5;
       master.print(0, 0, "%f", interpolator_end);
     }
 
-    chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      chassis.arcade_standard(ez::SPLIT);
+    }
+    else {
+      chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
+      //chassis.arcade_mkhl_standard(ez::SPLIT);
+    }
+    
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       
@@ -213,7 +220,7 @@ void opcontrol() {
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(0.6*600); //intake
+      cata_intake.intake_velocity(0.9*600); //intake
     }
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       cata_intake.intake_velocity(-300); //outake
