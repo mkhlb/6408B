@@ -727,6 +727,14 @@ class Drive {
 
   void reset_position(Vector2 position = Vector2(), Angle w = Angle());
 
+  // MOTION PLANNER
+
+  void turn_to_point(Vector2 target, Angle offset = Angle());
+
+  void straight_drive_to_point(Vector2 target);
+
+  //void turn_drive_to_point(Vector2 target, Angle offset = Angle());
+
  private:  // !Auton
 
   double width;
