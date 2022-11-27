@@ -7,7 +7,7 @@ MKHLib has a powerful ```CatapultIntakeController``` class that handles control 
 
 The ```CatapultIntakeController``` has functions for shooting with limit switch stopping, and waiting for different states in autonomous.
 
-The gear ratio for intake to roller is given in the constructor, so that speeds and positions can be given relative to roller and intake. The roller can be controller by PID or by time.
+The gear ratio for intake to roller is given in the constructor, so that speeds and positions can be passed relative to roller and intake. The roller can be controller by PID or by time.
 
 ## Ez Template extension - better drive code.
 
