@@ -19,18 +19,18 @@ void Drive::set_relative_turn_pid(double target, int speed) {
 
 void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset) {
   //calculate direction vector from current position to target
-  Vector2 position_to_target_unit = (target - position).GetNormalized();
-  Vector2 orientation_unit = Vector2::FromPolar(1, orientation);
+  Vector2 position_to_target_unit = (target - position).get_normalized();
+  Vector2 orientation_unit = Vector2::from_polar(1, orientation);
   
-  Angle angle = Angle::FromRad(atan2(position_to_target_unit.y, position_to_target_unit.x) - atan2(orientation_unit.y, orientation_unit.x));
+  Angle angle = Angle::from_rad(atan2(position_to_target_unit.y, position_to_target_unit.x) - atan2(orientation_unit.y, orientation_unit.x));
   //Angle angle = position_to_target_unit.GetAngleDirection() - orientation_unit.GetAngleDirection();
 
-  set_relative_turn_pid(angle.GetDeg() + offset.GetDeg(), speed);
+  set_relative_turn_pid(angle.get_deg() + offset.get_deg(), speed);
 }
 
 void Drive::set_straight_point_drive_pid(Vector2 target, int speed) {
-  Vector2 position_to_target_unit = (target - position).GetNormalized();
-  Vector2 orientation_unit = Vector2::FromPolar(1, orientation);
+  Vector2 position_to_target_unit = (target - position).get_normalized();
+  Vector2 orientation_unit = Vector2::from_polar(1, orientation);
   
   double projected = position_to_target_unit * orientation_unit; // dot product with a unit vector is just a regular projection
 

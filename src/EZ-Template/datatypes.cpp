@@ -4,58 +4,68 @@
 
 using namespace ez;
 
-double Vector2::GetMagnitude() { return sqrt(x * x + y * y); }
-Angle Vector2::GetAngleDirection() {
-  Angle angle = Angle::FromRad(atan(y / x));
+double operator*(Vector2 const &obj1, Vector2 const &obj2) {return obj1.x * obj2.x + obj1.y * obj2.y;}
+
+Vector2 operator+(Vector2 const &obj1, Vector2 const &obj2) {
+    return Vector2(obj1.x + obj2.x, obj1.y + obj2.y);
+  }
+
+Vector2 operator*(double const &scal, Vector2 const &vec) { return Vector2(vec.x * scal, vec.y * scal); }
+
+Vector2 operator*(Vector2 const &vec, double const &scal) {return scal * vec;};
+
+double Vector2::get_magnitude() { return sqrt(x * x + y * y); }
+Angle Vector2::get_angle_direction() {
+  Angle angle = Angle::from_rad(atan(y / x));
   Angle out;
 
   if (x < 0) {
     if (y < 0) {
-      out.SetDeg(180.0 + angle.GetDeg());
+      out.set_deg(180.0 + angle.get_deg());
     } else {
-      out.SetDeg(180.0 + angle.GetDeg());
+      out.set_deg(180.0 + angle.get_deg());
     }
   } else {
     if (y < 0) {
-      out.SetDeg(360.0 + angle.GetDeg());
+      out.set_deg(360.0 + angle.get_deg());
     } else {
-      out.SetRad(angle.GetRad());
+      out.set_rad(angle.get_rad());
     }
   }
 
   return out;
 }
-Vector2 Vector2::GetNormalized() {
-  return Vector2(x / GetMagnitude(), y / GetMagnitude());
+Vector2 Vector2::get_normalized() {
+  return Vector2(x / get_magnitude(), y / get_magnitude());
 }
-void Vector2::SetMagnitude(double value) {
-  double mag = GetMagnitude();
+void Vector2::set_magnitude(double value) {
+  double mag = get_magnitude();
 
   x = x / mag * value;
 
   y = y / mag * value;
 }
-void Vector2::SetAngleDirection(double value) {
-  double mag = GetMagnitude();
+void Vector2::set_angle_direction(double value) {
+  double mag = get_magnitude();
 
   x = mag * cos(value);
 
   y = mag * sin(value);
 }
 
-double Angle::ShortestError(Angle from,
+double Angle::shortest_error(Angle from,
                             Angle to) // returns shortest error from angle this
                                       // method is being called on to other
 {
-  if (to.GetDeg() - from.GetDeg() <= 180 &&
-      to.GetDeg() - from.GetDeg() >= -180) {
-    return to.GetDeg() - from.GetDeg();
+  if (to.get_deg() - from.get_deg() <= 180 &&
+      to.get_deg() - from.get_deg() >= -180) {
+    return to.get_deg() - from.get_deg();
   } else // need to go the other way around
   {
-    if (from.GetDeg() > 180) {
-      return 360 - from.GetDeg() + to.GetDeg();
+    if (from.get_deg() > 180) {
+      return 360 - from.get_deg() + to.get_deg();
     } else {
-      return -from.GetDeg() + to.GetDeg() - 360;
+      return - from.get_deg() + to.get_deg() - 360;
     }
   }
 }

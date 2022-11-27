@@ -733,7 +733,7 @@ class Drive {
 
   //ODOM STUFF
   Vector2 position;
-  Angle orientation = Angle::FromDegrees(0);
+  Angle orientation = Angle::from_degrees(0);
 
   void reset_position(Vector2 position = Vector2(), Angle w = Angle());
 

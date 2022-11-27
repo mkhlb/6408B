@@ -13,40 +13,40 @@ public:
 
   //Angle(double value) { SetDeg(value); }
 
-  static Angle FromDegrees(double deg) {Angle a; a.SetDeg(deg); return a;}
-  static Angle FromRad(double rad) {Angle a; a.SetRad(rad); return a;}
+  static Angle from_degrees(double deg) {Angle a; a.set_deg(deg); return a;}
+  static Angle from_rad(double rad) {Angle a; a.set_rad(rad); return a;}
 
-  void SetDeg(double value) {
+  void set_deg(double value) {
     _deg = value;
     _rad = 3.1415926 / 180 * value;
 
     if (_deg >= 360.0f) {
-      SetDeg(_deg - (floor(_deg / 360.0f) * 360));
+      set_deg(_deg - (floor(_deg / 360.0f) * 360));
     }
 
     if (_deg < 0) {
-      SetDeg(360 + _deg - (ceil(_deg / 360.0f) * 360));
+      set_deg(360 + _deg - (ceil(_deg / 360.0f) * 360));
     }
   }
-  void SetRad(double value) {
+  void set_rad(double value) {
     _rad = value;
     _deg = 180 / 3.1415926 * value;
 
     if (_deg >= 360.0f) {
-      SetDeg(_deg - (floor(_deg / 360.0f) * 360));
+      set_deg(_deg - (floor(_deg / 360.0f) * 360));
     }
 
     if (_deg < 0) {
-      SetDeg(360 + _deg - (ceil(_deg / 360.0f) * 360));
+      set_deg(360 + _deg - (ceil(_deg / 360.0f) * 360));
     }
   }
-  double GetDeg() { return _deg; }
-  double GetRad() { return _rad; }
+  double get_deg() { return _deg; }
+  double get_rad() { return _rad; }
 
-  static double ShortestError(Angle from, Angle to);
+  static double shortest_error(Angle from, Angle to);
 
-  Angle operator+(const Angle &obj) {return FromRad(_rad + obj._rad);}
-  Angle operator-(const Angle &obj) {return FromRad(_rad - obj._rad);}
+  Angle operator+(const Angle &obj) {return from_rad(_rad + obj._rad);}
+  Angle operator-(const Angle &obj) {return from_rad(_rad - obj._rad);}
 
 private:
   double _deg;
@@ -60,32 +60,26 @@ public:
     y = yValue;
   }
 
-  static Vector2 FromPolar(double magnitude, Angle angle) {
-    return Vector2(magnitude * cos(angle.GetRad()), magnitude * sin(angle.GetRad()));
+  static Vector2 from_polar(double magnitude, Angle angle) {
+    return Vector2(magnitude * cos(angle.get_rad()), magnitude * sin(angle.get_rad()));
   }
 
   double x;
   double y;
 
-  Vector2 GetNormalized();
+  Vector2 get_normalized();
 
-  double GetMagnitude();
-  Angle GetAngleDirection();
+  double get_magnitude();
+  Angle get_angle_direction();
 
-  void SetMagnitude(double value); // sets magnitude while preserving direction
-  void SetAngleDirection(
+  void set_magnitude(double value); // sets magnitude while preserving direction
+  void set_angle_direction(
       double value); // like rotating a vector, changes its polar
                      // coordinate angle while preserving magnitude
 
-  double Dot(Vector2 obj) { return x * obj.x + y * obj.x; }
+  double dot(Vector2 obj) { return x * obj.x + y * obj.x; }
 
-  Vector2 operator*(double const &obj) { return Vector2(x * obj, y * obj); }
-
-  double operator*(Vector2 const &obj) {return x * obj.x + y * obj.y;}
-
-  Vector2 operator+(Vector2 const &obj) {
-    return Vector2(x + obj.x, y + obj.y);
-  }
+  
 
   Vector2 operator-(Vector2 const &obj) {
     return Vector2(x - obj.x, y - obj.y);
@@ -93,3 +87,11 @@ public:
 
   // private:
 };
+
+double operator*(Vector2 const &obj1, Vector2 const &obj2);
+
+Vector2 operator+(Vector2 const &obj1, Vector2 const &obj2);
+
+Vector2 operator*(double const &scal, Vector2 const &vec);
+
+Vector2 operator*(Vector2 const &vec, double const &scal);

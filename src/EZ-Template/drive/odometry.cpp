@@ -21,10 +21,10 @@ void Drive::ez_odometry_task() {
     last_left_sensor = left_sensor();
     last_right_sensor = right_sensor();
 
-    double orientation_delta = orientation.GetRad() - last_orientation.GetRad();
+    double orientation_delta = orientation.get_rad() - last_orientation.get_rad();
 
     double orientation_average =
-        last_orientation.GetRad() + orientation_delta / 2;
+        last_orientation.get_rad() + orientation_delta / 2;
 
     if (orientation_delta == 0) {
       local_move = Vector2((left_distance + right_distance) / 2, 0);
@@ -36,10 +36,10 @@ void Drive::ez_odometry_task() {
                   0);
     }
 
-    if (local_move.GetMagnitude() != 0) {
+    if (local_move.get_magnitude() != 0) {
       Vector2 global_move = Vector2(local_move.x, local_move.y);
 
-      global_move.SetAngleDirection(local_move.GetAngleDirection().GetRad() +
+      global_move.set_angle_direction(local_move.get_angle_direction().get_rad() +
                                     orientation_average);
 
       position.x += global_move.x;
