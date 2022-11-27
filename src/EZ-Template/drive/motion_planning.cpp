@@ -23,6 +23,7 @@ void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset) {
   Vector2 orientation_unit = Vector2::FromPolar(1, orientation);
   
   Angle angle = Angle::FromRad(atan2(position_to_target_unit.y, position_to_target_unit.x) - atan2(orientation_unit.y, orientation_unit.x));
+  //Angle angle = position_to_target_unit.GetAngleDirection() - orientation_unit.GetAngleDirection();
 
   set_relative_turn_pid(angle.GetDeg() + offset.GetDeg(), speed);
 }

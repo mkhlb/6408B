@@ -45,6 +45,9 @@ public:
 
   static double ShortestError(Angle from, Angle to);
 
+  Angle operator+(const Angle &obj) {return FromRad(_rad + obj._rad);}
+  Angle operator-(const Angle &obj) {return FromRad(_rad - obj._rad);}
+
 private:
   double _deg;
   double _rad;
