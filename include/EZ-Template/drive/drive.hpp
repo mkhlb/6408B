@@ -12,6 +12,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include "EZ-Template/PID.hpp"
 #include "EZ-Template/util.hpp"
+#include "EZ-Template/datatypes.hpp"
 #include "pros/motors.h"
 
 using namespace ez;
@@ -113,6 +114,7 @@ class Drive {
    * Tasks for autonomous.
    */
   pros::Task ez_auto;
+  pros::Task ez_position_tracker;
 
   /**
    * Creates a Drive Controller using internal encoders.
@@ -130,7 +132,7 @@ class Drive {
    * \param ratio
    *        External gear ratio, wheel gear / motor gear.
    */
-  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio);
+  Drive(double width, std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio);
 
   /**
    * Creates a Drive Controller using encoders plugged into the brain.
@@ -152,7 +154,7 @@ class Drive {
    * \param right_tracker_ports
    *        Input {3, 4}.  Make ports negative if reversed!
    */
-  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio, std::vector<int> left_tracker_ports, std::vector<int> right_tracker_ports);
+  Drive(double width, std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio, std::vector<int> left_tracker_ports, std::vector<int> right_tracker_ports);
 
   /**
    * Creates a Drive Controller using encoders plugged into a 3 wire expander.
@@ -176,11 +178,13 @@ class Drive {
    * \param expander_smart_port
    *        Port the expander is plugged into.
    */
-  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio, std::vector<int> left_tracker_ports, std::vector<int> right_tracker_ports, int expander_smart_port);
+  Drive(double width, std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio, std::vector<int> left_tracker_ports, std::vector<int> right_tracker_ports, int expander_smart_port);
 
   /**
    * Creates a Drive Controller using rotation sensors.
    *
+   * \param width
+   *        Track width of drivetrain, in inches.
    * \param left_motor_ports
    *        Input {1, -2...}.  Make ports negative if reversed!
    * \param right_motor_ports
@@ -196,7 +200,7 @@ class Drive {
    * \param right_tracker_port
    *        Make ports negative if reversed!
    */
-  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ratio, int left_rotation_port, int right_rotation_port);
+  Drive(double width, std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ratio, int left_rotation_port, int right_rotation_port);
 
   /**
    * Sets drive defaults.
@@ -717,7 +721,16 @@ class Drive {
    */
   double slew_calculate(slew_ &input, double current);
 
+  //ODOM STUFF
+  Vector2 position;
+  Angle orientation = Angle::FromDegrees(0);
+
+  void reset_position(Vector2 position = Vector2(), Angle w = Angle());
+
  private:  // !Auton
+
+  double width;
+
   bool drive_toggle = true;
   bool print_toggle = true;
   int swing_min = 0;
@@ -756,6 +769,7 @@ class Drive {
   void swing_pid_task();
   void turn_pid_task();
   void ez_auto_task();
+  void ez_odometry_task();
 
   /**
    * Constants for slew
