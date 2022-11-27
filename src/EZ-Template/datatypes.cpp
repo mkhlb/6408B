@@ -63,7 +63,7 @@ Angle Angle::shortest_error(Angle from,
   } else // need to go the other way around
   {
     if (from.get_deg() > 180) {
-      return Angle::from_degrees(360) - from + to;
+      return to - from + Angle::from_degrees(360);
     } else {
       return to - from - Angle::from_degrees(360);
     }

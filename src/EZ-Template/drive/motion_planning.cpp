@@ -20,10 +20,8 @@ void Drive::set_relative_turn_pid(double target, int speed) {
 void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset) {
   //calculate direction vector from current position to target
   Vector2 position_to_target_unit = (target - position).get_normalized();
-  Vector2 orientation_unit = Vector2::from_polar(1, orientation);
-  
-  Angle angle = Angle::from_rad(atan2(position_to_target_unit.y, position_to_target_unit.x) - atan2(orientation_unit.y, orientation_unit.x));
-  //Angle angle = position_to_target_unit.GetAngleDirection() - orientation_unit.GetAngleDirection();
+
+  Angle angle = Angle::shortest_error(orientation, position_to_target_unit.get_angle_direction());
 
   set_relative_turn_pid(angle.get_deg() + offset.get_deg(), speed);
 }
