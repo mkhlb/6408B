@@ -17,9 +17,10 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 using namespace ez;
 
 class Drive {
- public:
+public:
   /**
-   * Joysticks will return 0 when they are within this number.  Set with set_joystick_threshold()
+   * Joysticks will return 0 when they are within this number.  Set with
+   * set_joystick_threshold()
    */
   int JOYSTICK_THRESHOLD;
 
@@ -130,7 +131,8 @@ class Drive {
    * \param ratio
    *        External gear ratio, wheel gear / motor gear.
    */
-  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio);
+  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports,
+        int imu_port, double wheel_diameter, double ticks, double ratio);
 
   /**
    * Creates a Drive Controller using encoders plugged into the brain.
@@ -152,7 +154,10 @@ class Drive {
    * \param right_tracker_ports
    *        Input {3, 4}.  Make ports negative if reversed!
    */
-  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio, std::vector<int> left_tracker_ports, std::vector<int> right_tracker_ports);
+  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports,
+        int imu_port, double wheel_diameter, double ticks, double ratio,
+        std::vector<int> left_tracker_ports,
+        std::vector<int> right_tracker_ports);
 
   /**
    * Creates a Drive Controller using encoders plugged into a 3 wire expander.
@@ -176,7 +181,10 @@ class Drive {
    * \param expander_smart_port
    *        Port the expander is plugged into.
    */
-  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ticks, double ratio, std::vector<int> left_tracker_ports, std::vector<int> right_tracker_ports, int expander_smart_port);
+  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports,
+        int imu_port, double wheel_diameter, double ticks, double ratio,
+        std::vector<int> left_tracker_ports,
+        std::vector<int> right_tracker_ports, int expander_smart_port);
 
   /**
    * Creates a Drive Controller using rotation sensors.
@@ -196,7 +204,9 @@ class Drive {
    * \param right_tracker_port
    *        Make ports negative if reversed!
    */
-  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double ratio, int left_rotation_port, int right_rotation_port);
+  Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports,
+        int imu_port, double wheel_diameter, double ratio,
+        int left_rotation_port, int right_rotation_port);
 
   /**
    * Sets drive defaults.
@@ -210,32 +220,42 @@ class Drive {
   /////
 
   /**
-   * Sets the chassis to controller joysticks using tank control.  Run is usercontrol.
-   * This passes the controller through the curve functions, but is disabled by default.  Use toggle_controller_curve_modifier() to enable it.
+   * Sets the chassis to controller joysticks using tank control.  Run is
+   * usercontrol. This passes the controller through the curve functions, but is
+   * disabled by default.  Use toggle_controller_curve_modifier() to enable it.
    */
   void tank();
 
-  
-  void mkhl(int forward_stick, int turn_stick, double interpolator);
+  void curvatherp(int forward_stick, int turn_stick, double interpolator);
   /**
-   * Sets the chassis to do mkhl drive, the interpolation between tank drives for low forward speed and cheezy for high speeds
-   * Pass in minimum deadzone value where all tank is used and maximum where full cheezy is reached
+   * Sets the chassis to do curvatherp drive, the interpolation between tank
+   * drives for low forward speed and cheezy for high speeds Pass in minimum
+   * deadzone value where all tank is used and maximum where full cheezy is
+   * reached
    */
-  void arcade_mkhl_standard(e_type stick_type, double interpolator_start=1, double interpolator_end=2);
+  void arcade_curvatherp_standard(e_type stick_type,
+                                  double interpolator_start = 1,
+                                  double interpolator_end = 2);
 
   /**
-   * Sets the chassis to do mkhl drive, the interpolation between tank drives for low forward speed and cheezy for high speeds
-   * Pass in minimum deadzone value where all tank is used and maximum where full cheezy is reached
+   * Sets the chassis to do curvatherp drive, the interpolation between tank
+   * drives for low forward speed and cheezy for high speeds Pass in minimum
+   * deadzone value where all tank is used and maximum where full cheezy is
+   * reached
    */
-  void arcade_mkhl_flipped(e_type stick_type, double interpolator_start=1, double interpolator_end=2);
+  void arcade_curvatherp_flipped(e_type stick_type,
+                                 double interpolator_start = 1,
+                                 double interpolator_end = 2);
 
   void arcade_normalized_standard(e_type stick_type);
 
   void arcade_normalized_flipped(e_type stick_type);
 
   /**
-   * Sets the chassis to controller joysticks using standard arcade control.  Run is usercontrol.
-   * This passes the controller through the curve functions, but is disabled by default.  Use toggle_controller_curve_modifier() to enable it.
+   * Sets the chassis to controller joysticks using standard arcade control. Run
+   * is usercontrol. This passes the controller through the curve functions, but
+   * is disabled by default.  Use toggle_controller_curve_modifier() to enable
+   * it.
    *
    * \param stick_type
    *        ez::SINGLE or ez::SPLIT control
@@ -243,8 +263,10 @@ class Drive {
   void arcade_standard(e_type stick_type);
 
   /**
-   * Sets the chassis to controller joysticks using flipped arcade control.  Run is usercontrol.
-   * This passes the controller through the curve functions, but is disabled by default.  Use toggle_controller_curve_modifier() to enable it.
+   * Sets the chassis to controller joysticks using flipped arcade control.  Run
+   * is usercontrol. This passes the controller through the curve functions, but
+   * is disabled by default.  Use toggle_controller_curve_modifier() to enable
+   * it.
    *
    * \param stick_type
    *        ez::SINGLE or ez::SPLIT control
@@ -252,7 +274,8 @@ class Drive {
   void arcade_flipped(e_type stick_type);
 
   /**
-   * Initializes left and right curves with the SD card, reccomended to run in initialize().
+   * Initializes left and right curves with the SD card, reccomended to run in
+   * initialize().
    */
   void init_curve_sd();
 
@@ -275,7 +298,8 @@ class Drive {
   void set_active_brake(double kp);
 
   /**
-   * Enables/disables modifying the joystick input curves with the controller.  True enables, false disables.
+   * Enables/disables modifying the joystick input curves with the controller.
+   * True enables, false disables.
    *
    * \param input
    *        bool input
@@ -290,7 +314,8 @@ class Drive {
    * \param increase
    *        a pros button enumerator
    */
-  void set_left_curve_buttons(pros::controller_digital_e_t decrease, pros::controller_digital_e_t increase);
+  void set_left_curve_buttons(pros::controller_digital_e_t decrease,
+                              pros::controller_digital_e_t increase);
 
   /**
    * Sets buttons for modifying the right joystick curve.
@@ -300,10 +325,12 @@ class Drive {
    * \param increase
    *        a pros button enumerator
    */
-  void set_right_curve_buttons(pros::controller_digital_e_t decrease, pros::controller_digital_e_t increase);
+  void set_right_curve_buttons(pros::controller_digital_e_t decrease,
+                               pros::controller_digital_e_t increase);
 
   /**
-   * Outputs a curve from 5225A In the Zone.  This gives more control over the robot at lower speeds.  https://www.desmos.com/calculator/rcfjjg83zx
+   * Outputs a curve from 5225A In the Zone.  This gives more control over the
+   * robot at lower speeds.  https://www.desmos.com/calculator/rcfjjg83zx
    *
    * \param x
    *        joystick input
@@ -311,7 +338,8 @@ class Drive {
   double left_curve_function(double x);
 
   /**
-   * Outputs a curve from 5225A In the Zone.  This gives more control over the robot at lower speeds.  https://www.desmos.com/calculator/rcfjjg83zx
+   * Outputs a curve from 5225A In the Zone.  This gives more control over the
+   * robot at lower speeds.  https://www.desmos.com/calculator/rcfjjg83zx
    *
    * \param x
    *        joystick input
@@ -319,7 +347,8 @@ class Drive {
   double right_curve_function(double x);
 
   /**
-   * Sets a new threshold for the joystick.  The joysticks wil not return a value if they are within this.
+   * Sets a new threshold for the joystick.  The joysticks wil not return a
+   * value if they are within this.
    *
    * \param threshold
    *        new threshold
@@ -348,7 +377,8 @@ class Drive {
   /////
 
   /**
-   * Checks if the motor is currently in pto_list.  Returns true if it's already in pto_list.
+   * Checks if the motor is currently in pto_list.  Returns true if it's already
+   * in pto_list.
    *
    * \param check_if_pto
    *        motor to check.
@@ -364,7 +394,8 @@ class Drive {
   void pto_add(std::vector<pros::Motor> pto_list);
 
   /**
-   * Removes motors from the pto list, adding them to the drive.  You cannot use the first index in a pto.
+   * Removes motors from the pto list, adding them to the drive.  You cannot use
+   * the first index in a pto.
    *
    * \param pto_list
    *        list of motors to add to the drive.
@@ -401,7 +432,8 @@ class Drive {
    * Changes the way the drive behaves when it is not under active user control
    *
    * \param brake_type
-   *        the 'brake mode' of the motor e.g. 'pros::E_MOTOR_BRAKE_COAST' 'pros::E_MOTOR_BRAKE_BRAKE' 'pros::E_MOTOR_BRAKE_HOLD'
+   *        the 'brake mode' of the motor e.g. 'pros::E_MOTOR_BRAKE_COAST'
+   * 'pros::E_MOTOR_BRAKE_BRAKE' 'pros::E_MOTOR_BRAKE_HOLD'
    */
   void set_drive_brake(pros::motor_brake_mode_e_t brake_type);
 
@@ -470,12 +502,14 @@ class Drive {
   bool left_over_current();
 
   /**
-   * Reset all the chassis motors, reccomended to run at the start of your autonomous routine.
+   * Reset all the chassis motors, reccomended to run at the start of your
+   * autonomous routine.
    */
   void reset_drive_sensor();
 
   /**
-   * Resets the current gyro value.  Defaults to 0, reccomended to run at the start of your autonomous routine.
+   * Resets the current gyro value.  Defaults to 0, reccomended to run at the
+   * start of your autonomous routine.
    *
    * \param new_heading
    *        New heading value.
@@ -483,7 +517,8 @@ class Drive {
   void reset_gyro(double new_heading = 0);
 
   /**
-   * Resets the imu so that where the drive is pointing is zero in set_drive_pid(turn)
+   * Resets the imu so that where the drive is pointing is zero in
+   * set_drive_pid(turn)
    */
   double get_gyro();
 
@@ -514,11 +549,12 @@ class Drive {
    * \param speed
    *        0 to 127, max speed during motion
    * \param slew_on
-   *        ramp up from slew_min to speed over slew_distance.  only use when you're going over about 14"
-   * \param toggle_heading
-   *        toggle for heading correction
+   *        ramp up from slew_min to speed over slew_distance.  only use when
+   * you're going over about 14" \param toggle_heading toggle for heading
+   * correction
    */
-  void set_drive_pid(double target, int speed, bool slew_on = false, bool toggle_heading = true);
+  void set_drive_pid(double target, int speed, bool slew_on = false,
+                     bool toggle_heading = true);
 
   /**
    * Sets the robot to turn using PID.
@@ -566,7 +602,8 @@ class Drive {
   void wait_until(double target);
 
   /**
-   * Autonomous interference detection.  Returns true when interfered, and false when nothing happened.
+   * Autonomous interference detection.  Returns true when interfered, and false
+   * when nothing happened.
    */
   bool interfered = false;
 
@@ -579,9 +616,11 @@ class Drive {
   void set_max_speed(int speed);
 
   /**
-   * Set Either the headingPID, turnPID, forwardPID, backwardPID, activeBrakePID, or swingPID
+   * Set Either the headingPID, turnPID, forwardPID, backwardPID,
+   * activeBrakePID, or swingPID
    */
-  void set_pid_constants(PID *pid, double p, double i, double d, double p_start_i);
+  void set_pid_constants(PID *pid, double p, double i, double d,
+                         double p_start_i);
 
   /**
    * Sets minimum power for swings when kI and startI are enabled.
@@ -645,7 +684,9 @@ class Drive {
    * \param p_velocity_exit_time
    *        Sets velocity_exit_time.  Timer will start when velocity is 0.
    */
-  void set_exit_condition(int type, int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout);
+  void set_exit_condition(int type, int p_small_exit_time, double p_small_error,
+                          int p_big_exit_time, double p_big_error,
+                          int p_velocity_exit_time, int p_mA_timeout);
 
   /**
    * Exit condition for turning.
@@ -705,7 +746,9 @@ class Drive {
    * \param backwards
    *        slew direction for constants
    */
-  void slew_initialize(slew_ &input, bool slew_on, double max_speed, double target, double current, double start, bool backwards);
+  void slew_initialize(slew_ &input, bool slew_on, double max_speed,
+                       double target, double current, double start,
+                       bool backwards);
 
   /**
    * Calculate slew.
@@ -717,7 +760,7 @@ class Drive {
    */
   double slew_calculate(slew_ &input, double current);
 
- private:  // !Auton
+private: // !Auton
   bool drive_toggle = true;
   bool print_toggle = true;
   int swing_min = 0;
@@ -772,7 +815,7 @@ class Drive {
   /**
    * Enable/disable modifying controller curve with controller.
    */
-  bool disable_controller = true;  // True enables, false disables.
+  bool disable_controller = true; // True enables, false disables.
 
   /**
    * Is tank drive running?
@@ -814,7 +857,9 @@ class Drive {
   /**
    * Function for button presses.
    */
-  void button_press(button_ *input_name, int button, std::function<void()> changeCurve, std::function<void()> save);
+  void button_press(button_ *input_name, int button,
+                    std::function<void()> changeCurve,
+                    std::function<void()> save);
 
   /**
    * The left and right curve scalers.

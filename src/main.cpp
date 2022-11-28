@@ -65,17 +65,16 @@ Drive chassis(
     // ,1
 );
 
-
 mkhlib::CatapultIntakeController cata_intake(
-  // Port of the catapult motor
-  {-12, 19}, 
-  // Port of the intake motor
-  11, 
-  // Port of the limit switch
-  1, 
-  // Ratio of roller revolutions / intake revolutions, intake revolution * this ratio should = roller revolutions
-  1.0f/3.0f
-);
+    // Port of the catapult motor
+    {-12, 19},
+    // Port of the intake motor
+    11,
+    // Port of the limit switch
+    1,
+    // Ratio of roller revolutions / intake revolutions, intake revolution *
+    // this ratio should = roller revolutions
+    1.0f / 3.0f);
 
 pros::ADIDigitalOut poonamic(8);
 
@@ -90,8 +89,8 @@ void initialize() {
   ez::print_ez_template();
 
   cata_intake.cata_hold();
-  pros::delay(500); // Stop the user from doing anything while legacy ports configure.
-
+  pros::delay(
+      500); // Stop the user from doing anything while legacy ports configure.
 
   // Configure your chassis controls
 
@@ -101,20 +100,21 @@ void initialize() {
   chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
   chassis.set_curve_default(
       1, 2); // Defaults for curve. If using tank, only the first parameter
-                 // is used. (Comment this line out if you have an SD card!)
+             // is used. (Comment this line out if you have an SD card!)
   default_constants(); // Set the drive to your own constants from autons.cpp!
 
-  exit_condition_defaults(); // Set the exit conditions to your own constants from autons.cpp!
-  
-  
-  // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
-  // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
-  // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
+  exit_condition_defaults(); // Set the exit conditions to your own constants
+                             // from autons.cpp!
+
+  // These are already defaulted to these buttons, but you can change the
+  // left/right curve buttons here! chassis.set_left_curve_buttons
+  // (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If
+  // using tank, only the left side is used.
+  // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,
+  // pros::E_CONTROLLER_DIGITAL_A);
 
   // Autonomous Selector using LLEMU
-  ez::as::auton_selector.add_autons({
-    Auton("Full win point", roll_test)
-  });
+  ez::as::auton_selector.add_autons({Auton("Full win point", roll_test)});
 
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -155,7 +155,7 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-  
+
   chassis.reset_pid_targets();               // Resets PID targets to 0.
   chassis.reset_gyro();                      // Reset gyro position to 0.
   chassis.reset_drive_sensor();              // Reset drive sensors to 0.
@@ -164,11 +164,12 @@ void autonomous() {
 
   cata_intake.cata_hold();
 
-  ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
+  ez::as::auton_selector
+      .call_selected_auton(); // Calls selected auton from autonomous selector.
 
   // auto selection
 
-  //roll_test();
+  // roll_test();
 }
 
 /**
@@ -185,7 +186,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
-
 void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
@@ -196,37 +196,35 @@ void opcontrol() {
 
   while (true) {
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       interpolator_end -= 5;
       master.print(0, 0, "%f", interpolator_end);
-    }
-    else if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
       interpolator_end += 5;
       master.print(0, 0, "%f", interpolator_end);
     }
 
-    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       chassis.arcade_standard(ez::SPLIT);
+    } else {
+      chassis.arcade_curvatherp_standard(
+          ez::SPLIT, 2, interpolator_end); // curvatherp special split arcade
+      // chassis.arcade_curvatherp_standard(ez::SPLIT);
     }
-    else {
-      chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
-      //chassis.arcade_mkhl_standard(ez::SPLIT);
-    }
-    
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      
-      cata_intake.cata_shoot(); //cata_intake shoot, moves cata_intake then shortly after waits until limit switch to stop it
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+
+      cata_intake
+          .cata_shoot(); // cata_intake shoot, moves cata_intake then shortly
+                         // after waits until limit switch to stop it
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(0.9*600); //intake
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      cata_intake.intake_velocity(-300); //outake
-    } 
-    else {
-      cata_intake.intake_velocity(0); //else to keep intake at 0
+      cata_intake.intake_velocity(0.9 * 600); // intake
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+      cata_intake.intake_velocity(-300); // outake
+    } else {
+      cata_intake.intake_velocity(0); // else to keep intake at 0
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
