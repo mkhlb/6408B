@@ -81,19 +81,19 @@ ${L \over R} = {{Y + |Y|X} \over {Y - |Y|X}}$
 
 $Y \geq 0$:
 
-${L \over R} {{Y + YX} \over {Y - YX}}$
+${L \over R} = {{Y + YX} \over {Y - YX}}$
 
-${L \over R} {{Y(1 + X)} \over {Y(1 - X)}}$
+${L \over R} = {{Y(1 + X)} \over {Y(1 - X)}}$
 
-${L \over R} {{1 + X} \over {1 - X}}$
+${L \over R} = {{1 + X} \over {1 - X}}$
 
 $Y \leq 0$:
 
-${L \over R} {{Y - YX} \over {Y + YX}}$
+${L \over R} = {{Y - YX} \over {Y + YX}}$
 
-${L \over R} {{Y(1 - X)} \over {Y(1 + X)}}$
+${L \over R} = {{Y(1 - X)} \over {Y(1 + X)}}$
 
-${L \over R} {{1 - X} \over {1 + X}}$
+${L \over R} = {{1 - X} \over {1 + X}}$
 
 In both versions, the simplified ratio $L \over R$ is independent of the $Y$ variable.
 
