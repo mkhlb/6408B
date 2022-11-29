@@ -18,10 +18,10 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
       cata_loop([this] { this->master_cata_task(); }),
       intake_loop([this] { this->master_intake_task(); }) {
 
-
+  
+  // Populate the list of cata motors
   pros::Motor temp(abs(cata_port), cata_gearset, ez::util::is_reversed(cata_port));
   temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
-
 
   cata_motors.push_back(temp);
 
@@ -50,6 +50,7 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
       cata_loop([this] { this->master_cata_task(); }),
       intake_loop([this] { this->master_intake_task(); }) {
   
+  // Populate list of cata motors
   for (auto i : cata_ports) {
     pros::Motor temp(abs(i), cata_gearset, ez::util::is_reversed(i));
     temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
@@ -74,18 +75,20 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
 }
 
 void CatapultIntakeController::master_cata_task() {
-  while (true) {
 
-    if( cata_state == e_cata_state::HOLD)
+  // Master control loop: state machine
+  while (true) {  
+  
+    if( cata_state == e_cata_state::HOLD) // Lock motors during hold state.
     {
       for (auto i : cata_motors) {
         i.move_velocity(0);
       }
     }
-    else if( cata_state == e_cata_state::CLEAR)
+    else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
     {
       for (auto i : cata_motors) {
-        i.move_velocity(90);
+        i.move_voltage(.9 * 12000);
       }
     }
     else if( cata_state == e_cata_state::PRIME)
@@ -107,7 +110,7 @@ void CatapultIntakeController::master_cata_task() {
 void CatapultIntakeController::cata_prime_task() {
   
   for (auto i : cata_motors) {
-    i.move_velocity(-100);
+    i.move_voltage(-12000);
   }
     
   if(limit.get_value())
@@ -121,7 +124,7 @@ void CatapultIntakeController::cata_prime_task() {
 void CatapultIntakeController::cata_shoot_task() {
 
   for (auto i : cata_motors) {
-    i.move_velocity(-100);
+    i.move_voltage(-12000);
   }
   if(!limit.get_value())
   {
