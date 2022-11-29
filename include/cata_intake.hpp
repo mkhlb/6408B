@@ -102,6 +102,11 @@ public:
    */
   void intake_velocity(double velocity);
   /**
+   * @brief Stops the intake - sets its velocity to 0
+   *
+   */
+  void intake_stop();
+  /**
    * @brief Sets the intake to spin for set time
    *
    * \param time the time in milliseconds to spin the intake for
@@ -115,6 +120,11 @@ public:
    * \param velocity the roller RPM velocity to set the roller to
    */
   void roller_velocity(double velocity);
+  /**
+   * @brief Stops the roller - sets its velocity to 0
+   *
+   */
+  void roller_stop();
   /**
    * @brief Sets the roller to spin for set time
    *

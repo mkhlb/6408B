@@ -157,22 +157,21 @@ void CatapultIntakeController::cata_shoot() { cata_state = e_cata_state::SHOOT; 
 void CatapultIntakeController::cata_clear() { cata_state = e_cata_state::CLEAR; }
 
 void CatapultIntakeController::master_intake_task() {
+  // Intake/roller state controller
   while(true)
   {
-    
     if(!cata_primed) {
-      intake.move_velocity(0);
+      intake.move_velocity(0); // Catapult safety, pause all other actions while catapult is up
     }
     else if(roller_state == e_roller_state::PID_MOVE) {
-      roller_pid_task();
+      roller_pid_task(); // Run the roller PID function
     }
     else if(roller_state == e_roller_state::TIME_MOVE) {
-      roller_intake_spin_time_task();
+      roller_intake_spin_time_task(); // Run the spin time function
     }
     else if (roller_state == e_roller_state::IDLE) {
-      intake.move_velocity(_intake_velocity);
+      intake.move_velocity(_intake_velocity); // Move roller at set speed (or stop it) if it's safe to do so
     }
-    
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!
                                        // Keep this ez::util::DELAY_TIME
@@ -185,11 +184,6 @@ void CatapultIntakeController::roller_pid_task() {
   //clip output
   double out = ez::util::clip_num(roller_pid.output, max_speed, -max_speed);
 
-  //clip speed when robot within startI
-  // if(roller_pid.constants.ki != 0 && (fabs(roller_pid.get_target()) > roller_pid.constants.start_i && fabs(roller_pid.error) < roller_pid.constants.start_i)) {
-
-  // }
-
   intake.move_velocity(out);
 
   // check for exit
@@ -198,52 +192,63 @@ void CatapultIntakeController::roller_pid_task() {
   if(exit != ez::RUNNING) { //PID HAS EXITED
     roller_interfered = exit == ez::mA_EXIT || exit == ez::VELOCITY_EXIT;
 
-    intake_velocity(0);
+    intake_stop();
   }
 }
 
 void CatapultIntakeController::roller_intake_spin_time_task() {
   if(_roller_timer > 0) {
-    _roller_timer -= ez::util::DELAY_TIME;
+    _roller_timer -= ez::util::DELAY_TIME; // Decrement roller timer by delta time
   }
   else {
-    intake_velocity(0);
+    intake_stop(); // Call intake_stop to transition state and stop the intake
   }
   
 }
 
 void CatapultIntakeController::intake_velocity(double velocity) {
   roller_state = e_roller_state::IDLE;
-  _intake_velocity = velocity / MOTOR_TO_INTAKE;
+  _intake_velocity = velocity / MOTOR_TO_INTAKE; // Convert between given intake RPM and the motor RPM
+}
+
+void CatapultIntakeController::intake_stop() {
+  roller_state = e_roller_state::IDLE;
+  _intake_velocity = 0;
 }
 
 void CatapultIntakeController::roller_velocity(double velocity) {
   roller_state = e_roller_state::IDLE;
-  _intake_velocity = velocity / MOTOR_TO_ROLLER;
+  _intake_velocity = velocity / MOTOR_TO_ROLLER; // Convert between given roller RPM and the motor RPM
+}
+
+void CatapultIntakeController::roller_stop() {
+  roller_state = e_roller_state::IDLE;
+  _intake_velocity = 0;
 }
 
 void CatapultIntakeController::roller_time(int time, double velocity) {
-  intake.move_velocity(velocity / MOTOR_TO_ROLLER);
+  intake.move_velocity(velocity / MOTOR_TO_ROLLER); // Convert between given roller RPM and the motor RPM
   _roller_timer = time;
   roller_state = e_roller_state::TIME_MOVE;
 }
 
 void CatapultIntakeController::intake_time( int time, double velocity) {
-  intake.move_velocity(velocity / MOTOR_TO_INTAKE);
+  intake.move_velocity(velocity / MOTOR_TO_INTAKE); // Convert between given intake RPM and the motor RPM
   _roller_timer = time;
   roller_state = e_roller_state::TIME_MOVE;
 }
 
 void CatapultIntakeController::roller_pid_move(double target, int speed) { //Target should be in degrees of the roller, speed should again be in speed of the roller
-  max_speed = speed / MOTOR_TO_ROLLER;
+  
+  max_speed = speed / MOTOR_TO_ROLLER; // Convert between given roller RPM and the motor RPM
 
   _roller_start = intake.get_position();
 
-  double target_encoder = _roller_start + (target / MOTOR_TO_ROLLER);
+  double target_encoder = _roller_start + (target / MOTOR_TO_ROLLER); // Convert between given roller target and the motor target
 
   roller_pid.set_target(target_encoder);
 
-  roller_state = e_roller_state::PID_MOVE;
+  roller_state = e_roller_state::PID_MOVE; // Set state to start PID logic
 }
 
 void CatapultIntakeController::roller_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout){
