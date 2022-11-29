@@ -148,21 +148,20 @@ void CatapultIntakeController::cata_clear() { cata_state = e_cata_state::CLEAR; 
 void CatapultIntakeController::master_intake_task() {
   while(true)
   {
-
-    if(roller_state == e_roller_state::PID_MOVE) {
+    
+    if(!cata_primed) {
+      intake.move_velocity(0);
+    }
+    else if(roller_state == e_roller_state::PID_MOVE) {
       roller_pid_task();
     }
     else if(roller_state == e_roller_state::TIME_MOVE) {
       roller_intake_spin_time_task();
     }
     else if (roller_state == e_roller_state::IDLE) {
-      if(cata_primed) {
-        intake.move_velocity(_intake_velocity);
-      }
-      else {
-        intake.move_velocity(0);
-      }
+      intake.move_velocity(_intake_velocity);
     }
+    
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!
                                        // Keep this ez::util::DELAY_TIME
