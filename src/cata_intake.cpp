@@ -10,21 +10,26 @@
 
 using namespace mkhlib;
 
-CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double intake_to_roller_ratio)
+CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio,  pros::motor_gearset_e cata_gearset, pros::motor_gearset_e intake_gearset)
     : limit(limit_switch_port),
-      intake(abs(intake_port), pros::motor_gearset_e::E_MOTOR_GEARSET_06, ez::util::is_reversed(intake_port), pros::E_MOTOR_ENCODER_DEGREES),
-      INTAKE_TO_ROLLER(intake_to_roller_ratio),
+      intake(abs(intake_port), intake_gearset, ez::util::is_reversed(intake_port), pros::E_MOTOR_ENCODER_DEGREES),
+      MOTOR_TO_ROLLER(motor_to_roller_ratio),
+      MOTOR_TO_INTAKE(motor_to_intake_ratio),
       cata_loop([this] { this->master_cata_task(); }),
       intake_loop([this] { this->master_intake_task(); }) {
 
-  pros::Motor temp(abs(cata_port), pros::motor_gearset_e::E_MOTOR_GEARSET_36, ez::util::is_reversed(cata_port));
+
+  pros::Motor temp(abs(cata_port), cata_gearset, ez::util::is_reversed(cata_port));
   temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 
+
   cata_motors.push_back(temp);
+
 
   // Default states
   cata_state = e_cata_state::HOLD; 
   roller_state = e_roller_state::IDLE;
+
 
   max_speed = 600; // Max speed internally is in terms of the intake motor, but when set you pass it in terms of the roller
 
@@ -37,15 +42,16 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
   roller_pid = PID(.5, 0, 5, 0);
 }
 
-CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double intake_to_roller_ratio)
+CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e cata_gearset, pros::motor_gearset_e intake_gearset)
     : limit(limit_switch_port),
-      intake(abs(intake_port), pros::motor_gearset_e::E_MOTOR_GEARSET_06, ez::util::is_reversed(intake_port), pros::E_MOTOR_ENCODER_DEGREES),
-      INTAKE_TO_ROLLER(intake_to_roller_ratio),
+      intake(abs(intake_port), intake_gearset, ez::util::is_reversed(intake_port), pros::E_MOTOR_ENCODER_DEGREES),
+      MOTOR_TO_ROLLER(motor_to_roller_ratio),
+      MOTOR_TO_INTAKE(motor_to_intake_ratio),
       cata_loop([this] { this->master_cata_task(); }),
       intake_loop([this] { this->master_intake_task(); }) {
   
   for (auto i : cata_ports) {
-    pros::Motor temp(abs(i), pros::motor_gearset_e::E_MOTOR_GEARSET_36, ez::util::is_reversed(i));
+    pros::Motor temp(abs(i), cata_gearset, ez::util::is_reversed(i));
     temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 
     cata_motors.push_back(temp);
@@ -203,30 +209,32 @@ void CatapultIntakeController::roller_intake_spin_time_task() {
 
 void CatapultIntakeController::intake_velocity(double velocity) {
   roller_state = e_roller_state::IDLE;
-  _intake_velocity = velocity;
+  _intake_velocity = velocity / MOTOR_TO_INTAKE;
 }
 
 void CatapultIntakeController::roller_velocity(double velocity) {
   roller_state = e_roller_state::IDLE;
-  _intake_velocity = velocity / INTAKE_TO_ROLLER;
+  _intake_velocity = velocity / MOTOR_TO_ROLLER;
 }
 
 void CatapultIntakeController::roller_time(int time, double velocity) {
-  intake_time(velocity / INTAKE_TO_ROLLER, time);
+  intake.move_velocity(velocity / MOTOR_TO_ROLLER);
+  _roller_timer = time;
+  roller_state = e_roller_state::TIME_MOVE;
 }
 
 void CatapultIntakeController::intake_time( int time, double velocity) {
-  intake.move_velocity(velocity);
+  intake.move_velocity(velocity / MOTOR_TO_INTAKE);
   _roller_timer = time;
   roller_state = e_roller_state::TIME_MOVE;
 }
 
 void CatapultIntakeController::roller_pid_move(double target, int speed) { //Target should be in degrees of the roller, speed should again be in speed of the roller
-  max_speed = ez::util::clip_num(speed, 600 * INTAKE_TO_ROLLER, -600 * INTAKE_TO_ROLLER) / INTAKE_TO_ROLLER;
+  max_speed = speed / MOTOR_TO_ROLLER;
 
   _roller_start = intake.get_position();
 
-  double target_encoder = _roller_start + (target / INTAKE_TO_ROLLER);
+  double target_encoder = _roller_start + (target / MOTOR_TO_ROLLER);
 
   roller_pid.set_target(target_encoder);
 

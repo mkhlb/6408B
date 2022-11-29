@@ -2,6 +2,7 @@
 
 #include "EZ-Template/PID.hpp"
 #include "pros/adi.hpp"
+#include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
 
@@ -17,7 +18,9 @@ public:
 
   pros::ADIDigitalIn limit;
 
-  double INTAKE_TO_ROLLER;
+  double MOTOR_TO_ROLLER;
+
+  double MOTOR_TO_INTAKE;
 
   /**
    * Creates a catapult controller.
@@ -30,9 +33,9 @@ public:
    *        Wether or not to reverse the catapult motor. Position should be up,
    * true by default.
    */
-  CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double intake_to_roller_ratio);
+  CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e cata_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_36, pros::motor_gearset_e intake_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_06);
   
-  CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double intake_to_roller_ratio);
+  CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e cata_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_36, pros::motor_gearset_e intake_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_06);
 
   /**
    * @brief Sets the catapult state to HOLD.

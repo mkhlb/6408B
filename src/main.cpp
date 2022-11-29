@@ -72,9 +72,15 @@ mkhlib::CatapultIntakeController cata_intake(
     11,
     // Port of the limit switch
     1,
-    // Ratio of roller revolutions / intake revolutions, intake revolution *
+    // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
-    1.0f / 3.0f);
+    1.0,
+    // Ratio of roller revolution / motor revolutions
+    3.0 / 1.0,
+    //gearset of catapult
+    pros::E_MOTOR_GEARSET_18,
+    //gearset of intake
+    pros::E_MOTOR_GEARSET_18);
 
 pros::ADIDigitalOut poonamic(8);
 
@@ -192,7 +198,7 @@ void opcontrol() {
 
   cata_intake.cata_hold();
 
-  double interpolator_end = 67.1;
+  double interpolator_end = 30.0;
 
   while (true) {
 
@@ -220,9 +226,9 @@ void opcontrol() {
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(0.9 * 600); // intake
+      cata_intake.intake_velocity(0.9 * 200); // intake
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      cata_intake.intake_velocity(-300); // outake
+      cata_intake.intake_velocity(-100); // outake
     } else {
       cata_intake.intake_velocity(0); // else to keep intake at 0
     }
