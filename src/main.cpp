@@ -230,7 +230,7 @@ void opcontrol() {
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       cata_intake.intake_velocity(-100); // outake
     } else {
-      cata_intake.intake_velocity(0); // else to keep intake at 0
+      cata_intake.intake_stop(); // else to keep intake at 0
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
