@@ -91,31 +91,31 @@ void CatapultIntakeController::master_cata_task() {
         i.move_voltage(.9 * 12000);
       }
     }
-    else if( cata_state == e_cata_state::PRIME)
+    else if( cata_state == e_cata_state::PRIME) // Run the prime function each tick while in the prime state
     {
       cata_prime_task();
     }
-    else if( cata_state == e_cata_state::SHOOT)
+    else if( cata_state == e_cata_state::SHOOT) // Run the shoot function each tick while in the shoot state
     {
       cata_shoot_task();
     }
 
-    cata_primed = cata_state == e_cata_state::HOLD;
+    cata_primed = cata_state == e_cata_state::HOLD; // Update the public cata_primed variable - used for intake safety
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!
                                        // Keep this ez::util::DELAY_TIME
   }
 }
 
-void CatapultIntakeController::cata_prime_task() {
+void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  for (auto i : cata_motors) {
-    i.move_voltage(-12000);
+  for (auto i : cata_motors) { // Iterate all motors
+    i.move_voltage(-12000); // Move at max speed into prime position
   }
     
-  if(limit.get_value())
+  if(limit.get_value()) // Stop when limit switch is pressed
   {
-    pros::delay(40);
+    pros::delay(40); // Short delay to get more square contact with switch
     cata_state = e_cata_state::HOLD;
   }
   
@@ -123,28 +123,30 @@ void CatapultIntakeController::cata_prime_task() {
 
 void CatapultIntakeController::cata_shoot_task() {
 
-  for (auto i : cata_motors) {
-    i.move_voltage(-12000);
+  for (auto i : cata_motors) { // Iterate all motors
+    i.move_voltage(-12000); // Move until limit switch is no longer pressed
   }
   if(!limit.get_value())
   {
-    pros::delay(100);
+    pros::delay(100); // Wait short while before priming in case limit switch is pressed again on the way up
 
     cata_state = e_cata_state::PRIME;
   }
 }
 
-void CatapultIntakeController::wait_cata_idle() {
+void CatapultIntakeController::wait_cata_idle() { // Waits until cata state is HOLD
   while (cata_state != e_cata_state::HOLD) {
     pros::delay(util::DELAY_TIME);
   }
 }
 
-void CatapultIntakeController::wait_done_shot() {
+void CatapultIntakeController::wait_done_shot() { // Waits untill cata is done SHOOT
   while (cata_state == e_cata_state::SHOOT) {
     pros::delay(util::DELAY_TIME);
   }
 }
+
+// Set cata state:
 
 void CatapultIntakeController::cata_hold() { cata_state = e_cata_state::HOLD; }
 
