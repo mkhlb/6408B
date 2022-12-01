@@ -15,5 +15,5 @@ void default_constants();
 void one_mogo_constants();
 void two_mogo_constants();
 void exit_condition_defaults();
-void exit_condition_sensitive();
+void exit_condition_hit_wall();
 void modified_exit_condition();

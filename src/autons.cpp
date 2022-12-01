@@ -66,6 +66,10 @@ void exit_condition_defaults() {
   cata_intake.roller_set_exit_condition(100, 25, 500, 125, 500, 500);
 }
 
+void exit_condition_early_drive() { // made to exit the drive way earlier, more error so only use with position tracking or if planning on recording error, made when distance forward and backwards doesn't matter too much
+  chassis.set_exit_condition(chassis.drive_exit, 50, 6, 500, 10, 500, 500);
+}
+
 void modified_exit_condition() {
   chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
@@ -73,7 +77,7 @@ void modified_exit_condition() {
 }
 
 
-void exit_condition_sensitive() {
+void exit_condition_hit_wall() { // made to exit as soon as velocity is 0, for detecting crashing into objects
   chassis.set_exit_condition(chassis.drive_exit, 100, 3, 500, 7, 30, 10);
 }
 
@@ -82,32 +86,32 @@ void exit_condition_sensitive() {
 
 void roll(double max_dist, double speed, double roll_amount) // roll_amount is degrees
 {
-  exit_condition_sensitive(); // set exit conditions to conditions very sensitive to interference
+  exit_condition_hit_wall(); // set exit conditions to conditions very sensitive to interference
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
   chassis.set_drive_pid(-.3, speed);
 
-  cata_intake.roller_pid_move(roll_amount, 500);
+  cata_intake.roller_pid_move(roll_amount, 200);
   cata_intake.wait_roller();
 }
 
 void roll_time(double max_dist, double speed, double roll_time) { //roll time can be negative or positive
-  exit_condition_sensitive(); // set exit conditions to conditions very sensitive to interference
+  exit_condition_hit_wall(); // set exit conditions to conditions very sensitive to interference
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
   chassis.set_drive_pid(-.3, speed);
 
-  cata_intake.roller_time(fabs(roll_time), 500 * util::sgn(roll_time));
+  cata_intake.roller_time(fabs(roll_time), 200 * util::sgn(roll_time));
   cata_intake.wait_roller();
 }
 
 //TEST OF VERY SENSITIVE EXIT CONDITIONS: Robot will exit almost immediately after the velocity of the wheel is 0
 void roll_test() {
-  roll(20, 50, -180);
+  roll(20, 115, -180);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
-  roll_time(20, 50, -500);
+  roll_time(20, 115, 500);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
 }
 
