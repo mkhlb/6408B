@@ -9,7 +9,7 @@ The ```CatapultIntakeController``` has functions for shooting with limit switch 
 
 The gear ratio for intake to roller is given in the constructor, so that speeds and positions can be given relative to roller and intake. The roller can be controller by PID or by time.
 
-## Ez Template extension - better drive code.
+## Ez Template Extension - Better Drive Code.
 
 MKHLib implements 2 new custom driver control schemes:
 
@@ -174,3 +174,17 @@ Now we must make the equation rise to $1.0$ by $I_e$. This is done by applying a
 #### The Implementation
 
 Again the curvatherp is built on top of Ez Template. Unlike normalized arcade, `Drive::arcade_curvatherp_standard(e_type stick_type, double interpolator_start, double interpolator_end)` and `Drive::arcade_reversed_standard(e_type stick_type, double interpolator_start, double interpolator_end)` need 2 special parameters for the start and end of the interpolation. These parameters are between 0 and 127, as the max value of the controller stick is 127 in practice.
+
+## Ez Template Extension - Odometry
+
+### Odometry
+
+#### The Theory
+
+[This is very basic.](http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf)
+
+#### The Implementation
+
+Odometry is implemented directly into the Ez Template `chassis`. Simply pass a width into the constructor and odometry is handled using the same IMU and encoders for PID.
+
+### Motion Planning
