@@ -110,12 +110,12 @@ void CatapultIntakeController::master_cata_task() {
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
   for (auto i : cata_motors) { // Iterate all motors
-    i.move_voltage(-12000); // Move at max speed into prime position
+    i.move_velocity(-200); // Move at max speed into prime position
   }
     
   if(limit.get_value()) // Stop when limit switch is pressed
   {
-    pros::delay(40); // Short delay to get more square contact with switch
+    pros::delay(45); // Short delay to get more square contact with switch
     cata_state = e_cata_state::HOLD;
   }
   
