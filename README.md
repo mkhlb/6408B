@@ -189,6 +189,10 @@ Odometry is implemented directly into the Ez Template `chassis`. Simply pass a w
 
 ### Motion Planning
 
+#### Turning To A Point
+
+MKHLib implements a simple function to turn to a point. It simply acts as a proxy to the normal Ez Template turn PID and sets the target value based on the angle to the point. That means that if the robot is pushed after the turn to point has been called, it wont adjust and still turn to that point; the PID only accesses the odometry position at the beginning of the motion, hence the term motion planning. MKHLib isn't running a PID on any of the odometry data, it's simply using it to inform the normal Ez Template PIDs.
+
 #### Dot Products
 
 The dot product is the multiplication of two vectors that yields a scalar.
@@ -206,6 +210,12 @@ Yielding an identical result, in polar coordinates:
 $\vec{v}_1 \cdot \vec{v}_2 = |\vec{v}_1||\vec{v}_2|cos(\theta)$
 
 This involves two operations: first you project one vector onto the other, then you multiply their magnitudes.
-The cosin between two angles is the projection, it gives the adjacent component of a vector to an angle. This is illustrated in this image from [mathisfun.com](mathisfun.com): ![image](https://www.mathsisfun.com/algebra/images/dot-product-a-cos.svg)
+The cosin between two angles is the projection, it gives the adjacent component of a vector to an angle. This is illustrated in this image from [mathisfun.com](mathisfun.com): 
 
+![image](https://www.mathsisfun.com/algebra/images/dot-product-a-cos.svg)
 
+#### Driving To A Point
+
+MKHLib doesn't mess with complicated driving algorithms. To drive to a point Ez Template does two things: turns to the point, then drive as close to it as it can in a straight line. So how does Ez Template figure out what distance it needs to drive to get as close as possible?
+
+Consider two vectors: the unit vector representing the direction the robot is facing $\hat{\omega}$, and the vector from the robot to the target point $\vec{T}$. $\hat{\omega}$ and $\vec{T}$ are seperated by an angle $\theta$. Recall that a dot product is a projection and then a multiplication, and that multiplication of $x \cdot 1 = x$, and $|\hat{v}| = 1$, so a dot product of a vector is just a projection, because the multiplication by $1$ does nothing. So $\hat{\omega} \cdot \vec{T}$ is just a projection of $\vec{T}$ onto $\hat{\omega}$. 
