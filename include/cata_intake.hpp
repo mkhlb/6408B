@@ -78,7 +78,7 @@ public:
    *
    *
    */
-  void wait_done_shot();
+  void wait_cata_done_shot();
 
   e_cata_state cata_state;
 
@@ -180,6 +180,8 @@ private:
   void master_cata_task();
   void master_intake_task();
 
+  void cata_move_velocity(double velocity);
+
   void cata_prime_task();
   void cata_shoot_task();
 
@@ -192,5 +194,7 @@ private:
   int _roller_timer;
 
   double _intake_velocity;
+
+  double _cata_max_velocity;
 };
 }; // namespace mkhlib

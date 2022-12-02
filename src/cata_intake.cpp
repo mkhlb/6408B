@@ -4,6 +4,7 @@
 #include "EZ-Template/util.hpp"
 #include "main.h"
 #include "pros/misc.hpp"
+#include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
 #include <algorithm>
@@ -40,6 +41,13 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
 
   // Default PID for e_roller_state::PID_MOVE
   roller_pid = PID(.5, 0, 5, 0);
+
+  switch (cata_gearset) {
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100;
+    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0;
+  }
 }
 
 CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e cata_gearset, pros::motor_gearset_e intake_gearset)
@@ -71,25 +79,26 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
 
   // Default PID for e_roller_state::PID_MOVE
   roller_pid = PID(.5, 0, 5, 0);
-  
+
+  switch (cata_gearset) {
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100;
+    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0;
+  }
 }
 
 void CatapultIntakeController::master_cata_task() {
 
   // Master control loop: state machine
   while (true) {  
-  
     if( cata_state == e_cata_state::HOLD) // Lock motors during hold state.
     {
-      for (auto i : cata_motors) {
-        i.move_velocity(0);
-      }
+      cata_move_velocity(0);
     }
     else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
     {
-      for (auto i : cata_motors) {
-        i.move_voltage(.9 * 12000);
-      }
+      cata_move_velocity(.9 * _cata_max_velocity);
     }
     else if( cata_state == e_cata_state::PRIME) // Run the prime function each tick while in the prime state
     {
@@ -107,11 +116,16 @@ void CatapultIntakeController::master_cata_task() {
   }
 }
 
+void CatapultIntakeController::cata_move_velocity(double velocity) {
+  for (auto i : cata_motors) { // Iterate all motors
+    i.move_velocity(velocity); // Move at max speed into prime position
+  }
+
+}
+
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  for (auto i : cata_motors) { // Iterate all motors
-    i.move_velocity(-200); // Move at max speed into prime position
-  }
+  cata_move_velocity(-_cata_max_velocity);
     
   if(limit.get_value()) // Stop when limit switch is pressed
   {
@@ -123,9 +137,8 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
 
 void CatapultIntakeController::cata_shoot_task() {
 
-  for (auto i : cata_motors) { // Iterate all motors
-    i.move_voltage(-12000); // Move until limit switch is no longer pressed
-  }
+  cata_move_velocity(-_cata_max_velocity);
+
   if(!limit.get_value())
   {
     pros::delay(100); // Wait short while before priming in case limit switch is pressed again on the way up
@@ -140,7 +153,7 @@ void CatapultIntakeController::wait_cata_idle() { // Waits until cata state is H
   }
 }
 
-void CatapultIntakeController::wait_done_shot() { // Waits untill cata is done SHOOT
+void CatapultIntakeController::wait_cata_done_shot() { // Waits untill cata is done SHOOT
   while (cata_state == e_cata_state::SHOOT) {
     pros::delay(util::DELAY_TIME);
   }
@@ -198,6 +211,7 @@ void CatapultIntakeController::roller_pid_task() {
 
 void CatapultIntakeController::roller_intake_spin_time_task() {
   if(_roller_timer > 0) {
+    intake.move_velocity(_intake_velocity);
     _roller_timer -= ez::util::DELAY_TIME; // Decrement roller timer by delta time
   }
   else {
@@ -227,13 +241,13 @@ void CatapultIntakeController::roller_stop() {
 }
 
 void CatapultIntakeController::roller_time(int time, double velocity) {
-  intake.move_velocity(velocity / MOTOR_TO_ROLLER); // Convert between given roller RPM and the motor RPM
+  _intake_velocity = velocity / MOTOR_TO_ROLLER; // Convert between given roller RPM and the motor RPM
   _roller_timer = time;
   roller_state = e_roller_state::TIME_MOVE;
 }
 
 void CatapultIntakeController::intake_time( int time, double velocity) {
-  intake.move_velocity(velocity / MOTOR_TO_INTAKE); // Convert between given intake RPM and the motor RPM
+  _intake_velocity = velocity / MOTOR_TO_INTAKE; // Convert between given intake RPM and the motor RPM
   _roller_timer = time;
   roller_state = e_roller_state::TIME_MOVE;
 }
