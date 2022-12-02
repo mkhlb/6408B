@@ -188,3 +188,24 @@ Again the curvatherp is built on top of Ez Template. Unlike normalized arcade, `
 Odometry is implemented directly into the Ez Template `chassis`. Simply pass a width into the constructor and odometry is handled using the same IMU and encoders for PID.
 
 ### Motion Planning
+
+#### Dot Products
+
+The dot product is the multiplication of two vectors that yields a scalar.
+
+There are two main ways to calculate the dot product of two vectors:
+
+In cartesian coordinates: 
+
+$\vec{v} \cdot \vec{v} = {\vec{v}_1}_x{\vec{v}_1}_x + {\vec{v}_1}_y{\vec{v}_1}_y$
+
+This is a simple multiplication and addition of both $x$ components and $y$ components.
+
+Yielding an identical result, in polar coordinates: 
+
+$\vec{v}_1 \cdot \vec{v}_2 = |\vec{v}_1||\vec{v}_2|cos(\theta)$
+
+This involves two operations: first you project one vector onto the other, then you multiply their magnitudes.
+The cosin between two angles is the projection, it gives the adjacent component of a vector to an angle. This is illustrated in this image from [mathisfun.com](mathisfun.com): ![image](https://www.mathsisfun.com/algebra/images/dot-product-a-cos.svg)
+
+
