@@ -115,4 +115,11 @@ void roll_test() {
   chassis.set_drive_pid(-10, DRIVE_SPEED);
 }
 
+void swing_test() {
+  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED);
+  chassis.set_swing_pid(ez::RIGHT_SWING, 90, SWING_SPEED, .3);
+  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, -.3);
+  chassis.set_swing_pid(ez::RIGHT_SWING, 45, SWING_SPEED, -.3);
+}
+
 

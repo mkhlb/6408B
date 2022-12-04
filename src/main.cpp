@@ -174,7 +174,7 @@ void autonomous() {
       .call_selected_auton(); // Calls selected auton from autonomous selector.
 
   // auto selection
-
+  swing_test();
   // roll_test();
 }
 

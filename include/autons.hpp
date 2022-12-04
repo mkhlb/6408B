@@ -10,6 +10,7 @@ extern mkhlib::CatapultIntakeController cata_intake;
 extern pros::ADIDigitalOut poonamic;
 
 void roll_test();
+void swing_test();
 
 void default_constants();
 void one_mogo_constants();
