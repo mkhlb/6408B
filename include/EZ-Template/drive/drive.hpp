@@ -576,7 +576,7 @@ public:
    * \param speed
    *        0 to 127, max speed during motion
    */
-  void set_swing_pid(e_swing type, double target, int speed);
+  void set_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0);
 
   /**
    * Resets all PID targets to 0.
@@ -761,6 +761,8 @@ public:
   double slew_calculate(slew_ &input, double current);
 
 private: // !Auton
+  double swing_offside_multiplier = 0;
+
   bool drive_toggle = true;
   bool print_toggle = true;
   int swing_min = 0;
