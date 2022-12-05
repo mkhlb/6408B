@@ -181,7 +181,7 @@ private:
   void master_intake_task();
 
   void cata_move_velocity(double velocity);
-  void cata_move_relative(double position, int velocity);
+  void cata_move_relative(double position, double velocity);
 
   void cata_prime_task();
   void cata_shoot_task();

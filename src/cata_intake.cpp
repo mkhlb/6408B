@@ -21,7 +21,7 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
 
   
   // Populate the list of cata motors
-  pros::Motor temp(abs(cata_port), cata_gearset, ez::util::is_reversed(cata_port));
+  pros::Motor temp(abs(cata_port), cata_gearset, ez::util::is_reversed(cata_port), pros::E_MOTOR_ENCODER_DEGREES);
   temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 
   cata_motors.push_back(temp);
@@ -60,7 +60,7 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   
   // Populate list of cata motors
   for (auto i : cata_ports) {
-    pros::Motor temp(abs(i), cata_gearset, ez::util::is_reversed(i));
+    pros::Motor temp(abs(i), cata_gearset, ez::util::is_reversed(i), pros::E_MOTOR_ENCODER_DEGREES);
     temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 
     cata_motors.push_back(temp);
@@ -123,7 +123,7 @@ void CatapultIntakeController::cata_move_velocity(double velocity) {
 
 }
 
-void CatapultIntakeController::cata_move_relative(double position, int velocity) {
+void CatapultIntakeController::cata_move_relative(double position, double velocity) {
   for (auto i : cata_motors) { // Iterate all motors
     i.move_relative(position, velocity); // Move at max speed into prime position
   }
@@ -135,7 +135,7 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value()) // Stop when limit switch is pressed
   {
-    cata_move_relative(-1, _cata_max_velocity);
+    cata_move_relative(-10.0 / 12.0 * 84.0, _cata_max_velocity);
     cata_state = e_cata_state::HOLD;
   }
   
