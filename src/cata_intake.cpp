@@ -94,7 +94,7 @@ void CatapultIntakeController::master_cata_task() {
   while (true) {  
     if( cata_state == e_cata_state::HOLD) // Lock motors during hold state.
     {
-      cata_move_velocity(0);
+      //cata_move_velocity(0);
     }
     else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
     {
@@ -123,13 +123,19 @@ void CatapultIntakeController::cata_move_velocity(double velocity) {
 
 }
 
+void CatapultIntakeController::cata_move_relative(double position, int velocity) {
+  for (auto i : cata_motors) { // Iterate all motors
+    i.move_relative(position, velocity); // Move at max speed into prime position
+  }
+}
+
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
   cata_move_velocity(-_cata_max_velocity);
     
   if(limit.get_value()) // Stop when limit switch is pressed
   {
-    pros::delay(45); // Short delay to get more square contact with switch
+    cata_move_relative(-1, _cata_max_velocity);
     cata_state = e_cata_state::HOLD;
   }
   
@@ -161,7 +167,11 @@ void CatapultIntakeController::wait_cata_done_shot() { // Waits untill cata is d
 
 // Set cata state:
 
-void CatapultIntakeController::cata_hold() { cata_state = e_cata_state::HOLD; }
+void CatapultIntakeController::cata_hold() { 
+  cata_state = e_cata_state::HOLD; 
+  cata_move_velocity(0);
+
+}
 
 void CatapultIntakeController::cata_prime() { cata_state = e_cata_state::PRIME; }
 
