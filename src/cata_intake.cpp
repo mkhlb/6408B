@@ -43,10 +43,10 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
   roller_pid = PID(.5, 0, 5, 0);
 
   switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100;
-    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0;
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600; break;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200; break;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100; break;
+    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
   }
 }
 
@@ -81,10 +81,10 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   roller_pid = PID(.5, 0, 5, 0);
 
   switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100;
-    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0;
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600; break;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200; break;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100; break;
+    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
   }
 }
 
