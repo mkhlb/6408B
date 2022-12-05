@@ -761,7 +761,7 @@ public:
   double slew_calculate(slew_ &input, double current);
 
 private: // !Auton
-  double swing_offside_multiplier = 0;
+  double swing_offside_multiplier;
 
   bool drive_toggle = true;
   bool print_toggle = true;
