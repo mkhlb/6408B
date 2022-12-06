@@ -21,7 +21,7 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
 
   
   // Populate the list of cata motors
-  pros::Motor temp(abs(cata_port), cata_gearset, ez::util::is_reversed(cata_port));
+  pros::Motor temp(abs(cata_port), cata_gearset, ez::util::is_reversed(cata_port), pros::E_MOTOR_ENCODER_DEGREES);
   temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 
   cata_motors.push_back(temp);
@@ -43,10 +43,10 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
   roller_pid = PID(.5, 0, 5, 0);
 
   switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100;
-    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0;
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600; break;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200; break;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100; break;
+    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
   }
 }
 
@@ -60,7 +60,7 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   
   // Populate list of cata motors
   for (auto i : cata_ports) {
-    pros::Motor temp(abs(i), cata_gearset, ez::util::is_reversed(i));
+    pros::Motor temp(abs(i), cata_gearset, ez::util::is_reversed(i), pros::E_MOTOR_ENCODER_DEGREES);
     temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 
     cata_motors.push_back(temp);
@@ -81,10 +81,10 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   roller_pid = PID(.5, 0, 5, 0);
 
   switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100;
-    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0;
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600; break;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200; break;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100; break;
+    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
   }
 }
 
@@ -94,7 +94,7 @@ void CatapultIntakeController::master_cata_task() {
   while (true) {  
     if( cata_state == e_cata_state::HOLD) // Lock motors during hold state.
     {
-      cata_move_velocity(0);
+      //cata_move_velocity(0);
     }
     else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
     {
@@ -123,13 +123,19 @@ void CatapultIntakeController::cata_move_velocity(double velocity) {
 
 }
 
+void CatapultIntakeController::cata_move_relative(double position, double velocity) {
+  for (auto i : cata_motors) { // Iterate all motors
+    i.move_relative(position, velocity); // Move at max speed into prime position
+  }
+}
+
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
   cata_move_velocity(-_cata_max_velocity);
     
   if(limit.get_value()) // Stop when limit switch is pressed
   {
-    pros::delay(45); // Short delay to get more square contact with switch
+    cata_move_relative(-10.0 / 12.0 * 84.0, _cata_max_velocity);
     cata_state = e_cata_state::HOLD;
   }
   
@@ -161,7 +167,11 @@ void CatapultIntakeController::wait_cata_done_shot() { // Waits untill cata is d
 
 // Set cata state:
 
-void CatapultIntakeController::cata_hold() { cata_state = e_cata_state::HOLD; }
+void CatapultIntakeController::cata_hold() { 
+  cata_state = e_cata_state::HOLD; 
+  cata_move_velocity(0);
+
+}
 
 void CatapultIntakeController::cata_prime() { cata_state = e_cata_state::PRIME; }
 
