@@ -2,7 +2,7 @@
 
 // Swing PID task
 void Drive::swing_pid_task(bool dummy) {
-  master.print(1, 1, "Hiya!");
+  master.print(1, 1, "Hiya! %f", (float)swing_offside_multiplier);
   // Compute PID
   swingPID.compute(get_gyro());
 
@@ -27,7 +27,7 @@ void Drive::swing_pid_task(bool dummy) {
 // Set swing PID
 void Drive::set_swing_pid(e_swing type, double target, int speed, double offside_multiplier) {
   master.print(1, 1, "Hi!");
-  swing_offside_multiplier = offside_multiplier;
+  this->swing_offside_multiplier = offside_multiplier;
   
   // Print targets
   if (print_toggle) printf("Swing Started... Target Value: %f\n", target);
