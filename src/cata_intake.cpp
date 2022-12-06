@@ -285,7 +285,11 @@ void CatapultIntakeController::roller_pid_move(double target, int speed) { //Tar
 }
 
 void CatapultIntakeController::roller_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout){
-  roller_pid.set_exit_condition(p_small_exit_time, p_small_error, p_big_exit_time, p_big_error, p_velocity_exit_time, p_mA_timeout);
+  roller_pid.set_exit_condition(p_small_exit_time, p_small_error / MOTOR_TO_ROLLER, p_big_exit_time, p_big_error / MOTOR_TO_ROLLER, p_velocity_exit_time, p_mA_timeout);
+}
+
+void CatapultIntakeController::roller_set_pid_constants(double kp, double ki, double kd, double start_i) {
+  roller_pid.set_constants(kp, ki, kd, start_i / MOTOR_TO_ROLLER);
 }
 
 void CatapultIntakeController::wait_roller() {

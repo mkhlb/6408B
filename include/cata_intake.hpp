@@ -159,6 +159,8 @@ public:
    */
   void roller_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout);
 
+  void roller_set_pid_constants(double kp, double ki, double kd, double start_i);
+
   /**
    * Waits until the roller is IDLE
    *
