@@ -761,7 +761,7 @@ public:
   double slew_calculate(slew_ &input, double current);
 
 private: // !Auton
-  double swing_offside_multiplier;
+  double swing_offside_multiplier = 0;
 
   bool drive_toggle = true;
   bool print_toggle = true;
@@ -798,7 +798,7 @@ private: // !Auton
    * Tasks
    */
   void drive_pid_task();
-  void swing_pid_task();
+  void swing_pid_task(bool dummy = false);
   void turn_pid_task();
   void ez_auto_task();
 

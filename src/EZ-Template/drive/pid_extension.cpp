@@ -1,8 +1,8 @@
 #include "EZ-Template/drive/drive.hpp"
 
 // Swing PID task
-void Drive::swing_pid_task() {
-  //return;
+void Drive::swing_pid_task(bool dummy) {
+  master.print(1, 1, "Hiya!");
   // Compute PID
   swingPID.compute(get_gyro());
 
@@ -18,14 +18,15 @@ void Drive::swing_pid_task() {
   if (drive_toggle) {
     // Check if left or right swing, then set motors accordingly
     if (current_swing == LEFT_SWING)
-      set_tank(swing_out, swing_out * swing_offside_multiplier);
+      set_tank(swing_out, 0);
     else if (current_swing == RIGHT_SWING)
-      set_tank(-swing_out * swing_offside_multiplier, -swing_out);
+      set_tank(0, -swing_out);
   }
 }
 
 // Set swing PID
 void Drive::set_swing_pid(e_swing type, double target, int speed, double offside_multiplier) {
+  master.print(1, 1, "Hi!");
   swing_offside_multiplier = offside_multiplier;
   
   // Print targets
