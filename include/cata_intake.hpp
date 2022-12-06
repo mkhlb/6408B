@@ -95,6 +95,8 @@ public:
 
   bool roller_interfered;
 
+  void intake_roller_set_active_brake(double kp);
+
   /**
    * @brief Sets the intake's velocity
    *
@@ -197,5 +199,7 @@ private:
   double _intake_velocity;
 
   int _cata_max_velocity;
+
+  double _intake_roller_active_brake_kp = 0;
 };
 }; // namespace mkhlib

@@ -7,7 +7,6 @@
 
 extern Drive chassis;
 extern mkhlib::CatapultIntakeController cata_intake;
-extern pros::ADIDigitalOut poonamic;
 
 void roll_test();
 

@@ -101,6 +101,7 @@ void initialize() {
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
   chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
+  cata_intake.intake_roller_set_active_brake(.25);
   chassis.set_curve_default(
       1, 2); // Defaults for curve. If using tank, only the first parameter
              // is used. (Comment this line out if you have an SD card!)
@@ -228,10 +229,6 @@ void opcontrol() {
       cata_intake.intake_velocity(-100); // outake
     } else {
       cata_intake.intake_stop(); // else to keep intake at 0
-    }
-
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-      poonamic.set_value(true); // Laucnhes Pneumatics expansion
     }
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!

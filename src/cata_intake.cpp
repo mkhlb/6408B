@@ -193,7 +193,12 @@ void CatapultIntakeController::master_intake_task() {
       roller_intake_spin_time_task(); // Run the spin time function
     }
     else if (roller_state == e_roller_state::IDLE) {
-      intake.move_velocity(_intake_velocity); // Move roller at set speed (or stop it) if it's safe to do so
+      if(_intake_roller_active_brake_kp != 0 && _intake_velocity != 0){
+        intake.move_velocity(_intake_velocity); // Move roller at set speed (or stop it) if it's safe to do so
+      }
+      else { // intake_stop and roller_stop properly set the desired position to 0, important to use them!
+        intake.move_voltage(/*0 */- intake.get_position() * _intake_roller_active_brake_kp * 12000.0 / 127.0);
+      }
     }
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!
@@ -201,13 +206,15 @@ void CatapultIntakeController::master_intake_task() {
   }
 }
 
+void CatapultIntakeController::intake_roller_set_active_brake(double kp) { _intake_roller_active_brake_kp = kp; }
+
 void CatapultIntakeController::roller_pid_task() {
   roller_pid.compute(intake.get_position());
 
   //clip output
   double out = ez::util::clip_num(roller_pid.output, max_speed, -max_speed);
 
-  intake.move_velocity(out);
+  intake.move_voltage(out * 12000.0 / 127.0);
 
   // check for exit
 
@@ -237,6 +244,7 @@ void CatapultIntakeController::intake_velocity(double velocity) {
 
 void CatapultIntakeController::intake_stop() {
   roller_state = e_roller_state::IDLE;
+  intake.tare_position();
   _intake_velocity = 0;
 }
 
@@ -247,6 +255,7 @@ void CatapultIntakeController::roller_velocity(double velocity) {
 
 void CatapultIntakeController::roller_stop() {
   roller_state = e_roller_state::IDLE;
+  intake.tare_position();
   _intake_velocity = 0;
 }
 
