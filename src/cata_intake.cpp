@@ -111,8 +111,7 @@ void CatapultIntakeController::master_cata_task() {
 
     cata_primed = cata_state == e_cata_state::HOLD; // Update the public cata_primed variable - used for intake safety
 
-    pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!
-                                       // Keep this ez::util::DELAY_TIME
+    pros::delay(ez::util::DELAY_TIME);
   }
 }
 
@@ -197,7 +196,8 @@ void CatapultIntakeController::master_intake_task() {
         intake.move_velocity(_intake_velocity); // Move roller at set speed (or stop it) if it's safe to do so
       }
       else { // intake_stop and roller_stop properly set the desired position to 0, important to use them!
-        intake.move_voltage(/*0 */- intake.get_position() * _intake_roller_active_brake_kp * 12000.0 / 127.0);
+        master.print(1, 1, "%f", (float)intake.get_position());
+        intake.move_voltage(/*0 */- intake.get_position() * _intake_roller_active_brake_kp * (12000.0 / 127.0));
       }
     }
 
@@ -219,7 +219,7 @@ void CatapultIntakeController::roller_pid_task() {
   // check for exit
 
   exit_output exit = roller_pid.exit_condition(intake);
-  if(exit != ez::RUNNING) { //PID HAS EXITED
+  if(exit != ez::RUNNING) { //PID HAS EXITED!
     roller_interfered = exit == ez::mA_EXIT || exit == ez::VELOCITY_EXIT;
 
     intake_stop();
@@ -244,7 +244,7 @@ void CatapultIntakeController::intake_velocity(double velocity) {
 
 void CatapultIntakeController::intake_stop() {
   roller_state = e_roller_state::IDLE;
-  intake.tare_position();
+  if(_intake_velocity != 0) {intake.tare_position(); }
   _intake_velocity = 0;
 }
 
@@ -255,7 +255,7 @@ void CatapultIntakeController::roller_velocity(double velocity) {
 
 void CatapultIntakeController::roller_stop() {
   roller_state = e_roller_state::IDLE;
-  intake.tare_position();
+  if(_intake_velocity != 0) {intake.tare_position(); }
   _intake_velocity = 0;
 }
 

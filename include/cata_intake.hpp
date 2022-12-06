@@ -202,6 +202,6 @@ private:
 
   int _cata_max_velocity;
 
-  double _intake_roller_active_brake_kp = 0;
+  double _intake_roller_active_brake_kp = 0.25;
 };
 }; // namespace mkhlib
