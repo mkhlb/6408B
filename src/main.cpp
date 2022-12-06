@@ -81,9 +81,6 @@ mkhlib::CatapultIntakeController cata_intake(
     pros::E_MOTOR_GEARSET_18,
     //gearset of intake
     pros::E_MOTOR_GEARSET_18);
-
-pros::ADIDigitalOut poonamic(8);
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
