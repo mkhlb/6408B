@@ -196,7 +196,6 @@ void CatapultIntakeController::master_intake_task() {
         intake.move_velocity(_intake_velocity); // Move roller at set speed (or stop it) if it's safe to do so
       }
       else { // intake_stop and roller_stop properly set the desired position to 0, important to use them!
-        master.print(1, 1, "%f", (float)intake.get_position());
         intake.move_voltage(/*0 */- intake.get_position() * _intake_roller_active_brake_kp * (12000.0 / 127.0));
       }
     }
