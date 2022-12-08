@@ -161,8 +161,10 @@ void autonomous() {
 
   cata_intake.cata_hold();
 
-  ez::as::auton_selector
-      .call_selected_auton(); // Calls selected auton from autonomous selector.
+  drive_test();
+
+  //ez::as::auton_selector
+  //    .call_selected_auton(); // Calls selected auton from autonomous selector.
 
   // auto selection
 

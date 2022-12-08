@@ -35,14 +35,14 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
   chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-  cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
+  //cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
 }
 
 void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
-  cata_intake.roller_set_exit_condition(100, 5, 500, 30, 500, 500);
+  //cata_intake.roller_set_exit_condition(100, 5, 500, 30, 500, 500);
 }
 
 void exit_condition_early_drive() { // made to exit the drive way earlier, more error so only use with position tracking or if planning on recording error, made when distance forward and backwards doesn't matter too much
@@ -90,8 +90,16 @@ void roll_time(double max_dist, double speed, double roll_time) { //roll time ca
 void roll_test() {
   roll(20, 115, -180);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
+  chassis.wait_drive();
   roll_time(20, 115, 500);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
+  chassis.wait_drive();
+}
+
+void drive_test() {
+  chassis.set_drive_pid(10, DRIVE_SPEED);
+  chassis.wait_drive();
+  master.print(0, 0, "Done!");
 }
 
 
