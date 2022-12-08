@@ -272,7 +272,7 @@ void CatapultIntakeController::intake_time( int time, double velocity) {
 
 void CatapultIntakeController::roller_pid_move(double target, int speed) { //Target should be in degrees of the roller, speed should again be in speed of the roller
   
-  max_speed = speed / MOTOR_TO_ROLLER; // Convert between given roller RPM and the motor RPM
+  max_speed = speed; // Convert between given roller RPM and the motor RPM
 
   _roller_start = intake.get_position();
 

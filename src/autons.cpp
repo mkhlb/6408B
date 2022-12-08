@@ -71,7 +71,7 @@ void roll(double max_dist, double speed, double roll_amount) // roll_amount is d
   exit_condition_defaults(); //reset exit conditions
   chassis.set_drive_pid(-1, speed);
 
-  cata_intake.roller_pid_move(roll_amount, 200);
+  cata_intake.roller_pid_move(roll_amount, 127);
   cata_intake.wait_roller();
   cata_intake.roller_velocity(0);
 }
