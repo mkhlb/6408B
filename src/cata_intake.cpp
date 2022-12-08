@@ -146,7 +146,7 @@ void CatapultIntakeController::cata_shoot_task() {
 
   if(!limit.get_value())
   {
-    pros::delay(100); // Wait short while before priming in case limit switch is pressed again on the way up
+    pros::delay(500); // Wait short while before priming in case limit switch is pressed again on the way up
 
     cata_state = e_cata_state::PRIME;
   }
