@@ -29,7 +29,7 @@ Drive chassis(
 
     // IMU Port
     ,
-    16
+    14
 
     // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
     //    (or tracking wheel diameter)
@@ -107,8 +107,6 @@ void initialize() {
              // is used.
   default_constants(); // Set the drive to your own constants from autons.cpp!
 
-  exit_condition_defaults();
-
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
     Auton("Full win point", roll_test)});
@@ -161,14 +159,14 @@ void autonomous() {
 
   cata_intake.cata_hold();
 
-  drive_test();
+  //drive_example();
 
   //ez::as::auton_selector
   //    .call_selected_auton(); // Calls selected auton from autonomous selector.
 
   // auto selection
 
-  // roll_test();
+  roll_test();
 }
 
 /**
