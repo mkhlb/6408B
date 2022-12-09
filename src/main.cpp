@@ -190,8 +190,8 @@ void autonomous() {
 
 void print_odom() {
   while(true) {
-    master.print(0, 0, "%f, %f", (float)chassis.orientation.get_deg(), (float)chassis.position.y);
-    master.print(1,1, "silly");
+    printf("x: %f, y: %f \n", (float)chassis.position.x, (float)chassis.position.y);
+    //master.print(1,1, "silly");
     pros::delay(500);
   }
 }

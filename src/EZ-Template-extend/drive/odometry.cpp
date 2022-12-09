@@ -10,9 +10,16 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
   int last_left_sensor = left_sensor();
   int last_right_sensor = right_sensor();
 
-  Angle last_orientation = orientation;
+  Angle last_orientation = Angle::from_rad(orientation.get_rad());
+
+  printf("starting odom task");
 
   while (true) {
+
+    if(imu.is_calibrating()) {
+      continue;
+    }
+
     Vector2 local_move(0, 0);
 
     orientation.set_deg(get_gyro());
@@ -23,36 +30,40 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
     last_left_sensor = left_sensor();
     last_right_sensor = right_sensor();
 
-    Angle orientation_delta = Angle::from_rad(orientation.get_rad() - last_orientation.get_rad());
+    double orientation_delta = Angle::shortest_error(last_orientation, orientation);
 
-    Angle orientation_average = Angle::from_rad(last_orientation.get_rad() + orientation_delta.get_rad() / 2);
+    Angle orientation_average = Angle::from_rad(last_orientation.get_rad() + orientation_delta / 2);
+
+    printf("Average Orientation: %f", (float)orientation_average.get_deg());
 
     last_orientation.set_rad(orientation.get_rad());
 
-    // arc length = radius * theta
-    // find radius from both sides and add or subtract the offset from tracking center (by convention the arc is to the right of robot so L is far from arc center and R is close)
-
-    
-
-    if (orientation_delta.get_rad() == 0) {
+    if (orientation_delta == 0) {
       local_move = Vector2((left_distance + right_distance) / 2, 0);
     } else {
-      double left_radius = left_distance / orientation_delta.get_rad();
-      double right_radius = right_distance / orientation_delta.get_rad();
+      // arc length = radius * theta
+      // find radius from both sides and add or subtract the offset from tracking center (by convention the arc is to the right of robot so L is far from arc center and R is close)
+
+      double left_radius = left_distance / orientation_delta;
+      double right_radius = right_distance / orientation_delta;
       double middle_radius = ((left_radius - width / 2) + (right_radius + width / 2)) / 2; // take average of both side's reading of radius 
       local_move = // local move = chord length = 2 * radius * sin(theta/2)
-          Vector2(2 * middle_radius * sin(orientation_delta.get_rad() / 2) ,0);
+          Vector2(2 * middle_radius * sin(orientation_delta / 2) ,0);
     }
     if (local_move.get_magnitude() != 0) {
       Vector2 global_move = Vector2(local_move.x, local_move.y);
 
-      global_move.set_angle_direction(Angle::from_degrees(360 - local_move.get_angle_direction().get_deg() + orientation_average.get_deg())); // local move.get_angle_direction is in coordinate system where CCW+ so we must invert it
+      // local move is offset from global CS by average_orientation so we must rotate it
+
+      global_move.set_angle_direction(Angle::from_degrees( -local_move.get_angle_direction().get_deg() + orientation_average.get_deg())); // local move.get_angle_direction is in coordinate system where CCW+ so we must invert it
 
       position.x += global_move.x;
       position.y += global_move.y;
+      printf("Global move x: %f, y: %f", global_move.x, global_move.y);
     }
 
     pros::delay(ez::util::DELAY_TIME);
+    
   }
 }
 

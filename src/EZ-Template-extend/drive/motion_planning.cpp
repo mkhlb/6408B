@@ -21,9 +21,9 @@ void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset) {
   //calculate direction vector from current position to target
   Vector2 position_to_target_unit = (target - position).get_normalized();
 
-  Angle angle = Angle::shortest_error(orientation, position_to_target_unit.get_angle_direction());
+  double angle = Angle::shortest_error(orientation, position_to_target_unit.get_angle_direction());
 
-  set_relative_turn_pid(angle.get_deg() + offset.get_deg(), speed);
+  set_relative_turn_pid(angle * 180 / 3.1415926 + offset.get_deg(), speed);
 }
 
 void Drive::set_straight_point_drive_pid(Vector2 target, int speed) {
@@ -36,7 +36,7 @@ void Drive::set_straight_point_drive_pid(Vector2 target, int speed) {
 }
 
 void Drive::set_orientation_turn_pid(Angle target, int speed) {
-  Angle error = Angle::shortest_error(orientation, target);
+  double error = Angle::shortest_error(orientation, target);
 
-  set_relative_turn_pid(error.get_deg(), speed);
+  set_relative_turn_pid(error * 180 / 3.1415926, speed);
 }

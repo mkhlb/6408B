@@ -52,19 +52,19 @@ void Vector2::set_angle_direction(Angle value) {
   y = mag * sin(value.get_rad());
 }
 
-Angle Angle::shortest_error(Angle from,
+double Angle::shortest_error(Angle from,
                             Angle to) // returns shortest error from angle this
                                       // method is being called on to other
 {
   if (to.get_deg() - from.get_deg() <= 180 &&
       to.get_deg() - from.get_deg() >= -180) {
-    return to - from;
+    return to.get_rad() - from.get_rad();
   } else // need to go the other way around
   {
     if (from.get_deg() > 180) {
-      return to - from + Angle::from_degrees(360);
+      return (to - from + Angle::from_degrees(360)).get_rad();
     } else {
-      return to - from - Angle::from_degrees(360);
+      return (to - from - Angle::from_degrees(360)).get_rad();
     }
   }
 }
