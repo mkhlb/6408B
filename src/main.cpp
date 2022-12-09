@@ -23,16 +23,16 @@ Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {10, 20}
+    {16, 18}
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {-3, -5}
+    {-3, -13}
 
     // IMU Port
     ,
-    16
+    14
 
     // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
     //    (or tracking wheel diameter)
@@ -73,7 +73,7 @@ mkhlib::CatapultIntakeController cata_intake(
   // Port of the catapult motor
   {-12, 19}, 
   // Port of the intake motor
-  11, 
+  -20, 
   // Port of the limit switch
   1, 
   // Ratio of roller revolutions / intake revolutions, intake revolution * this ratio should = roller revolutions
@@ -188,6 +188,13 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
+void print_odom() {
+  while(true) {
+    master.print(0, 0, "%f, %f", (float)chassis.orientation.get_deg(), (float)chassis.position.y);
+    master.print(1,1, "silly");
+    pros::delay(500);
+  }
+}
 
 void opcontrol() {
   // This is preference to what you like to drive on.
@@ -196,6 +203,8 @@ void opcontrol() {
   cata_intake.cata_hold();
 
   double interpolator_end = 67.1;
+
+  pros::Task odom_printer = pros::Task(print_odom);
 
   while (true) {
 
