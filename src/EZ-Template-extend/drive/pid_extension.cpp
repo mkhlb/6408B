@@ -6,7 +6,7 @@ void Drive::swing_pid_task() {
   swingPID.compute(get_gyro());
 
   // Clip swingPID to max speed
-  double swing_out = util::clip_num(swingPID.output, max_speed, -max_speed);
+  double swing_out = util::clip_num(swingPID.output + swingPID.output * swing_offside_multiplier * .1, max_speed, -max_speed);
 
   // Clip the speed of the turn when the robot is within StartI, only do this when target is larger then StartI
   if (swingPID.constants.ki != 0 && (fabs(swingPID.get_target()) > swingPID.constants.start_i && fabs(swingPID.error) < swingPID.constants.start_i)) {
