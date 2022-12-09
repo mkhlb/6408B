@@ -798,7 +798,7 @@ private: // !Auton
    * Tasks
    */
   void drive_pid_task();
-  void swing_pid_task(bool dummy = false);
+  void swing_pid_task();
   void turn_pid_task();
   void ez_auto_task();
 

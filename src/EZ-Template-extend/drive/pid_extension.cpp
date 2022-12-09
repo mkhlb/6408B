@@ -1,7 +1,7 @@
 #include "EZ-Template/drive/drive.hpp"
 
 // Swing PID task
-void Drive::swing_pid_task(bool dummy) {
+void Drive::swing_pid_task() {
   // Compute PID
   swingPID.compute(get_gyro());
 
