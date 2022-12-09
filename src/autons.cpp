@@ -122,7 +122,7 @@ void swing_test() {
   chassis.wait_drive();
   chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED);
   chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, 90, SWING_SPEED, 0);
+  chassis.set_swing_pid(ez::LEFT_SWING, 90, SWING_SPEED, .5);
   chassis.wait_drive();
   //chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, -.3);
   //chassis.wait_drive();
