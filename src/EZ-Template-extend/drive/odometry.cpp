@@ -32,13 +32,14 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
     // arc length = radius * theta
     // find radius from both sides and add or subtract the offset from tracking center (by convention the arc is to the right of robot so L is far from arc center and R is close)
 
-    double left_radius = left_distance / orientation_delta.get_rad();
-    double right_radius = right_distance / orientation_delta.get_rad();
-    double middle_radius = ((left_radius - width / 2) + (right_radius + width / 2)) / 2; // take average of both side's reading of radius 
+    
 
     if (orientation_delta.get_rad() == 0) {
       local_move = Vector2((left_distance + right_distance) / 2, 0);
     } else {
+      double left_radius = left_distance / orientation_delta.get_rad();
+      double right_radius = right_distance / orientation_delta.get_rad();
+      double middle_radius = ((left_radius - width / 2) + (right_radius + width / 2)) / 2; // take average of both side's reading of radius 
       local_move = // local move = chord length = 2 * radius * sin(theta/2)
           Vector2(2 * middle_radius * sin(orientation_delta.get_rad() / 2) ,0);
     }
