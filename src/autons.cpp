@@ -118,16 +118,25 @@ void roll_test() {
 void swing_test() {
   chassis.set_drive_pid(3, 110);
   chassis.wait_drive();
-  chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, .4);
   chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED);
+  chassis.set_swing_pid(ez::LEFT_SWING, 90, SWING_SPEED, .7);
   chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, 90, SWING_SPEED, .5);
+  chassis.set_swing_pid(ez::RIGHT_SWING, 45, SWING_SPEED, -.5);
   chassis.wait_drive();
-  //chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, -.3);
-  //chassis.wait_drive();
-  //chassis.set_swing_pid(ez::RIGHT_SWING, 0, SWING_SPEED, -.5);
-  //chassis.wait_drive();
+  chassis.set_swing_pid(ez::LEFT_SWING, -45, SWING_SPEED, -.3);
+  chassis.wait_drive();
+  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, -.3);
+  chassis.wait_drive();
+  chassis.set_swing_pid(ez::RIGHT_SWING, 90, SWING_SPEED, -.5);
+  chassis.wait_drive();
+  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, .7);
+  chassis.wait_drive();
+  chassis.set_swing_pid(ez::LEFT_SWING, 0, SWING_SPEED, .4);
+  chassis.wait_drive();
+  chassis.set_drive_pid(-3, 110);
+  chassis.wait_drive();
+
 }
 
 
