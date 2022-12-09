@@ -6,7 +6,7 @@
 
 using namespace ez;
 
-void Drive::ez_odometry_task() {
+void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot moves towards positive x, clockwise turn is positive (CW+)
   int last_left_sensor = left_sensor();
   int last_right_sensor = right_sensor();
 
@@ -23,28 +23,29 @@ void Drive::ez_odometry_task() {
     last_left_sensor = left_sensor();
     last_right_sensor = right_sensor();
 
-    double orientation_delta = orientation.get_rad() - last_orientation.get_rad();
+    Angle orientation_delta = Angle::from_rad(orientation.get_rad() - last_orientation.get_rad());
 
-    double orientation_average =
-        last_orientation.get_rad() + orientation_delta / 2;
+    Angle orientation_average = Angle::from_rad(last_orientation.get_rad() + orientation_delta.get_rad() / 2);
 
     last_orientation.set_rad(orientation.get_rad());
 
-    if (orientation_delta == 0) {
+    // arc length = radius * theta
+    // find radius from both sides and add or subtract the offset from tracking center (by convention the arc is to the right of robot so L is far from arc center and R is close)
+
+    double left_radius = left_distance / orientation_delta.get_rad();
+    double right_radius = right_distance / orientation_delta.get_rad();
+    double middle_radius = ((left_radius - width / 2) + (right_radius + width / 2)) / 2; // take average of both side's reading of radius 
+
+    if (orientation_delta.get_rad() == 0) {
       local_move = Vector2((left_distance + right_distance) / 2, 0);
     } else {
-      local_move =
-          Vector2(((left_distance / orientation_delta + width / 2) +
-                   (right_distance / orientation_delta - width)) /
-                      2,
-                  0);
+      local_move = // local move = chord length = 2 * radius * sin(theta/2)
+          Vector2(2 * middle_radius * sin(orientation_delta.get_rad() / 2) ,0);
     }
-
     if (local_move.get_magnitude() != 0) {
       Vector2 global_move = Vector2(local_move.x, local_move.y);
 
-      global_move.set_angle_direction(local_move.get_angle_direction().get_rad() +
-                                    orientation_average);
+      global_move.set_angle_direction(Angle::from_degrees(360 - local_move.get_angle_direction().get_deg() + orientation_average.get_deg())); // local move.get_angle_direction is in coordinate system where CCW+ so we must invert it
 
       position.x += global_move.x;
       position.y += global_move.y;

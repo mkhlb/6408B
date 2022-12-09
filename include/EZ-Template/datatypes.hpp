@@ -48,6 +48,7 @@ public:
   Angle operator+(const Angle &obj) {return from_rad(_rad + obj._rad);}
   Angle operator-(const Angle &obj) {return from_rad(_rad - obj._rad);}
 
+
 private:
   double _deg;
   double _rad;
@@ -74,7 +75,7 @@ public:
 
   void set_magnitude(double value); // sets magnitude while preserving direction
   void set_angle_direction(
-      double value); // like rotating a vector, changes its polar
+      Angle value); // like rotating a vector, changes its polar
                      // coordinate angle while preserving magnitude
 
   double dot(Vector2 obj) { return x * obj.x + y * obj.x; }

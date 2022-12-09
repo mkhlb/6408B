@@ -16,23 +16,22 @@ Vector2 operator*(Vector2 const &vec, double const &scal) {return scal * vec;};
 
 double Vector2::get_magnitude() { return sqrt(x * x + y * y); }
 Angle Vector2::get_angle_direction() {
-  Angle angle = Angle::from_rad(atan(y / x));
+  Angle angle = Angle::from_rad(atan(y / x)); // atan is always from x axis, in quad 1, 3 is positive, in quad 2, 4 is negative
   Angle out;
 
   if (x < 0) {
-    if (y < 0) {
+    if (y < 0) { // quad 3
       out.set_deg(180.0 + angle.get_deg());
-    } else {
+    } else { // quad 2
       out.set_deg(180.0 + angle.get_deg());
     }
-  } else {
-    if (y < 0) {
+  } else { 
+    if (y < 0) { // quad 4
       out.set_deg(360.0 + angle.get_deg());
-    } else {
+    } else { // quad 1
       out.set_rad(angle.get_rad());
     }
   }
-
   return out;
 }
 Vector2 Vector2::get_normalized() {
@@ -45,12 +44,12 @@ void Vector2::set_magnitude(double value) {
 
   y = y / mag * value;
 }
-void Vector2::set_angle_direction(double value) {
+void Vector2::set_angle_direction(Angle value) {
   double mag = get_magnitude();
 
-  x = mag * cos(value);
+  x = mag * cos(value.get_rad());
 
-  y = mag * sin(value);
+  y = mag * sin(value.get_rad());
 }
 
 Angle Angle::shortest_error(Angle from,
