@@ -18,7 +18,7 @@ public:
 
   //Angle(double value) { SetDeg(value); }
 
-  static Angle from_degrees(double deg) {Angle a; a.set_deg(deg); return a;}
+  static Angle from_deg(double deg) {Angle a; a.set_deg(deg); return a;}
   static Angle from_rad(double rad) {Angle a; a.set_rad(rad); return a;}
 
   void set_deg(double value) {

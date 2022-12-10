@@ -54,11 +54,11 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
       Vector2 global_move = Vector2(local_move.x, local_move.y);
 
       // local move is offset from global CS by average_orientation so we must rotate it
-      global_move.set_angle_direction(Angle::from_degrees( -local_move.get_angle_direction().get_deg() + orientation_average.get_deg())); // local move.get_angle_direction is in coordinate system where CCW+ so we must invert it
+      global_move.set_angle_direction( -local_move.get_angle_direction() + orientation_average); // local move.get_angle_direction is in coordinate system where CCW+ so we must invert it
       
 
       position.x += global_move.x;
-      position.y += global_move.y;
+      position.y += global_move.y; 
       //printf("Global move x: %f, y: %f", global_move.x, global_move.y);
     }
 

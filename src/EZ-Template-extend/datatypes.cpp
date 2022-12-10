@@ -16,11 +16,16 @@ Vector2 operator*(Vector2 const &vec, double const &scal) {return scal * vec;};
 
 double Vector2::get_magnitude() { return sqrt(x * x + y * y); }
 Angle Vector2::get_angle_direction() {
-  Angle angle;
+  if(x == 0) {
+    if(y >= 0) {
+      return Angle::from_deg(90);
+    }
+    else {
+      return Angle::from_deg(-90);
+    }
+  }
 
-  angle = Angle::from_rad(atan2(y, x));
-
-  return angle;
+  return Angle::from_rad(atan2(y, x));
 }
 Vector2 Vector2::get_normalized() {
   if(get_magnitude() == 0) {
@@ -51,10 +56,10 @@ double Angle::shortest_error(Angle from,
   // must clamp between pi and -pi
   
   if(error.get_deg() > 180) {
-    return error.get_rad() - Angle::from_degrees(360).get_rad();
+    return error.get_rad() - 360 * DEG_TO_RAD;
   }
   else if(error.get_deg() < -180) {
-    return error.get_rad() + Angle::from_degrees(360).get_rad();
+    return error.get_rad() + 360 * DEG_TO_RAD;
   }
   return error.get_rad();
 }
