@@ -113,4 +113,8 @@ void roll_test() {
   chassis.set_drive_pid(-10, DRIVE_SPEED);
 }
 
+void turn_test() {
+  chassis.set_point_turn_pid(Vector2(), 80);
+}
+
 

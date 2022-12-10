@@ -1,4 +1,5 @@
 #include "main.h"
+#include "EZ-Template/datatypes.hpp"
 #include "EZ-Template/sdcard.hpp"
 #include "EZ-Template/util.hpp"
 #include "autons.hpp"
@@ -190,7 +191,11 @@ void autonomous() {
 
 void print_odom() {
   while(true) {
-    printf("x: %f, y: %f \n", (float)chassis.position.x, (float)chassis.position.y);
+    Vector2 position_to_target_unit = (Vector2() - chassis.position).get_normalized();
+    //master.print(0, 0, "%f", (float)Angle::shortest_error(Angle::from_degrees(90), Angle::from_degrees(0)));
+    printf("angle: %f ", (float)position_to_target_unit.get_angle_direction().get_deg());
+    printf("shortest error: %f ", (float)Angle::shortest_error(chassis.orientation, Angle::from_rad(-position_to_target_unit.get_angle_direction().get_rad())) * 180 / 3.1415926);
+    printf("x: %f, y: %f, w: %f \n", (float)chassis.position.x, (float)chassis.position.y, (float)chassis.orientation.get_deg());
     //master.print(1,1, "silly");
     pros::delay(500);
   }
@@ -207,6 +212,12 @@ void opcontrol() {
   pros::Task odom_printer = pros::Task(print_odom);
 
   while (true) {
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      chassis.set_point_turn_pid(Vector2(), 80);
+      chassis.wait_drive();
+      chassis.set_mode(ez::e_mode::DISABLE);
+    }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       interpolator_end -= 5;

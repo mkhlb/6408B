@@ -6,6 +6,11 @@ using namespace ez;
 
 class Angle {
 public:
+
+  static constexpr double PI = 3.141592653589793238;
+  static constexpr double RAD_TO_DEG = 180 / PI;
+  static constexpr double DEG_TO_RAD = PI / 180;
+
   Angle() {
     _deg = 0;
     _rad = 0;
@@ -18,7 +23,7 @@ public:
 
   void set_deg(double value) {
     _deg = value;
-    _rad = 3.1415926 / 180 * value;
+    _rad = value * DEG_TO_RAD;
 
     if (_deg >= 360.0f) {
       set_deg(_deg - (floor(_deg / 360.0f) * 360));
@@ -30,7 +35,7 @@ public:
   }
   void set_rad(double value) {
     _rad = value;
-    _deg = 180 / 3.1415926 * value;
+    _deg = value * RAD_TO_DEG;
 
     if (_deg >= 360.0f) {
       set_deg(_deg - (floor(_deg / 360.0f) * 360));
@@ -47,6 +52,7 @@ public:
 
   Angle operator+(const Angle &obj) {return from_rad(_rad + obj._rad);}
   Angle operator-(const Angle &obj) {return from_rad(_rad - obj._rad);}
+  Angle operator-() {return from_rad(-_rad);}
 
 
 private:
