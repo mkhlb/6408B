@@ -216,6 +216,10 @@ The cosin between two angles is the projection, it gives the adjacent component 
 
 #### Driving To A Point
 
-MKHLib doesn't mess with complicated driving algorithms. To drive to a point Ez Template does two things: turns to the point, then drive as close to it as it can in a straight line. So how does Ez Template figure out what distance it needs to drive to get as close as possible?
+MKHLib doesn't mess with complicated driving algorithms. To drive to a point MKHLib does two things: turns to the point, then drive as close to it as it can in a straight line. So how does MKHLib figure out what distance it needs to drive to get as close as possible?
 
 Consider two vectors: the unit vector representing the direction the robot is facing $\hat{\omega}$, and the vector from the robot to the target point $\vec{T}$. $\hat{\omega}$ and $\vec{T}$ are seperated by an angle $\theta$. Recall that a dot product is a projection and then a multiplication, and that multiplication of $x \cdot 1 = x$, and $|\hat{v}| = 1$, so a dot product of a vector is just a projection, because the multiplication by $1$ does nothing. So $\hat{\omega} \cdot \vec{T}$ is just a projection of $\vec{T}$ onto $\hat{\omega}$. 
+
+$\hat{\omega} \cdot \vec{T}$ gives the distance to drive in direction $\hat{\omega}$ to get as close as possible to $\vec{T}$. If you don't intuitively understand this, allow a mathematical illustration:
+
+The distance to drive $D$ times the orientation vector $\hat{\omega}$ ( $\vec{D}$ ) forms a right angle triangle with $\vec{T}$ (by definition of being as close as possible).
