@@ -25,24 +25,24 @@ public:
     _deg = value;
     _rad = value * DEG_TO_RAD;
 
-    if (_deg >= 360.0f) {
-      set_deg(_deg - (floor(_deg / 360.0f) * 360));
+    if (_deg >= 360.0) {
+      set_deg(_deg - (floor(_deg / 360.0) * 360));
     }
 
     if (_deg < 0) {
-      set_deg(360 + _deg - (ceil(_deg / 360.0f) * 360));
+      set_deg(360.0 + _deg - (ceil(_deg / 360.0) * 360));
     }
   }
   void set_rad(double value) {
     _rad = value;
     _deg = value * RAD_TO_DEG;
 
-    if (_deg >= 360.0f) {
-      set_deg(_deg - (floor(_deg / 360.0f) * 360));
+    if (_deg >= 360.0) {
+      set_deg(_deg - (floor(_deg / 360.0) * 360));
     }
 
     if (_deg < 0) {
-      set_deg(360 + _deg - (ceil(_deg / 360.0f) * 360));
+      set_deg(360 + _deg - (ceil(_deg / 360.0) * 360));
     }
   }
   double get_deg() { return _deg; }

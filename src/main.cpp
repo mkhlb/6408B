@@ -10,6 +10,7 @@
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
+#include <cmath>
 
 /////
 /////
@@ -193,12 +194,37 @@ void print_odom() {
   while(true) {
     Vector2 position_to_target_unit = (Vector2() - chassis.position).get_normalized();
     //master.print(0, 0, "%f", (float)Angle::shortest_error(Angle::from_degrees(90), Angle::from_degrees(0)));
-    printf("angle: %f ", (float)position_to_target_unit.get_angle_direction().get_deg());
-    printf("shortest error: %f ", (float)Angle::shortest_error(chassis.orientation, Angle::from_rad(-position_to_target_unit.get_angle_direction().get_rad())) * 180 / 3.1415926);
+    printf("angle: %f ", (float)(-position_to_target_unit.get_angle_direction()).get_deg());
+    printf("shortest error: %f ", (float)Angle::shortest_error(chassis.orientation, -position_to_target_unit.get_angle_direction()) * Angle::RAD_TO_DEG);
     printf("x: %f, y: %f, w: %f \n", (float)chassis.position.x, (float)chassis.position.y, (float)chassis.orientation.get_deg());
     //master.print(1,1, "silly");
     pros::delay(500);
   }
+}
+
+double aim_assist_coefficient(Vector2 goal_position, double goal_width, double min_coefficient, double angular_interp_start_error, double distance_interp_end, double distance_interp_start) { //interp start is furthest distance, end is closest
+  Vector2 robot_to_goal = goal_position - chassis.position;
+  
+  double absolute_error_to_center = abs(Angle::shortest_error(chassis.orientation, -robot_to_goal.get_angle_direction()));
+  if(absolute_error_to_center >= 90) {
+    return 1.0;
+  }
+  if(robot_to_goal.get_magnitude() == 0) {
+    return 1.0;
+  }
+  //get the angle from the vector to the outside of the goal to the center of it
+  double absolute_outside_to_center = abs(atan(goal_width / 2 / robot_to_goal.get_magnitude()));
+
+  //interpolation equation: out = ((in - in_at_max) * (out_at_min - out_at_max)) / (in_at_min - in_at_max) + out_at_max
+
+  // at absolute_outside_to_center = absolute_outside_to_center, = min_cofficient, at outside_to_center = angular_interp_start_angle, = 1
+  double angular_coefficient =  1 + ((absolute_error_to_center - angular_interp_start_error) * (min_coefficient - 1)) / (absolute_outside_to_center - angular_interp_start_error);
+  double clamped_angular_coefficient = max(min(angular_coefficient, 1.0), min_coefficient);
+  // same 0 to 1 interpolation
+  double distance_coefficient = (robot_to_goal.get_magnitude() - distance_interp_start) / (distance_interp_end - distance_interp_start); 
+  double clamped_distance_coefficient = max(0.0, min(1.0, distance_coefficient));
+  
+  return clamped_angular_coefficient * clamped_distance_coefficient;
 }
 
 void opcontrol() {

@@ -535,6 +535,16 @@ class Drive {
   void set_turn_pid(double target, int speed);
 
   /**
+  * Sets the robot to turn relative to current heading target using PID.
+  * 
+  * \param target
+  *        target in degrees relative to current heading target
+  * \param speed
+  *        0 to 127, max speed during motion
+  */
+  void set_target_relative_turn_pid(double target, int speed);
+
+  /**
   * Sets the robot to turn relative to current heading using PID.
   * 
   * \param target
@@ -542,7 +552,7 @@ class Drive {
   * \param speed
   *        0 to 127, max speed during motion
   */
-  void set_relative_turn_pid(double target, int speed);
+  void set_heading_relative_turn_pid(double target, int speed);
 
   /**
    * Turn using only the left or right side.
