@@ -202,7 +202,7 @@ void print_odom() {
   }
 }
 
-double aim_assist_coefficient(Vector2 goal_position, double goal_width, double min_coefficient, double angular_interp_start_error, double distance_interp_end, double distance_interp_start) { //interp start is furthest distance, end is closest
+double aim_assist_coefficient(Vector2 goal_position, double goal_width, double min_coefficient, double angular_interp_start_error, double far_distance_interp_start, double far_distance_interp_end, double near_distance_interp_start, double near_distance_interp_end) { //interp start is furthest distance, end is closest
   Vector2 robot_to_goal = goal_position - chassis.position;
   
   double absolute_error_to_center = abs(Angle::shortest_error(chassis.orientation, -robot_to_goal.get_angle_direction()));
@@ -221,7 +221,14 @@ double aim_assist_coefficient(Vector2 goal_position, double goal_width, double m
   double angular_coefficient =  1 + ((absolute_error_to_center - angular_interp_start_error) * (min_coefficient - 1)) / (absolute_outside_to_center - angular_interp_start_error);
   double clamped_angular_coefficient = max(min(angular_coefficient, 1.0), min_coefficient);
   // same 0 to 1 interpolation
-  double distance_coefficient = (robot_to_goal.get_magnitude() - distance_interp_start) / (distance_interp_end - distance_interp_start); 
+  double distance = robot_to_goal.get_magnitude();
+  double distance_coefficient = 1;
+  if(distance > far_distance_interp_end) {
+    distance_coefficient = (distance - far_distance_interp_start) / (far_distance_interp_end - far_distance_interp_start); 
+  }
+  else if(distance < near_distance_interp_start) {
+    distance_coefficient = (distance - near_distance_interp_start) / (near_distance_interp_end - near_distance_interp_start);
+  }
   double clamped_distance_coefficient = max(0.0, min(1.0, distance_coefficient));
   
   return clamped_angular_coefficient * clamped_distance_coefficient;
@@ -258,7 +265,8 @@ void opcontrol() {
       chassis.arcade_standard(ez::SPLIT);
     }
     else {
-      chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end); // Mkhl special split arcade
+      double turn_coefficient = aim_assist_coefficient(Vector2(0,0), 8.0, .5, 30.0, 42.0, 36.0, 20.0, 12.0);
+      chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end, turn_coefficient); // Mkhl special split arcade
       //chassis.arcade_mkhl_standard(ez::SPLIT);
     }
     

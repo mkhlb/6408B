@@ -225,13 +225,13 @@ class Drive {
    * Sets the chassis to do mkhl drive, the interpolation between tank drives for low forward speed and cheezy for high speeds
    * Pass in minimum deadzone value where all tank is used and maximum where full cheezy is reached
    */
-  void arcade_mkhl_standard(e_type stick_type, double interpolator_start=1, double interpolator_end=2);
+  void arcade_mkhl_standard(e_type stick_type, double interpolator_start=1, double interpolator_end=2, double turn_coefficient=1.0);
 
   /**
    * Sets the chassis to do mkhl drive, the interpolation between tank drives for low forward speed and cheezy for high speeds
    * Pass in minimum deadzone value where all tank is used and maximum where full cheezy is reached
    */
-  void arcade_mkhl_flipped(e_type stick_type, double interpolator_start=1, double interpolator_end=2);
+  void arcade_mkhl_flipped(e_type stick_type, double interpolator_start=1, double interpolator_end=2, double turn_coefficient=1.0);
 
   void arcade_normalized_standard(e_type stick_type);
 

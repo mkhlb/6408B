@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <cmath>
 
-void Drive::arcade_mkhl_standard(e_type stick_type, double interpolator_start, double interpolator_end) {
+void Drive::arcade_mkhl_standard(e_type stick_type, double interpolator_start, double interpolator_end, double turn_coefficient) {
   is_tank = false;
   reset_drive_sensors_opcontrol();
 
@@ -25,10 +25,10 @@ void Drive::arcade_mkhl_standard(e_type stick_type, double interpolator_start, d
 
   double interpolator = (fabs(fwd_stick)-interpolator_start)/(interpolator_end - interpolator_start);
 
-  mkhl(fwd_stick, turn_stick, ez::util::clip_num(interpolator, 1, 0));
+  mkhl(fwd_stick, turn_stick * turn_coefficient, ez::util::clip_num(interpolator, 1, 0));
 }
 
-void Drive::arcade_mkhl_flipped(e_type stick_type, double interpolator_start, double interpolator_end) {
+void Drive::arcade_mkhl_flipped(e_type stick_type, double interpolator_start, double interpolator_end, double turn_coefficient) {
   is_tank = false;
   reset_drive_sensors_opcontrol();
 
@@ -49,7 +49,7 @@ void Drive::arcade_mkhl_flipped(e_type stick_type, double interpolator_start, do
 
   double interpolator = (fabs(fwd_stick)-(interpolator_start))/(interpolator_end - interpolator_start);
 
-  mkhl(fwd_stick, fwd_stick, ez::util::clip_num(interpolator, 1, 0));
+  mkhl(fwd_stick, turn_stick * turn_coefficient, ez::util::clip_num(interpolator, 1, 0));
 }
 
 void Drive::mkhl(int forward_stick, int turn_stick, double interpolator) {
