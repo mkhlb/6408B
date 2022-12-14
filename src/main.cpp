@@ -247,7 +247,7 @@ void opcontrol() {
   while (true) {
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      chassis.set_point_turn_pid(Vector2(), 80);
+      chassis.set_point_turn_pid(Vector2(), 80, Angle::from_deg(180));
       chassis.wait_drive();
       chassis.set_mode(ez::e_mode::DISABLE);
     }
@@ -266,7 +266,7 @@ void opcontrol() {
     }
     else {
       double turn_coefficient = aim_assist_coefficient(Vector2(0,0), 8.0, .5, 30.0, 42.0, 36.0, 20.0, 12.0);
-      chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end, turn_coefficient); // Mkhl special split arcade
+      chassis.arcade_mkhl_standard(ez::SPLIT, 2, interpolator_end, 1); // Mkhl special split arcade
       //chassis.arcade_mkhl_standard(ez::SPLIT);
     }
     
