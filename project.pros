@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "6408B_AUTO",
+    "project_name": "Auto",
     "target": "v5",
     "templates": {
       "kernel": {

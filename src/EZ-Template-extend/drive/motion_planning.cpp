@@ -5,32 +5,14 @@ void Drive::set_target_relative_turn_pid(double target, int speed) {
   // Compute absolute target by adding to current heading
   double absolute_target = turnPID.get_target() + target;
 
-  // Print targets
-  if (print_toggle) printf("Turn Started... Target Value: %f\n", absolute_target);
-
-  // Set PID targets
-  turnPID.set_target(absolute_target);
-  headingPID.set_target(absolute_target);
-  set_max_speed(speed);
-
-  // Run task
-  set_mode(TURN);
+  set_turn_pid(absolute_target, speed);
 }
 
 void Drive::set_heading_relative_turn_pid(double target, int speed) {
   // Compute absolute target by adding to current heading
   double absolute_target = get_gyro() + target;
 
-  // Print targets
-  if (print_toggle) printf("Turn Started... Target Value: %f\n", absolute_target);
-
-  // Set PID targets
-  turnPID.set_target(absolute_target);
-  headingPID.set_target(absolute_target);
-  set_max_speed(speed);
-
-  // Run task
-  set_mode(TURN);
+  set_turn_pid(absolute_target, speed);
 }
 
 void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset) {
@@ -52,7 +34,7 @@ void Drive::set_straight_point_drive_pid(Vector2 target, int speed) {
 }
 
 void Drive::set_orientation_turn_pid(Angle target, int speed) {
-  double error = -Angle::shortest_error(orientation, target);
+  double error = Angle::shortest_error(orientation, target);
 
   set_heading_relative_turn_pid(error * Angle::RAD_TO_DEG, speed);
 }

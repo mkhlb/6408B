@@ -79,11 +79,11 @@ mkhlib::CatapultIntakeController cata_intake(
     1,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
-    1.0,
+    84.0 / 36.0 * 6 / 12 * 36 / 60,
     // Ratio of roller revolution / motor revolutions
-    1.0,
+    84.0 / 36.0,
     // gearset of catapult
-    pros::E_MOTOR_GEARSET_18,
+    pros::E_MOTOR_GEARSET_36,
     // gearset of intake
     pros::E_MOTOR_GEARSET_18);
 /**
@@ -171,7 +171,7 @@ void autonomous() {
 
   // auto selection
 
-  roll_test();
+  drive_test();
 }
 
 /**
@@ -189,6 +189,7 @@ void autonomous() {
  */
 
 void print_odom() {
+  return;
   while (true) {
     Vector2 position_to_target_unit =
         (Vector2() - chassis.position).get_normalized();
@@ -300,9 +301,9 @@ void opcontrol() {
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(0.9 * 200); // intake
+      cata_intake.intake_velocity(0.9 * 200.0 * 84 / 36); // intake
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      cata_intake.intake_velocity(-100); // outake
+      cata_intake.intake_velocity(-150.0 * 84/36); // outake
     } else {
       cata_intake.intake_stop(); // else to keep intake at 0
     }

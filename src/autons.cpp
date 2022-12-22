@@ -34,7 +34,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
   chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
   chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
+  chassis.set_pid_constants(&chassis.turnPID, 5, 0.002, 35, 15);
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
   cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
 }
@@ -102,9 +102,19 @@ void roll_test() {
 
 void drive_test() {
   chassis.reset_position(Vector2(8, 20), Angle::from_deg(-90));
+  chassis.set_orientation_turn_pid(Angle::from_deg(90), TURN_SPEED);
+  chassis.wait_drive();
+  return;
+  chassis.set_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED);
+  chassis.wait_drive();
   chassis.set_drive_pid(-10, DRIVE_SPEED);
   chassis.wait_drive();
   roll_time(30, 115, 120);
+  chassis.set_heading_relative_swing_pid(ez::RIGHT_SWING, 30, SWING_SPEED, .3);
+  chassis.wait_drive();
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(45), SWING_SPEED, -.2);
+  chassis.wait_drive();
+  cata_intake.intake_velocity(200);
 }
 
 void turn_test() {
