@@ -21,11 +21,12 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "api.h"
+//#include "api.h"
 
 #define OPT_GESTURE_ERR (INT8_MAX)
 #define OPT_COUNT_ERR (INT16_MAX)
 #define OPT_TIME_ERR PROS_ERR
+#define PROS_ERR (INT32_MAX)
 
 #ifdef __cplusplus
 extern "C" {

@@ -243,20 +243,17 @@ double aim_assist_coefficient(
       max(min(angular_coefficient, 1.0), min_coefficient);
   // same 0 to 1 interpolation
   double distance = robot_to_goal.get_magnitude();
-  double distance_coefficient = 1;
+
+  double distance_coefficient = clamped_angular_coefficient;
   if (distance > far_distance_interp_end) {
-    distance_coefficient =
-        (distance - far_distance_interp_start) /
-        (far_distance_interp_end - far_distance_interp_start);
+    distance_coefficient = (distance - far_distance_interp_start) * (1.0 - clamped_angular_coefficient) / (far_distance_interp_end - far_distance_interp_start) + 1.0;
   } else if (distance < near_distance_interp_start) {
-    distance_coefficient =
-        (distance - near_distance_interp_start) /
-        (near_distance_interp_end - near_distance_interp_start);
+    distance_coefficient = (distance - near_distance_interp_start) * (clamped_angular_coefficient - 1.0) / (near_distance_interp_end - near_distance_interp_start) + clamped_angular_coefficient;
   }
   double clamped_distance_coefficient =
-      max(0.0, min(1.0, distance_coefficient));
+      max(clamped_angular_coefficient, min(1.0, distance_coefficient));
 
-  return clamped_angular_coefficient * clamped_distance_coefficient;
+  return clamped_distance_coefficient;
 }
 
 void opcontrol() {
