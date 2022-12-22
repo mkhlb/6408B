@@ -95,6 +95,8 @@ public:
 
   bool roller_interfered;
 
+  void intake_roller_set_active_brake(double kp);
+
   /**
    * @brief Sets the intake's velocity
    *
@@ -157,6 +159,8 @@ public:
    */
   void roller_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout);
 
+  void roller_set_pid_constants(double kp, double ki, double kd, double start_i);
+
   /**
    * Waits until the roller is IDLE
    *
@@ -181,6 +185,7 @@ private:
   void master_intake_task();
 
   void cata_move_velocity(double velocity);
+  void cata_move_relative(double position, double velocity);
 
   void cata_prime_task();
   void cata_shoot_task();
@@ -195,6 +200,8 @@ private:
 
   double _intake_velocity;
 
-  double _cata_max_velocity;
+  int _cata_max_velocity;
+
+  double _intake_roller_active_brake_kp = 0.25;
 };
 }; // namespace mkhlib

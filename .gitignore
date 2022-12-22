@@ -5,7 +5,7 @@
 # Executables
 *.bin
 *.elf
-.cache/
+.cache/*
 
 # PROS
 bin/

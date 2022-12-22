@@ -6,7 +6,8 @@
 
 void Drive::arcade_curvatherp_standard(e_type stick_type,
                                        double interpolator_start,
-                                       double interpolator_end) {
+                                       double interpolator_end,
+                                       double turn_coefficient) {
   is_tank = false;
   reset_drive_sensors_opcontrol();
 
@@ -32,12 +33,14 @@ void Drive::arcade_curvatherp_standard(e_type stick_type,
   double interpolator = (fabs(fwd_stick) - interpolator_start) /
                         (interpolator_end - interpolator_start);
 
-  curvatherp(fwd_stick, turn_stick, ez::util::clip_num(interpolator, 1, 0));
+  curvatherp(fwd_stick, turn_stick * turn_coefficient,
+             ez::util::clip_num(interpolator, 1, 0));
 }
 
 void Drive::arcade_curvatherp_flipped(e_type stick_type,
                                       double interpolator_start,
-                                      double interpolator_end) {
+                                      double interpolator_end,
+                                      double turn_coefficient) {
   is_tank = false;
   reset_drive_sensors_opcontrol();
 
@@ -63,7 +66,8 @@ void Drive::arcade_curvatherp_flipped(e_type stick_type,
   double interpolator = (fabs(fwd_stick) - (interpolator_start)) /
                         (interpolator_end - interpolator_start);
 
-  curvatherp(fwd_stick, fwd_stick, ez::util::clip_num(interpolator, 1, 0));
+  curvatherp(fwd_stick, turn_stick * turn_coefficient,
+             ez::util::clip_num(interpolator, 1, 0));
 }
 
 void Drive::curvatherp(int forward_stick, int turn_stick, double interpolator) {

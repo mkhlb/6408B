@@ -15,11 +15,9 @@ const int DRIVE_SPEED =
          // it's only correcting by making one side slower.  When this is 87%,
          // it's correcting by making one side faster and one side slower,
          // giving better heading correction.
-const int TURN_SPEED = 90;
-const int SWING_SPEED = 90;
-const int INTK_IN = 0.6*600;
-
-const double MOTOR_TO_ROLLER_REVOLUTIONS = 1.0f/3.0f;
+const int TURN_SPEED = 110;
+const int SWING_SPEED = 110;
+const int INTK_IN = 0.9*200;
 
 ///
 // Constants
@@ -37,33 +35,14 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
   chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-}
-
-void one_mogo_constants() {
-  chassis.set_slew_min_power(80, 80);
-  chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
-  chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
-  chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-}
-
-void two_mogo_constants() {
-  chassis.set_slew_min_power(80, 80);
-  chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
-  chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
-  chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
+  cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
 }
 
 void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
-  cata_intake.roller_set_exit_condition(100, 25, 500, 125, 500, 500);
+  cata_intake.roller_set_exit_condition(100, 5, 500, 30, 500, 500);
 }
 
 void exit_condition_early_drive() { // made to exit the drive way earlier, more error so only use with position tracking or if planning on recording error, made when distance forward and backwards doesn't matter too much
@@ -90,10 +69,11 @@ void roll(double max_dist, double speed, double roll_amount) // roll_amount is d
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
-  chassis.set_drive_pid(-.3, speed);
+  chassis.set_drive_pid(-1, speed);
 
-  cata_intake.roller_pid_move(roll_amount, 200);
+  cata_intake.roller_pid_move(roll_amount, 127);
   cata_intake.wait_roller();
+  cata_intake.roller_velocity(0);
 }
 
 void roll_time(double max_dist, double speed, double roll_time) { //roll time can be negative or positive
@@ -101,18 +81,32 @@ void roll_time(double max_dist, double speed, double roll_time) { //roll time ca
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
-  chassis.set_drive_pid(-.3, speed);
+  chassis.set_drive_pid(-1, speed);
 
   cata_intake.roller_time(fabs(roll_time), 200 * util::sgn(roll_time));
   cata_intake.wait_roller();
 }
 
+
+
 //TEST OF VERY SENSITIVE EXIT CONDITIONS: Robot will exit almost immediately after the velocity of the wheel is 0
 void roll_test() {
   roll(20, 115, -180);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
+  chassis.wait_drive();
   roll_time(20, 115, 500);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
+  chassis.wait_drive();
+}
+
+void drive_test() {
+  chassis.set_drive_pid(10, DRIVE_SPEED);
+  chassis.wait_drive();
+  master.print(0, 0, "Done!");
+}
+
+void turn_test() {
+  chassis.set_point_turn_pid(Vector2(), 80);
 }
 
 void swing_test() {
