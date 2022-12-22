@@ -87,6 +87,8 @@ void roll_time(double max_dist, double speed, double roll_time) { //roll time ca
   cata_intake.wait_roller();
 }
 
+
+
 //TEST OF VERY SENSITIVE EXIT CONDITIONS: Robot will exit almost immediately after the velocity of the wheel is 0
 void roll_test() {
   roll(20, 115, -180);
@@ -101,6 +103,10 @@ void drive_test() {
   chassis.set_drive_pid(10, DRIVE_SPEED);
   chassis.wait_drive();
   master.print(0, 0, "Done!");
+}
+
+void turn_test() {
+  chassis.set_point_turn_pid(Vector2(), 80);
 }
 
 

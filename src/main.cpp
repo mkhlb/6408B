@@ -1,4 +1,5 @@
 #include "main.h"
+#include "EZ-Template/datatypes.hpp"
 #include "EZ-Template/sdcard.hpp"
 #include "EZ-Template/util.hpp"
 #include "autons.hpp"
@@ -9,6 +10,7 @@
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
+#include <cmath>
 
 /////
 /////
@@ -18,14 +20,17 @@
 
 // Chassis constructor
 Drive chassis(
+    // Track width of chassis in inches
+    5
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
+    ,
     {16, 18}
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {-13, -3}
+    {-3, -13}
 
     // IMU Port
     ,
@@ -77,9 +82,9 @@ mkhlib::CatapultIntakeController cata_intake(
     1.0,
     // Ratio of roller revolution / motor revolutions
     1.0,
-    //gearset of catapult
+    // gearset of catapult
     pros::E_MOTOR_GEARSET_18,
-    //gearset of intake
+    // gearset of intake
     pros::E_MOTOR_GEARSET_18);
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -102,14 +107,12 @@ void initialize() {
               // joysticks
   chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
   cata_intake.intake_roller_set_active_brake(.9);
-  chassis.set_curve_default(
-      1, 2); // Defaults for curve. If using tank, only the first parameter
-             // is used.
+  chassis.set_curve_default(1, 2); // Defaults for curve. If using tank, only
+                                   // the first parameter is used.
   default_constants(); // Set the drive to your own constants from autons.cpp!
 
   // Autonomous Selector using LLEMU
-  ez::as::auton_selector.add_autons({
-    Auton("Full win point", roll_test)});
+  ez::as::auton_selector.add_autons({Auton("Full win point", roll_test)});
 
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -159,10 +162,11 @@ void autonomous() {
 
   cata_intake.cata_hold();
 
-  //drive_example();
+  // drive_example();
 
-  //ez::as::auton_selector
-  //    .call_selected_auton(); // Calls selected auton from autonomous selector.
+  // ez::as::auton_selector
+  //     .call_selected_auton(); // Calls selected auton from autonomous
+  //     selector.
 
   // auto selection
 
@@ -183,6 +187,77 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
+void print_odom() {
+  while (true) {
+    Vector2 position_to_target_unit =
+        (Vector2() - chassis.position).get_normalized();
+    // master.print(0, 0, "%f",
+    // (float)Angle::shortest_error(Angle::from_degrees(90),
+    // Angle::from_degrees(0)));
+    printf("angle: %f ",
+           (float)(-position_to_target_unit.get_angle_direction()).get_deg());
+    printf("shortest error: %f ",
+           (float)Angle::shortest_error(
+               chassis.orientation,
+               -position_to_target_unit.get_angle_direction()) *
+               Angle::RAD_TO_DEG);
+    printf("x: %f, y: %f, w: %f \n", (float)chassis.position.x,
+           (float)chassis.position.y, (float)chassis.orientation.get_deg());
+    // master.print(1,1, "silly");
+    pros::delay(500);
+  }
+}
+
+double aim_assist_coefficient(
+    Vector2 goal_position, double goal_width, double min_coefficient,
+    double angular_interp_start_error, double far_distance_interp_start,
+    double far_distance_interp_end, double near_distance_interp_start,
+    double near_distance_interp_end) { // interp start is furthest distance, end
+                                       // is closest
+  Vector2 robot_to_goal = goal_position - chassis.position;
+
+  double absolute_error_to_center = abs(Angle::shortest_error(
+      chassis.orientation, -robot_to_goal.get_angle_direction()));
+  if (absolute_error_to_center >= 90) {
+    return 1.0;
+  }
+  if (robot_to_goal.get_magnitude() == 0) {
+    return 1.0;
+  }
+  // get the angle from the vector to the outside of the goal to the center of
+  // it
+  double absolute_outside_to_center =
+      abs(atan(goal_width / 2 / robot_to_goal.get_magnitude()));
+
+  // interpolation equation: out = ((in - in_at_max) * (out_at_min -
+  // out_at_max)) / (in_at_min - in_at_max) + out_at_max
+
+  // at absolute_outside_to_center = absolute_outside_to_center, =
+  // min_cofficient, at outside_to_center = angular_interp_start_angle, = 1
+  double angular_coefficient =
+      1 + ((absolute_error_to_center - angular_interp_start_error) *
+           (min_coefficient - 1)) /
+              (absolute_outside_to_center - angular_interp_start_error);
+  double clamped_angular_coefficient =
+      max(min(angular_coefficient, 1.0), min_coefficient);
+  // same 0 to 1 interpolation
+  double distance = robot_to_goal.get_magnitude();
+  double distance_coefficient = 1;
+  if (distance > far_distance_interp_end) {
+    distance_coefficient =
+        (distance - far_distance_interp_start) /
+        (far_distance_interp_end - far_distance_interp_start);
+  } else if (distance < near_distance_interp_start) {
+    distance_coefficient =
+        (distance - near_distance_interp_start) /
+        (near_distance_interp_end - near_distance_interp_start);
+  }
+  double clamped_distance_coefficient =
+      max(0.0, min(1.0, distance_coefficient));
+
+  return clamped_angular_coefficient * clamped_distance_coefficient;
+}
+
 void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
@@ -191,7 +266,15 @@ void opcontrol() {
 
   double interpolator_end = 30.0;
 
+  pros::Task odom_printer = pros::Task(print_odom);
+
   while (true) {
+
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      chassis.set_point_turn_pid(Vector2(), 80, Angle::from_deg(180));
+      chassis.wait_drive();
+      chassis.set_mode(ez::e_mode::DISABLE);
+    }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       interpolator_end -= 5;
@@ -204,8 +287,10 @@ void opcontrol() {
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       chassis.arcade_standard(ez::SPLIT);
     } else {
-      chassis.arcade_curvatherp_standard(
-          ez::SPLIT, 2, interpolator_end); // curvatherp special split arcade
+      double turn_coefficient = aim_assist_coefficient(
+          Vector2(0, 0), 8.0, .5, 30.0, 42.0, 36.0, 20.0, 12.0);
+      chassis.arcade_curvatherp_standard(ez::SPLIT, 2, interpolator_end,
+                                         1); // curvatherp special split arcade
       // chassis.arcade_curvatherp_standard(ez::SPLIT);
     }
 

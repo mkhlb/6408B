@@ -1,41 +1,16 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "active_brakee",
+    "project_name": "Odometry",
     "target": "v5",
     "templates": {
-      "EZ-Template": {
-        "location": "C:\\Users\\union\\AppData\\Roaming\\PROS\\templates\\EZ-Template@2.1.1",
-        "metadata": {
-          "origin": "local"
-        },
-        "name": "EZ-Template",
-        "py/object": "pros.conductor.templates.local_template.LocalTemplate",
-        "supported_kernels": "^3.5.4",
-        "system_files": [
-          "firmware\\EZ-Template.a",
-          "include\\EZ-Template\\util.hpp",
-          "include\\EZ-Template\\auton_selector.hpp",
-          "include\\EZ-Template\\api.hpp",
-          "include\\EZ-Template\\PID.hpp",
-          "include\\EZ-Template\\auton.hpp",
-          "include\\EZ-Template\\sdcard.hpp",
-          "include\\EZ-Template\\drive\\drive.hpp"
-        ],
-        "target": "v5",
-        "user_files": [],
-        "version": "2.1.1"
-      },
       "kernel": {
-        "location": "C:\\Users\\union\\AppData\\Roaming\\PROS\\templates\\kernel@3.5.4",
+        "location": "C:\\Users\\ingim\\AppData\\Roaming\\PROS\\templates\\kernel@3.5.4",
         "metadata": {
-          "allow_online": true,
           "cold_addr": "58720256",
           "cold_output": "bin/cold.package.bin",
-          "force_apply": false,
           "hot_addr": "125829120",
           "hot_output": "bin/hot.package.bin",
-          "kernel_version": "3.5.3",
           "origin": "pros-mainline",
           "output": "bin/monolith.bin"
         },
@@ -188,8 +163,7 @@
       }
     },
     "upload_options": {
-      "slot": 1,
-      "icon": "ufo"
+      "slot": 3
     }
   }
 }
