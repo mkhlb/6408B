@@ -1,4 +1,5 @@
 #include "autons.hpp"
+#include "EZ-Template/datatypes.hpp"
 #include "EZ-Template/util.hpp"
 #include "main.h"
 
@@ -100,9 +101,10 @@ void roll_test() {
 }
 
 void drive_test() {
-  chassis.set_drive_pid(10, DRIVE_SPEED);
+  chassis.reset_position(Vector2(8, 20), Angle::from_deg(-90));
+  chassis.set_drive_pid(-10, DRIVE_SPEED);
   chassis.wait_drive();
-  master.print(0, 0, "Done!");
+  roll_time(30, 115, 120);
 }
 
 void turn_test() {
