@@ -14,7 +14,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 using namespace ez;
 
-
 void Drive::set_defaults() {
   // PID Constants
   headingPID = {11, 0, 20, 0};

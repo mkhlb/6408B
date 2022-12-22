@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Odometry",
+    "project_name": "6408B_AUTO",
     "target": "v5",
     "templates": {
       "kernel": {

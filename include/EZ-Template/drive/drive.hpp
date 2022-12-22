@@ -604,7 +604,7 @@ public:
    * \param speed
    *        0 to 127, max speed during motion
    */
-  void set_swing_pid(e_swing type, double target, int speed);
+  void set_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0);
 
   /**
    * Resets all PID targets to 0.
@@ -805,6 +805,7 @@ public:
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 
 private: // !Auton
+  double swing_offside_multiplier = 0;
   double width;
 
   bool drive_toggle = true;

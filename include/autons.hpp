@@ -9,6 +9,7 @@ extern Drive chassis;
 extern mkhlib::CatapultIntakeController cata_intake;
 
 void roll_test();
+void swing_test();
 void drive_test();
 
 void default_constants();

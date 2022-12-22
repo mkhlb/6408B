@@ -98,17 +98,3 @@ void Drive::set_turn_pid(double target, int speed) {
   set_mode(TURN);
 }
 
-// Set swing PID
-void Drive::set_swing_pid(e_swing type, double target, int speed) {
-  // Print targets
-  if (print_toggle) printf("Swing Started... Target Value: %f\n", target);
-  current_swing = type;
-
-  // Set PID targets
-  swingPID.set_target(target);
-  headingPID.set_target(target);  // Update heading target for next drive motion
-  set_max_speed(speed);
-
-  // Run task
-  set_mode(SWING);
-}
