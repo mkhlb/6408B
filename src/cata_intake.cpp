@@ -182,7 +182,7 @@ void CatapultIntakeController::master_intake_task() {
   // Intake/roller state controller
   while(true)
   {
-    if(!cata_primed) {
+    if(!_intake_safety_bypass && !cata_primed) {
       intake.move_velocity(0); // Catapult safety, pause all other actions while catapult is up
     }
     else if(roller_state == e_roller_state::PID_MOVE) {
@@ -239,6 +239,7 @@ void CatapultIntakeController::roller_intake_spin_time_task() {
 void CatapultIntakeController::intake_velocity(double velocity) {
   roller_state = e_roller_state::IDLE;
   _intake_velocity = velocity / MOTOR_TO_INTAKE; // Convert between given intake RPM and the motor RPM
+  _intake_safety_bypass = false;
 }
 
 void CatapultIntakeController::intake_stop() {
@@ -250,6 +251,7 @@ void CatapultIntakeController::intake_stop() {
 void CatapultIntakeController::roller_velocity(double velocity) {
   roller_state = e_roller_state::IDLE;
   _intake_velocity = velocity / MOTOR_TO_ROLLER; // Convert between given roller RPM and the motor RPM
+  _intake_safety_bypass = true;
 }
 
 void CatapultIntakeController::roller_stop() {
@@ -262,12 +264,14 @@ void CatapultIntakeController::roller_time(int time, double velocity) {
   _intake_velocity = velocity / MOTOR_TO_ROLLER; // Convert between given roller RPM and the motor RPM
   _roller_timer = time;
   roller_state = e_roller_state::TIME_MOVE;
+  _intake_safety_bypass = true;
 }
 
 void CatapultIntakeController::intake_time( int time, double velocity) {
   _intake_velocity = velocity / MOTOR_TO_INTAKE; // Convert between given intake RPM and the motor RPM
   _roller_timer = time;
   roller_state = e_roller_state::TIME_MOVE;
+  _intake_safety_bypass = false;
 }
 
 void CatapultIntakeController::roller_pid_move(double target, int speed) { //Target should be in degrees of the roller, speed should again be in speed of the roller
@@ -281,6 +285,8 @@ void CatapultIntakeController::roller_pid_move(double target, int speed) { //Tar
   roller_pid.set_target(target_encoder);
 
   roller_state = e_roller_state::PID_MOVE; // Set state to start PID logic
+
+  _intake_safety_bypass = true;
 }
 
 void CatapultIntakeController::roller_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout){
