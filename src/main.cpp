@@ -269,14 +269,15 @@ void opcontrol() {
 
   chassis.set_mode(ez::DISABLE);
 
-  chassis.reset_position(Vector2(10.5, 29.5), Angle::from_deg(180));
+  //chassis.reset_position(Vector2(10.5, -29.5), Angle::from_deg(180));
   //ROBOT TO GOAL: 6.5, 94
-  Vector2 far_goal = Vector2(17, 124.5);
+  //Vector2 far_goal = Vector2(17, -130.5);
 
   while (true) {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
+      //chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
+      chassis.set_straight_point_drive_pid(Vector2(), 110);
       chassis.wait_drive();
       chassis.set_mode(ez::e_mode::DISABLE);
     }

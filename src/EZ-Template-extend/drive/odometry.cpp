@@ -67,8 +67,8 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
   }
 }
 
-void Drive::reset_position(Vector2 position, Angle w) {
-  position = position;
+void Drive::reset_position(Vector2 set_position, Angle w) {
+  position = set_position;
   set_angle(w.get_deg());
   orientation = w;
   

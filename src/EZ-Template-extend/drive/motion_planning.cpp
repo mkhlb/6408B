@@ -25,11 +25,11 @@ void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset) {
 }
 
 void Drive::set_straight_point_drive_pid(Vector2 target, int speed) {
-  Vector2 position_to_target_unit = (target - position).get_normalized();
+  Vector2 position_to_target = target - position;
   Vector2 orientation_unit = Vector2::from_polar(1, orientation);
   
-  double projected = position_to_target_unit * orientation_unit; // dot product with a unit vector is just a regular projection
-
+  double projected = position_to_target * orientation_unit; // dot product with a unit vector is just a regular projection
+  set_heading_relative_turn_pid(0, speed);
   set_drive_pid(projected, speed);
 }
 
