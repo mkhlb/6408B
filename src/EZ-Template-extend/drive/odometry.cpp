@@ -10,7 +10,7 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
   int last_left_sensor = left_sensor();
   int last_right_sensor = right_sensor();
 
-  double last_gyro = get_gyro();
+  Angle last_orientation = Angle::from_rad(orientation.get_rad());
 
   printf("starting odom task");
 
@@ -22,11 +22,7 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
 
     Vector2 local_move(0, 0);
 
-    Angle last_orientation = orientation;
-
-    orientation.set_deg(last_orientation.get_deg() + get_gyro() - last_gyro);
-
-    last_gyro = get_gyro();
+    orientation.set_deg(get_gyro());
 
     double left_distance = (double)(left_sensor() - last_left_sensor) / TICK_PER_INCH;
     double right_distance = (double)(right_sensor() - last_right_sensor) / TICK_PER_INCH;
@@ -39,6 +35,8 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
     Angle orientation_average = Angle::from_rad(last_orientation.get_rad() + orientation_delta / 2);
 
     //printf("Average Orientation: %f", (float)orientation_average.get_deg());
+
+    last_orientation.set_rad(orientation.get_rad());
 
     if (orientation_delta == 0) {
       local_move = Vector2((left_distance + right_distance) / 2, 0);
@@ -71,6 +69,7 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
 
 void Drive::reset_position(Vector2 position, Angle w) {
   position = position;
+  set_angle(w.get_deg());
   orientation = w;
   
 }

@@ -18,7 +18,7 @@ const int DRIVE_SPEED =
          // giving better heading correction.
 const int TURN_SPEED = 110;
 const int SWING_SPEED = 110;
-const int INTK_IN = 0.9*200;
+const int INTK_IN = 0.9*200*84/36;
 
 ///
 // Constants
@@ -34,16 +34,16 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
   chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
   chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.002, 35, 15);
+  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-  cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
+  //cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
 }
 
 void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
-  cata_intake.roller_set_exit_condition(100, 5, 500, 30, 500, 500);
+  //cata_intake.roller_set_exit_condition(100, 5, 500, 30, 500, 500);
 }
 
 void exit_condition_early_drive() { // made to exit the drive way earlier, more error so only use with position tracking or if planning on recording error, made when distance forward and backwards doesn't matter too much
@@ -77,12 +77,12 @@ void roll(double max_dist, double speed, double roll_amount) // roll_amount is d
   cata_intake.roller_velocity(0);
 }
 
-void roll_time(double max_dist, double speed, double roll_time) { //roll time can be negative or positive
+void roll_time(double max_dist, double back_distance, double speed, double roll_time) { //roll time can be negative or positive
   exit_condition_hit_wall(); // set exit conditions to conditions very sensitive to interference
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
-  chassis.set_drive_pid(-1, speed);
+  chassis.set_drive_pid(back_distance, speed);
 
   cata_intake.roller_time(fabs(roll_time), 200 * util::sgn(roll_time));
   cata_intake.wait_roller();
@@ -95,26 +95,28 @@ void roll_test() {
   roll(20, 115, -180);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
   chassis.wait_drive();
-  roll_time(20, 115, 500);
+  roll_time(20, -.4, 115, 500);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
   chassis.wait_drive();
 }
 
 void drive_test() {
   chassis.reset_position(Vector2(8, 20), Angle::from_deg(-90));
-  chassis.set_orientation_turn_pid(Angle::from_deg(90), TURN_SPEED);
-  chassis.wait_drive();
-  return;
-  chassis.set_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED);
-  chassis.wait_drive();
-  chassis.set_drive_pid(-10, DRIVE_SPEED);
-  chassis.wait_drive();
-  roll_time(30, 115, 120);
-  chassis.set_heading_relative_swing_pid(ez::RIGHT_SWING, 30, SWING_SPEED, .3);
-  chassis.wait_drive();
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(45), SWING_SPEED, -.2);
+  cata_intake.cata_prime();
+  roll_time(30, -.4, 50, 250);
+  chassis.set_heading_relative_swing_pid(ez::RIGHT_SWING, 30, SWING_SPEED, 0);
   chassis.wait_drive();
   cata_intake.intake_velocity(200);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(65), SWING_SPEED, -.5);
+  chassis.wait_drive();
+  chassis.set_drive_pid(20, DRIVE_SPEED);
+  chassis.wait_until(7);
+  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(0), SWING_SPEED, .15);
+  chassis.wait_drive();
+  chassis.set_drive_pid(30, DRIVE_SPEED);
+  chassis.wait_until(7);
+  cata_intake.intake_stop();
+  roll_time(30, -.8, 50, 250);
 }
 
 void turn_test() {

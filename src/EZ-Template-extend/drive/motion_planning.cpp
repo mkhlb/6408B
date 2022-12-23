@@ -48,5 +48,5 @@ void Drive::set_target_relative_swing_pid(e_swing type, double target, int speed
 }
 
 void Drive::set_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier) {
-  set_heading_relative_swing_pid(swing_type, -Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG, speed, offside_multiplier);
+  set_heading_relative_swing_pid(swing_type, Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG, speed, offside_multiplier);
 }

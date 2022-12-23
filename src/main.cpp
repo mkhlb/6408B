@@ -25,12 +25,12 @@ Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {16, 18}
+    {18, 16}
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {-3, -13}
+    {-13, -3}
 
     // IMU Port
     ,
@@ -266,6 +266,8 @@ void opcontrol() {
   double interpolator_end = 30.0;
 
   pros::Task odom_printer = pros::Task(print_odom);
+
+  chassis.set_mode(ez::DISABLE);
 
   while (true) {
 
