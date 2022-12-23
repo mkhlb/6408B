@@ -1,5 +1,6 @@
 #include "autons.hpp"
 #include "EZ-Template/datatypes.hpp"
+#include "EZ-Template/drive/drive.hpp"
 #include "EZ-Template/util.hpp"
 #include "main.h"
 
@@ -130,7 +131,7 @@ void drive_test() {
   // chassis.wait_until_orientation(Angle::from_deg(-90));
   // chassis.set_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED);
   chassis.wait_drive();
-  chassis.set_drive_pid(-48, DRIVE_SPEED);
+  chassis.set_drive_pid(-49, DRIVE_SPEED);
   chassis.wait_drive();
   cata_intake.intake_stop();
   //chassis.set_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180));
@@ -138,14 +139,39 @@ void drive_test() {
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(180), SWING_SPEED, -.45);
+  chassis.set_orientation_turn_pid(Angle::from_deg(170), TURN_SPEED);
   chassis.wait_drive();
   cata_intake.intake_velocity(INTK_IN);
   chassis.set_drive_pid(50, 70);
   chassis.wait_until(40);
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-138), SWING_SPEED, -.1);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-138), SWING_SPEED, -.3);
+  chassis.wait_until_orientation(Angle::from_deg(-146));
+  cata_intake.intake_velocity(-.8 * INTK_IN);
   chassis.wait_drive();
-  chassis.set_drive_pid(-3, DRIVE_SPEED);
+  pros::delay(60);
+  chassis.set_heading_relative_turn_pid(-7, TURN_SPEED);
+  chassis.set_drive_pid(-6, DRIVE_SPEED);
+  chassis.wait_until(-4);
+  cata_intake.cata_shoot();
+  cata_intake.wait_cata_done_shot();
+  cata_intake.intake_velocity(INTK_IN);
+  chassis.set_drive_pid(10, DRIVE_SPEED);
+  chassis.wait_drive();
+  chassis.set_orientation_turn_pid(Angle::from_deg(-45), TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(50, DRIVE_SPEED);
+  chassis.wait_drive();
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-105), SWING_SPEED, .2);
+  chassis.wait_drive();
+  chassis.set_drive_pid(-28, DRIVE_SPEED);
+  chassis.wait_drive();
+  cata_intake.cata_shoot();
+  cata_intake.wait_cata_done_shot();
+  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(80), SWING_SPEED, .4);
+  chassis.wait_drive();
+  chassis.set_drive_pid(45, DRIVE_SPEED);
+  chassis.wait_until(39);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(170), SWING_SPEED);
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
