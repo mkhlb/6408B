@@ -50,3 +50,20 @@ void Drive::set_target_relative_swing_pid(e_swing type, double target, int speed
 void Drive::set_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier) {
   set_heading_relative_swing_pid(swing_type, Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG, speed, offside_multiplier);
 }
+
+void Drive::wait_until_heading_relative(double target) {
+  wait_until(get_gyro() + target);
+}
+
+void Drive::wait_until_target_relative(double target) {
+  if(mode == TURN) {
+    wait_until(turnPID.get_target() + target);
+  }
+  else if(mode == SWING) {
+    wait_until(swingPID.get_target() + target);
+  }
+}
+
+void Drive::wait_until_orientation(Angle target) {
+  wait_until_heading_relative(Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG);
+}

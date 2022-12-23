@@ -610,6 +610,10 @@ public:
 
   void set_heading_relative_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0);
 
+  void wait_until_target_relative(double target);
+
+  void wait_until_heading_relative(double target);
+
   /**
    * Resets all PID targets to 0.
    */
@@ -646,6 +650,8 @@ public:
    *        new clipped speed
    */
   void set_max_speed(int speed);
+
+  void set_offside_multiplier(double offside_multiplier);
 
   /**
    * Set Either the headingPID, turnPID, forwardPID, backwardPID,
@@ -807,6 +813,8 @@ public:
   void set_straight_point_drive_pid(Vector2 target, int speed);
 
   void set_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier = 0);
+
+  void wait_until_orientation(Angle target);
 
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 

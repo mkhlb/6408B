@@ -105,7 +105,7 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
+  //chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
   cata_intake.intake_roller_set_active_brake(.9);
   chassis.set_curve_default(1, 2); // Defaults for curve. If using tank, only
                                    // the first parameter is used.
@@ -269,10 +269,14 @@ void opcontrol() {
 
   chassis.set_mode(ez::DISABLE);
 
+  chassis.reset_position(Vector2(10.5, 29.5), Angle::from_deg(0));
+  //ROBOT TO GOAL: 6.5, 94
+  Vector2 far_goal = Vector2(-17, 121.5);
+
   while (true) {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      chassis.set_point_turn_pid(Vector2(), 80, Angle::from_deg(180));
+      chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
       chassis.wait_drive();
       chassis.set_mode(ez::e_mode::DISABLE);
     }
