@@ -10,7 +10,7 @@ extern mkhlib::CatapultIntakeController cata_intake;
 
 void roll_test();
 void swing_test();
-void drive_test();
+void skills();
 
 void default_constants();
 void one_mogo_constants();

@@ -101,9 +101,9 @@ void roll_test() {
   chassis.wait_drive();
 }
 
-void drive_test() {
+void skills() {
   default_constants();
-  chassis.reset_position(Vector2(32, 19.5), Angle::from_deg(-90));
+  chassis.reset_position(Vector2(32, 19.5), Angle::from_deg(90));
   //ROBOT TO GOAL: -15, 102
   Vector2 far_goal = Vector2(17, 121.5);
   cata_intake.cata_prime();
@@ -111,22 +111,22 @@ void drive_test() {
   chassis.set_heading_relative_swing_pid(ez::RIGHT_SWING, 65, SWING_SPEED, .3);
   chassis.wait_until_heading_relative(25);
   cata_intake.intake_velocity(INTK_IN);
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(44), SWING_SPEED, -.5);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-136), SWING_SPEED, -.5);
   chassis.wait_drive();
   chassis.set_drive_pid(20, DRIVE_SPEED * .8);
   chassis.wait_until(6.5);
-  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(0), SWING_SPEED, .24);
+  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(180), SWING_SPEED, .24);
   chassis.wait_drive();
   chassis.set_drive_pid(30, DRIVE_SPEED);
   chassis.wait_until(3);
   cata_intake.intake_stop();
   roll_time(30, -.9, 50, 280);
   chassis.reset_position(Vector2(19.5, 29.5), chassis.orientation);
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-96), SWING_SPEED, -.2);
-  chassis.wait_until_orientation(Angle::from_deg(-25));
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(84), SWING_SPEED, -.2);
+  chassis.wait_until_orientation(Angle::from_deg(155));
   cata_intake.intake_velocity(INTK_IN);
   chassis.set_offside_multiplier(.4);
-  chassis.wait_until_orientation(Angle::from_deg(-75));
+  chassis.wait_until_orientation(Angle::from_deg(105));
   chassis.set_offside_multiplier(.6);
   // chassis.wait_until_orientation(Angle::from_deg(-90));
   // chassis.set_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED);
@@ -135,17 +135,17 @@ void drive_test() {
   chassis.wait_drive();
   cata_intake.intake_stop();
   //chassis.set_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180));
-  chassis.set_orientation_turn_pid(Angle::from_deg(-85), TURN_SPEED);
+  chassis.set_orientation_turn_pid(Angle::from_deg(95), TURN_SPEED);
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
-  chassis.set_orientation_turn_pid(Angle::from_deg(170), TURN_SPEED);
+  chassis.set_orientation_turn_pid(Angle::from_deg(-10), TURN_SPEED);
   chassis.wait_drive();
   cata_intake.intake_velocity(INTK_IN);
   chassis.set_drive_pid(50, 70);
   chassis.wait_until(40);
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-138), SWING_SPEED, -.3);
-  chassis.wait_until_orientation(Angle::from_deg(-146));
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(42), SWING_SPEED, -.3);
+  chassis.wait_until_orientation(Angle::from_deg(34));
   cata_intake.intake_velocity(-.8 * INTK_IN);
   chassis.wait_drive();
   pros::delay(60);
@@ -157,21 +157,21 @@ void drive_test() {
   cata_intake.intake_velocity(INTK_IN);
   chassis.set_drive_pid(10, DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_orientation_turn_pid(Angle::from_deg(-45), TURN_SPEED);
+  chassis.set_orientation_turn_pid(Angle::from_deg(135), TURN_SPEED);
   chassis.wait_drive();
   chassis.set_drive_pid(50, DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-105), SWING_SPEED, .2);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(75), SWING_SPEED, .2);
   chassis.wait_drive();
   chassis.set_drive_pid(-28, DRIVE_SPEED);
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
-  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(80), SWING_SPEED, .4);
+  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(-100), SWING_SPEED, .4);
   chassis.wait_drive();
   chassis.set_drive_pid(45, DRIVE_SPEED);
   chassis.wait_until(39);
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(170), SWING_SPEED);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-10), SWING_SPEED);
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();

@@ -171,7 +171,7 @@ void autonomous() {
 
   // auto selection
 
-  drive_test();
+  skills();
 }
 
 /**
@@ -269,9 +269,9 @@ void opcontrol() {
 
   chassis.set_mode(ez::DISABLE);
 
-  chassis.reset_position(Vector2(10.5, 29.5), Angle::from_deg(0));
+  chassis.reset_position(Vector2(10.5, 29.5), Angle::from_deg(180));
   //ROBOT TO GOAL: 6.5, 94
-  Vector2 far_goal = Vector2(-17, 121.5);
+  Vector2 far_goal = Vector2(17, 124.5);
 
   while (true) {
 
