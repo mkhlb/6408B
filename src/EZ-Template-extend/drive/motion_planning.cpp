@@ -3,7 +3,7 @@
 
 void Drive::set_target_relative_turn_pid(double target, int speed) {
   // Compute absolute target by adding to current heading
-  double absolute_target = turnPID.get_target() + target;
+  double absolute_target = headingPID.get_target() + target;
 
   set_turn_pid(absolute_target, speed);
 }
@@ -53,7 +53,7 @@ void Drive::set_heading_relative_swing_pid(e_swing type, double target, int spee
 }
 
 void Drive::set_target_relative_swing_pid(e_swing type, double target, int speed, double offside_multiplier) {
-  set_swing_pid(type, swingPID.get_target() + target, speed, offside_multiplier);
+  set_swing_pid(type, headingPID.get_target() + target, speed, offside_multiplier);
 }
 
 void Drive::set_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier) {

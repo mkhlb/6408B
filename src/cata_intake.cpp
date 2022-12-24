@@ -81,9 +81,9 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   roller_pid = PID(.5, 0, 5, 0);
 
   switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600; break;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200; break;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100; break;
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 480; break;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 160; break;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 80; break;
     case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
   }
 }

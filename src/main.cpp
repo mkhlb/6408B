@@ -105,7 +105,7 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  //chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
   cata_intake.intake_roller_set_active_brake(.9);
   chassis.set_curve_default(1, 2); // Defaults for curve. If using tank, only
                                    // the first parameter is used.
