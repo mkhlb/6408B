@@ -21,7 +21,7 @@
 // Chassis constructor
 Drive chassis(
     // Track width of chassis in inches
-    5
+    9.5
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
@@ -170,8 +170,8 @@ void autonomous() {
   //     selector.
 
   // auto selection
-
-  skills();
+  //roll_test();
+  skills2();
 }
 
 /**
@@ -277,6 +277,8 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
+      chassis.set_point_turn_pid(Vector2(), 110);
+      chassis.wait_drive();
       chassis.set_straight_point_drive_pid(Vector2(), 110);
       chassis.wait_drive();
       chassis.set_mode(ez::e_mode::DISABLE);
@@ -297,6 +299,7 @@ void opcontrol() {
           Vector2(0, 0), 8.0, .5, 30.0, 42.0, 36.0, 20.0, 12.0);
       chassis.arcade_curvatherp_standard(ez::SPLIT, 2, interpolator_end,
                                          1); // curvatherp special split arcade
+      //chassis.tank();
       // chassis.arcade_curvatherp_standard(ez::SPLIT);
     }
 

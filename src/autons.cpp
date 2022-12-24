@@ -35,16 +35,16 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.headingPID, 9, 0, 20, 0);
   chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
   chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
+  chassis.set_pid_constants(&chassis.turnPID, 5.1, 0.003, 35, 15);
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-  //cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
+  cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
 }
 
 void exit_condition_defaults() {
-  chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
-  chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
-  chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
-  //cata_intake.roller_set_exit_condition(100, 5, 500, 30, 500, 500);
+  chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 1000, 500);
+  chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 1000, 500);
+  chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 1000, 500);
+  cata_intake.roller_set_exit_condition(100, 5, 500, 30, 1000, 500);
 }
 
 void exit_condition_early_drive() { // made to exit the drive way earlier, more error so only use with position tracking or if planning on recording error, made when distance forward and backwards doesn't matter too much
@@ -93,21 +93,20 @@ void roll_time(double max_dist, double back_distance, double speed, double roll_
 
 //TEST OF VERY SENSITIVE EXIT CONDITIONS: Robot will exit almost immediately after the velocity of the wheel is 0
 void roll_test() {
-  roll(20, 115, -180);
-  chassis.set_drive_pid(-10, DRIVE_SPEED);
-  chassis.wait_drive();
-  roll_time(20, -.4, 115, 500);
-  chassis.set_drive_pid(-10, DRIVE_SPEED);
-  chassis.wait_drive();
+  default_constants();
+  exit_condition_defaults();
+  cata_intake.roller_pid_move(-45, 110);
+  cata_intake.wait_roller();
 }
 
 void skills() {
   default_constants();
-  chassis.reset_position(Vector2(32, -19.5), Angle::from_deg(90));
+  chassis.reset_position(Vector2(32, -11.5), Angle::from_deg(90));
   //ROBOT TO GOAL: -15, 102
-  Vector2 far_goal = Vector2(22.5, -130);
+  Vector2 far_goal = Vector2(18.5, -139.5);
+  Vector2 first_shot = Vector2(14, -88.5);
   cata_intake.cata_prime();
-  roll_time(30, -.4, 50, 280);
+  roll_time(30, -.5, 50, 280);
   chassis.set_heading_relative_swing_pid(ez::RIGHT_SWING, 65, SWING_SPEED, .3);
   chassis.wait_until_heading_relative(25);
   cata_intake.intake_velocity(INTK_IN);
@@ -120,18 +119,23 @@ void skills() {
   chassis.set_drive_pid(30, DRIVE_SPEED);
   chassis.wait_until(3);
   cata_intake.intake_stop();
-  roll_time(30, -.9, 50, 280);
-  chassis.reset_position(Vector2(19.5, -29.5), chassis.orientation);
+  roll_time(30, -.11, 50, 280);
+  chassis.set_mode(ez::DISABLE);
+  pros::delay(500);
+  //chassis.reset_position(Vector2(9.75, chassis.position.y), chassis.orientation);
   chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(80), SWING_SPEED, -.2);
   chassis.wait_until_orientation(Angle::from_deg(155));
   cata_intake.intake_velocity(INTK_IN);
-  chassis.set_offside_multiplier(.4);
-  chassis.wait_until_orientation(Angle::from_deg(105));
-  chassis.set_offside_multiplier(.6);
+  chassis.set_heading_relative_swing_pid(ez::LEFT_SWING, chassis.error_to_point(first_shot, Angle::from_deg(180)), SWING_SPEED);
   // chassis.wait_until_orientation(Angle::from_deg(-90));
   // chassis.set_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED);
   chassis.wait_drive();
-  chassis.set_drive_pid(-49, DRIVE_SPEED);
+  //chassis.set_drive_pid(-49, DRIVE_SPEED);
+  chassis.set_heading_relative_turn_pid(chassis.error_to_point(first_shot, Angle::from_deg(180)), TURN_SPEED);
+  chassis.set_straight_point_drive_pid(first_shot, DRIVE_SPEED);
+  // chassis.wait_until(-15);
+  // chassis.set_heading_relative_turn_pid(chassis.error_to_point(first_shot, Angle::from_deg(180)), TURN_SPEED);
+  // chassis.set_straight_point_drive_pid(first_shot, DRIVE_SPEED);
   chassis.wait_drive();
   cata_intake.intake_stop();
   //chassis.set_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180));
@@ -139,21 +143,23 @@ void skills() {
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
-  chassis.set_straight_point_drive_pid(Vector2(0, -97.5), DRIVE_SPEED);
+  chassis.set_straight_point_drive_pid(Vector2(0, -92), DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_orientation_turn_pid(Angle::from_deg(-4), TURN_SPEED);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-4), SWING_SPEED, -.5);
   chassis.wait_drive();
   cata_intake.intake_velocity(INTK_IN);
   chassis.set_drive_pid(50, 70);
   chassis.wait_until(40);
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(42), SWING_SPEED, -.3);
-  chassis.wait_until_orientation(Angle::from_deg(34));
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(38), SWING_SPEED, -.3);
+  chassis.wait_until_orientation(Angle::from_deg(32));
   cata_intake.intake_velocity(-.8 * INTK_IN);
   chassis.wait_drive();
-  pros::delay(60);
-  chassis.set_heading_relative_turn_pid(-7, TURN_SPEED);
-  chassis.set_drive_pid(-6, DRIVE_SPEED);
-  chassis.wait_until(-4);
+  pros::delay(130);
+  //chassis.set_heading_relative_turn_pid(-7, TURN_SPEED);
+  chassis.set_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180));
+  chassis.wait_drive();
+  chassis.set_drive_pid(-8, DRIVE_SPEED);
+  chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
   cata_intake.intake_velocity(INTK_IN);
@@ -163,22 +169,50 @@ void skills() {
   chassis.wait_drive();
   chassis.set_drive_pid(50, DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(75), SWING_SPEED, .2);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(82), SWING_SPEED, .2);
   chassis.wait_drive();
-  chassis.set_drive_pid(-28, DRIVE_SPEED);
+  chassis.set_drive_pid(-30, DRIVE_SPEED);
+  chassis.wait_drive();
+  chassis.set_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180));
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
-  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(-98), SWING_SPEED, .43);
+  chassis.set_orientation_turn_pid(Angle::from_deg(74), TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_target_relative_swing_pid(ez::RIGHT_SWING, -178, SWING_SPEED, .43);
   chassis.wait_drive();
   chassis.set_drive_pid(45, DRIVE_SPEED);
-  chassis.wait_until(10);
-  chassis.set_max_speed(DRIVE_SPEED * .65);
-  chassis.wait_until(39);
-  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-20), SWING_SPEED * .75, -.1);
+  chassis.wait_until(8);
+  chassis.set_max_speed(DRIVE_SPEED * .45);
+  chassis.wait_until(28);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-85), SWING_SPEED * .75, 0);
+  chassis.wait_drive();
+  chassis.set_drive_pid(40, DRIVE_SPEED * .55);
+  chassis.wait_until(9);
+  chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-12), SWING_SPEED, .1);
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
+}
+
+void skills2() {
+  default_constants();
+  chassis.reset_position(Vector2(32, -11.5), Angle::from_deg(90));
+  cata_intake.cata_prime();
+  roll_time(30, -.5, 50, 280);
+  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(180), SWING_SPEED);
+  cata_intake.intake_velocity(INTK_IN);
+  chassis.wait_drive();
+  chassis.set_target_relative_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, .3);
+  chassis.wait_drive();
+  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(180), SWING_SPEED, .6);
+  chassis.wait_drive();
+  cata_intake.intake_stop();
+  roll_time(30, -.8, 50, 280);
+  chassis.set_target_relative_swing_pid(ez::LEFT_SWING, -100, SWING_SPEED, -.3);
+  chassis.wait_drive();
+  chassis.set_drive_pid(-70, DRIVE_SPEED);
+  chassis.wait_drive();
 }
 
 void turn_test() {

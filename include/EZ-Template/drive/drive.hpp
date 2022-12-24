@@ -816,6 +816,8 @@ public:
 
   void wait_until_orientation(Angle target);
 
+  double error_to_point(Vector2 target, Angle offset = Angle());
+
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 
 private: // !Auton
