@@ -37,7 +37,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
   chassis.set_pid_constants(&chassis.turnPID, 5.1, 0.003, 35, 15);
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-  cata_intake.roller_set_pid_constants(3, 0.000, 7, 0);
+  cata_intake.roller_set_pid_constants(4, 0.000, 9, 0);
 }
 
 void exit_condition_defaults() {
@@ -209,7 +209,7 @@ void skills2() {
   chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(180), SWING_SPEED); // Swing directly in front of inter-roller disc
   cata_intake.intake_velocity(INTK_IN);
   chassis.wait_drive();
-  chassis.set_pid_constants(&chassis.swingPID, 7.3, 0, 43, 0); // Wide swing constants
+  chassis.set_pid_constants(&chassis.swingPID, 8, 0, 43, 0); // Wide swing constants
   chassis.set_target_relative_swing_pid(ez::LEFT_SWING, 52, SWING_SPEED, .4);
   chassis.wait_drive(); // Swing into disc
   chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(180), SWING_SPEED, .4);
@@ -236,7 +236,7 @@ void skills2() {
   chassis.wait_drive(); // Turn to third disc
   chassis.set_drive_pid(17, DRIVE_SPEED * .6, true);
   chassis.wait_drive(); // Intake third disc
-  chassis.set_orientation_turn_pid(Angle::from_deg(3), TURN_SPEED * .8);
+  chassis.set_orientation_turn_pid(Angle::from_deg(6), TURN_SPEED * .8);
   chassis.wait_drive(); // Face out a bit
   chassis.set_target_relative_swing_pid(ez::LEFT_SWING, 49, SWING_SPEED * .7);
   cata_intake.intake_time(700, INTK_IN); // Intake third disc, and probably extra one
@@ -245,7 +245,7 @@ void skills2() {
   chassis.wait_drive(); // Swing out to shot
   chassis.set_drive_pid(-6, DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_target_relative_turn_pid(-3, TURN_SPEED);
+  chassis.set_target_relative_turn_pid(-8, TURN_SPEED);
   chassis.wait_drive(); // Position for second shot
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
@@ -257,15 +257,44 @@ void skills2() {
   chassis.wait_drive(); // Turn to line of discs
   chassis.set_drive_pid(30, DRIVE_SPEED * .7, true);
   chassis.wait_drive(); // Intake line of discs
+
+  //TODO: make third shot end further up so swing into next line of 3 is simple
+
   chassis.set_target_relative_swing_pid(ez::LEFT_SWING, -67.0, SWING_SPEED);
   chassis.wait_drive(); // Swing to third shot
-  chassis.set_drive_pid(-22, DRIVE_SPEED, true);
+  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
   chassis.wait_drive(); // Drive to third shot
   chassis.set_target_relative_turn_pid(-3, TURN_SPEED);
   chassis.wait_drive(); // Aim for third shot
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
   /*** THIRD SHOT DONE ***/
+  chassis.set_target_relative_turn_pid(-20, TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_pid_constants(&chassis.swingPID, 8, 0, 43, 0); // Wide swing constants
+  chassis.set_target_relative_swing_pid(ez::RIGHT_SWING, -150, SWING_SPEED, .35);
+  chassis.wait_drive();
+  default_constants();
+  cata_intake.intake_velocity(INTK_IN);
+  chassis.set_drive_pid(8, DRIVE_SPEED * .8);
+  chassis.wait_drive(); // Intake first two discs
+  chassis.set_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED * .8); 
+  chassis.wait_drive(); // Turn to third disc
+  chassis.set_drive_pid(36, DRIVE_SPEED * .8, true);
+  chassis.wait_drive(); // Intake third disc
+  chassis.set_orientation_turn_pid(Angle::from_deg(-10), TURN_SPEED);
+  chassis.wait_drive();
+  cata_intake.cata_shoot();
+  cata_intake.wait_cata_done_shot();
+  /*** FOURTH SHOT DONE ***/
+  chassis.set_orientation_turn_pid(Angle::from_deg(6), TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(60, DRIVE_SPEED, true);
+  chassis.wait_drive();
+  chassis.set_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED);
+  chassis.wait_drive();
+  roll(30, -.5, 50, 180);
+  
 }
 
 void turn_test() {
