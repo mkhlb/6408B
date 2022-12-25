@@ -37,7 +37,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
   chassis.set_pid_constants(&chassis.turnPID, 5.1, 0.003, 35, 15);
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-  cata_intake.roller_set_pid_constants(.375, 0.009, 3.75, 10);
+  cata_intake.roller_set_pid_constants(2, 0.000, 5, 0);
 }
 
 void exit_condition_defaults() {
@@ -65,13 +65,13 @@ void exit_condition_hit_wall() { // made to exit as soon as velocity is 0, for d
 // 6408B code
 // __________________________________________________________________________________________________________________________________________________________________________________________________________
 
-void roll(double max_dist, double speed, double roll_amount) // roll_amount is degrees
+void roll(double max_dist, double back_distance, double speed, double roll_amount) // roll_amount is degrees
 {
   exit_condition_hit_wall(); // set exit conditions to conditions very sensitive to interference
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
-  chassis.set_drive_pid(-1, speed);
+  chassis.set_drive_pid(back_distance, speed);
 
   cata_intake.roller_pid_move(roll_amount, 127);
   cata_intake.wait_roller();
@@ -95,8 +95,11 @@ void roll_time(double max_dist, double back_distance, double speed, double roll_
 void roll_test() {
   default_constants();
   exit_condition_defaults();
-  cata_intake.roller_pid_move(-45, 110);
-  cata_intake.wait_roller();
+  roll(30, -.4, 50, 180);
+  // cata_intake.roller_pid_move(-180, 110);
+  // cata_intake.wait_roller();
+  // cata_intake.roller_pid_move(360, 110);
+  // cata_intake.wait_roller();
 }
 
 void skills() {
@@ -202,7 +205,7 @@ void skills2() {
   pros::delay(10);
   chassis.set_orientation_turn_pid(Angle::from_deg(90), TURN_SPEED);
   cata_intake.cata_prime();
-  roll_time(30, -.5, 50, 280);
+  roll(30, -.5, 50, 200);
   chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(180), SWING_SPEED);
   cata_intake.intake_velocity(INTK_IN);
   chassis.wait_drive();
@@ -213,7 +216,7 @@ void skills2() {
   chassis.wait_drive();
   default_constants();
   cata_intake.intake_stop();
-  roll_time(30, -.8, 50, 280);
+  roll(30, -.8, 50, 200);
   chassis.set_target_relative_swing_pid(ez::LEFT_SWING, -95.5, SWING_SPEED);
   chassis.wait_drive();
   cata_intake.intake_velocity(INTK_IN);

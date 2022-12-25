@@ -212,7 +212,7 @@ void CatapultIntakeController::roller_pid_task() {
 
   //clip output
   double out = ez::util::clip_num(roller_pid.output, max_speed, -max_speed);
-
+  
   intake.move_voltage(out * 12000.0 / 127.0);
 
   // check for exit
@@ -221,6 +221,7 @@ void CatapultIntakeController::roller_pid_task() {
   if(exit != ez::RUNNING) { //PID HAS EXITED!
     roller_interfered = exit == ez::mA_EXIT || exit == ez::VELOCITY_EXIT;
 
+    
     intake_stop();
   }
 }
@@ -243,8 +244,8 @@ void CatapultIntakeController::intake_velocity(double velocity) {
 }
 
 void CatapultIntakeController::intake_stop() {
+  if(_intake_velocity != 0 || roller_state != IDLE) {intake.tare_position(); }
   roller_state = e_roller_state::IDLE;
-  if(_intake_velocity != 0) {intake.tare_position(); }
   _intake_velocity = 0;
 }
 

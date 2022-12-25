@@ -202,7 +202,7 @@ private:
 
   int _cata_max_velocity;
 
-  double _intake_roller_active_brake_kp = 0.25;
+  double _intake_roller_active_brake_kp = 0;
 
   bool _intake_safety_bypass = false;
 };
