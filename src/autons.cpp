@@ -251,20 +251,17 @@ void skills2() {
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
   cata_intake.intake_velocity(INTK_IN);
-
   chassis.set_target_relative_swing_pid(ez::RIGHT_SWING, -40, SWING_SPEED, .42);
-  //chassis.set_drive_pid(10, DRIVE_SPEED);
   chassis.wait_drive();
   chassis.set_orientation_turn_pid(Angle::from_deg(135), TURN_SPEED);
   chassis.wait_drive();
-  
   chassis.set_drive_pid(30, DRIVE_SPEED * .7, true);
   chassis.wait_drive();
   chassis.set_target_relative_swing_pid(ez::LEFT_SWING, -67.0, SWING_SPEED);
   chassis.wait_drive();
   chassis.set_drive_pid(-22, DRIVE_SPEED, true);
   chassis.wait_drive();
-  chassis.set_target_relative_turn_pid(-5, TURN_SPEED);
+  chassis.set_target_relative_turn_pid(-3, TURN_SPEED);
   chassis.wait_drive();
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
