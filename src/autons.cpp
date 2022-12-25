@@ -37,14 +37,14 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
   chassis.set_pid_constants(&chassis.turnPID, 5.1, 0.003, 35, 15);
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-  cata_intake.roller_set_pid_constants(2, 0.000, 5, 0);
+  cata_intake.roller_set_pid_constants(3, 0.000, 7, 0);
 }
 
 void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 1000, 500);
   chassis.set_exit_condition(chassis.swing_exit, 100, 1.5, 500, 7, 1000, 500);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 1000, 500);
-  cata_intake.roller_set_exit_condition(100, 5, 500, 30, 1000, 500);
+  cata_intake.roller_set_exit_condition(100, 10, 500, 50, 1000, 500);
 }
 
 void exit_condition_early_drive() { // made to exit the drive way earlier, more error so only use with position tracking or if planning on recording error, made when distance forward and backwards doesn't matter too much
@@ -205,7 +205,7 @@ void skills2() {
   pros::delay(10);
   chassis.set_orientation_turn_pid(Angle::from_deg(90), TURN_SPEED);
   cata_intake.cata_prime();
-  roll(30, -.5, 50, 200);
+  roll(30, -.5, 50, 180);
   chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(180), SWING_SPEED);
   cata_intake.intake_velocity(INTK_IN);
   chassis.wait_drive();
@@ -216,7 +216,7 @@ void skills2() {
   chassis.wait_drive();
   default_constants();
   cata_intake.intake_stop();
-  roll(30, -.8, 50, 200);
+  roll(30, -.8, 50, 180);
   chassis.set_target_relative_swing_pid(ez::LEFT_SWING, -95.5, SWING_SPEED);
   chassis.wait_drive();
   cata_intake.intake_velocity(INTK_IN);
