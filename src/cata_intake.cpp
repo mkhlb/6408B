@@ -36,6 +36,8 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
 
   roller_interfered = false;
 
+  cata_primed = false;
+
   // Default internal timer for e_roller_state::TIME_MOVE
   _roller_timer = 0;
 
@@ -73,6 +75,8 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   max_speed = 600; // Max speed internally is in terms of the intake motor, but when set you pass it in terms of the roller
 
   roller_interfered = false;
+
+  cata_primed = false;
 
   // Default internal timer for e_roller_state::TIME_MOVE
   _roller_timer = 0;
@@ -172,7 +176,7 @@ void CatapultIntakeController::cata_hold() {
 
 }
 
-void CatapultIntakeController::cata_prime() { cata_state = e_cata_state::PRIME; }
+void CatapultIntakeController::cata_prime() { if(!cata_primed) { cata_state = e_cata_state::PRIME; } }
 
 void CatapultIntakeController::cata_shoot() { cata_state = e_cata_state::SHOOT; }
 
@@ -212,7 +216,7 @@ void CatapultIntakeController::roller_pid_task() {
 
   //clip output
   double out = ez::util::clip_num(roller_pid.output, max_speed, -max_speed);
-  
+
   intake.move_voltage(out * 12000.0 / 127.0);
 
   // check for exit
