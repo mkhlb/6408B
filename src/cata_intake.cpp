@@ -113,8 +113,6 @@ void CatapultIntakeController::master_cata_task() {
       cata_shoot_task();
     }
 
-    cata_primed = cata_state == e_cata_state::HOLD; // Update the public cata_primed variable - used for intake safety
-
     pros::delay(ez::util::DELAY_TIME);
   }
 }
@@ -138,7 +136,8 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value()) // Stop when limit switch is pressed
   {
-    cata_move_relative(-9 / 36.0 * 84.0, _cata_max_velocity);
+    cata_move_relative(-8.3 / 36.0 * 84.0, _cata_max_velocity);
+    cata_primed = true;
     cata_state = e_cata_state::HOLD;
   }
   

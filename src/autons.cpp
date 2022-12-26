@@ -138,15 +138,11 @@ void skills1() {
   cata_intake.cata_shoot(); // First shot
   cata_intake.wait_cata_done_shot();
   /*** FIRST SHOT DONE ***/
-  chassis.set_orientation_turn_pid(Angle::from_deg(-7), TURN_SPEED); 
+  chassis.set_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED); 
   chassis.wait_drive(); // Turn to slightly face low goal
   cata_intake.intake_velocity(INTK_IN);
-  chassis.set_drive_pid(20, DRIVE_SPEED * .8, true);
+  chassis.set_drive_pid(37, DRIVE_SPEED * .8, true);
   chassis.wait_drive(); // Intake first two discs
-  chassis.set_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED * .8); 
-  chassis.wait_drive(); // Turn to third disc
-  chassis.set_drive_pid(17, DRIVE_SPEED * .6, true);
-  chassis.wait_drive(); // Intake third disc
   chassis.set_orientation_turn_pid(Angle::from_deg(6), TURN_SPEED * .8);
   chassis.wait_drive(); // Face out a bit
   chassis.set_target_relative_swing_pid(ez::LEFT_SWING, 49, SWING_SPEED * .7);

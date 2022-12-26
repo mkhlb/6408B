@@ -93,10 +93,11 @@ mkhlib::CatapultIntakeController cata_intake(
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  cata_intake.cata_prime();
   // Print our branding over your terminal :D
   ez::print_ez_template();
 
-  cata_intake.cata_prime();
+  //cata_intake.cata_prime();
   pros::delay(
       500); // Stop the user from doing anything while legacy ports configure.
 
