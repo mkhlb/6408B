@@ -172,7 +172,7 @@ void autonomous() {
 
   // auto selection
   //roll_test();
-  roll_test();
+  skills();
 }
 
 /**
