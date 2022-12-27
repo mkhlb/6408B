@@ -820,6 +820,8 @@ public:
 
   double error_to_point(Vector2 target, Angle offset = Angle());
 
+  void drive_to_point(Vector2 target, int speed, bool backwards = false);
+
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 
 private: // !Auton
