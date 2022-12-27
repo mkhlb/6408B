@@ -1,5 +1,6 @@
 #include "main.h"
 #include "EZ-Template/datatypes.hpp"
+#include "EZ-Template/drive/drive.hpp"
 #include "EZ-Template/sdcard.hpp"
 #include "EZ-Template/util.hpp"
 #include "autons.hpp"
@@ -106,11 +107,12 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
+  //chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
   cata_intake.intake_roller_set_active_brake(.9);
   chassis.set_curve_default(1, 2); // Defaults for curve. If using tank, only
                                    // the first parameter is used.
   default_constants(); // Set the drive to your own constants from autons.cpp!
+  exit_condition_defaults();
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({Auton("Full win point", roll_test)});
@@ -278,9 +280,11 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
-      chassis.set_point_turn_pid(Vector2(), 110);
-      chassis.wait_drive();
-      chassis.set_straight_point_drive_pid(Vector2(), 110);
+      chasing_heading_constants();
+      chassis.drive_to_point(Vector2(), 110);
+      default_constants();
+      chassis.set_orientation_turn_pid(Angle(), 110);
+      //chassis.set_point_turn_pid(Vector2(), 110);
       chassis.wait_drive();
       chassis.set_mode(ez::e_mode::DISABLE);
     }

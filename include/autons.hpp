@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EZ-Template/drive/drive.hpp"
+#include "autons.hpp"
 #include "cata_intake.hpp"
 #include "pros/adi.hpp"
 #include "pros/motors.hpp"
@@ -20,3 +21,6 @@ void two_mogo_constants();
 void exit_condition_defaults();
 void exit_condition_hit_wall();
 void modified_exit_condition();
+
+void exit_condition_defaults();
+void chasing_heading_constants();
