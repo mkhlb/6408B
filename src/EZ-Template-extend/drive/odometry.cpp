@@ -9,6 +9,7 @@ using namespace ez;
 void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot moves towards positive x, clockwise turn is positive (CW+)
   int last_left_sensor = left_sensor();
   int last_right_sensor = right_sensor();
+  int last_middle_sensor = middle_sensor();
 
   Angle last_orientation = Angle::from_rad(orientation.get_rad());
 
@@ -26,9 +27,11 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
 
     double left_distance = (double)(left_sensor() - last_left_sensor) / TICK_PER_INCH;
     double right_distance = (double)(right_sensor() - last_right_sensor) / TICK_PER_INCH;
+    double middle_distance = (double)(middle_sensor() - last_middle_sensor) / MIDDLE_TICK_PER_INCH;
 
     last_left_sensor = left_sensor();
     last_right_sensor = right_sensor();
+    last_middle_sensor = middle_sensor();
 
     double orientation_delta = Angle::shortest_error(last_orientation, orientation);
 
@@ -47,8 +50,9 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
       double left_radius = left_distance / orientation_delta;
       double right_radius = right_distance / orientation_delta;
       double middle_radius = ((left_radius - width / 2) + (right_radius + width / 2)) / 2; // take average of both side's reading of radius 
+      double lateral_radius = (middle_distance / orientation_delta) + length;
       local_move = // local move = chord length = 2 * radius * sin(theta/2)
-          Vector2(2 * middle_radius * sin(orientation_delta / 2) ,0);
+          Vector2(2 * middle_radius * sin(orientation_delta / 2) , 2 * lateral_radius * sin(orientation_delta / 2));
     }
     if (local_move.get_magnitude() != 0) {
       Vector2 global_move = Vector2(local_move.x, local_move.y);

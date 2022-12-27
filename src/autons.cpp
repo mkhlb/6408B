@@ -160,7 +160,7 @@ void skills1() {
   cata_intake.intake_velocity(INTK_IN); // Continue intaking in case discs aren't settled
   chassis.set_target_relative_turn_pid(0, TURN_SPEED);
   chassis.wait_drive();
-  chassis.set_drive_pid(-55.5, DRIVE_SPEED, true); 
+  chassis.set_drive_pid(-55.4, DRIVE_SPEED, true); 
   chassis.wait_drive(); // Drive to far goal
   chassis.set_target_relative_turn_pid(15, TURN_SPEED);
   chassis.wait_drive(); // Turn for first shot
@@ -244,7 +244,7 @@ void skills2() {
   // pros::delay(10); // Wait for odometry to use the reset orientation
   // chassis.set_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED); // Set heading PID
   // if(!cata_intake.cata_primed) { cata_intake.cata_prime(); }
-  Vector2 expansion = Vector2(20, -120);
+  Vector2 expansion = Vector2(120, -120);
 
   roll(30, -.5, 50, 180);
   chassis.set_target_relative_swing_pid(ez::RIGHT_SWING, 140, SWING_SPEED, .14);
@@ -298,8 +298,10 @@ void skills2() {
   cata_intake.cata_shoot();
   cata_intake.wait_cata_done_shot();
   /*** SECOND SHOT DONE ***/
+  chasing_heading_constants();
   chassis.drive_to_point(expansion, DRIVE_SPEED);
-  chassis.set_orientation_turn_pid(Angle::from_deg(135), TURN_SPEED);
+  default_constants();
+  chassis.set_orientation_turn_pid(Angle::from_deg(-45), TURN_SPEED);
   chassis.wait_drive();
 }
 

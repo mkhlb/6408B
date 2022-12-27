@@ -13,6 +13,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #include "EZ-Template/PID.hpp"
 #include "EZ-Template/datatypes.hpp"
 #include "EZ-Template/util.hpp"
+#include "pros/adi.hpp"
 #include "pros/motors.h"
 
 
@@ -70,6 +71,8 @@ public:
    * Right tracking wheel.
    */
   pros::ADIEncoder right_tracker;
+
+  pros::ADIEncoder middle_tracker;
 
   /**
    * Left rotation tracker.
@@ -160,10 +163,10 @@ public:
    * \param right_tracker_ports
    *        Input {3, 4}.  Make ports negative if reversed!
    */
-  Drive(double width, std::vector<int> left_motor_ports,
+  Drive(double width, double length, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
         double ticks, double ratio, std::vector<int> left_tracker_ports,
-        std::vector<int> right_tracker_ports);
+        std::vector<int> right_tracker_ports, std::vector<int> middle_tracker_ports, double middle_tracker_diameter);
 
   /**
    * Creates a Drive Controller using encoders plugged into a 3 wire expander.
@@ -506,6 +509,8 @@ public:
    */
   double left_mA();
 
+  int middle_sensor();
+
   /**
    * Return TRUE when the motor is over current.
    */
@@ -829,6 +834,7 @@ private: // !Auton
 
   double swing_offside_multiplier = 0;
   double width;
+  double length = 0;
 
   bool drive_toggle = true;
   bool print_toggle = true;
@@ -850,6 +856,8 @@ private: // !Auton
    */
   double TICK_PER_REV;
   double TICK_PER_INCH;
+  double MIDDLE_TICK_PER_REV;
+  double MIDDLE_TICK_PER_INCH;
   double CIRCUMFERENCE;
 
   double CARTRIDGE;

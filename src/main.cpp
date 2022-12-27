@@ -23,6 +23,8 @@
 Drive chassis(
     // Track width of chassis in inches
     9.5
+    , 
+    -1.45
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
@@ -64,7 +66,10 @@ Drive chassis(
     // Right Tracking Wheel Ports (negative port will reverse it!)
     ,{5, 6} // 3 wire encoder
     // ,-9 // Rotation sensor
-    
+
+    ,{-3,-4}
+
+    ,2.75
 
     // Uncomment if tracking wheels are plugged into a 3 wire expander
     // 3 Wire Port Expander Smart Port
@@ -272,19 +277,31 @@ void opcontrol() {
 
   chassis.set_mode(ez::DISABLE);
 
-  //chassis.reset_position(Vector2(10.5, -29.5), Angle::from_deg(180));
+  chassis.reset_position(Vector2(11.5, -29.5), Angle::from_deg(180));
+  pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94
-  //Vector2 far_goal = Vector2(17, -130.5);
+  Vector2 firing_spot = Vector2(19.5, -82);
+  Vector2 firing_spot_2 = Vector2(54, -126);
+  Vector2 far_goal = Vector2(17.5, -125.5);
 
   while (true) {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
       chasing_heading_constants();
-      chassis.drive_to_point(Vector2(), 110);
+      chassis.drive_to_point(firing_spot, 110, true);
       default_constants();
-      chassis.set_orientation_turn_pid(Angle(), 110);
-      //chassis.set_point_turn_pid(Vector2(), 110);
+      //chassis.set_orientation_turn_pid(Angle(), 110);
+      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.wait_drive();
+      chassis.set_mode(ez::e_mode::DISABLE);
+    }
+
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      chasing_heading_constants();
+      chassis.drive_to_point(firing_spot_2, 110, true);
+      default_constants();
+      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();
       chassis.set_mode(ez::e_mode::DISABLE);
     }

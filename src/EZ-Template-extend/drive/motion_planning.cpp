@@ -86,6 +86,10 @@ void Drive::drive_to_point(Vector2 target, int speed, bool backwards) {
     set_straight_point_drive_pid(target, speed);
     pros::delay(util::DELAY_TIME);
   }
+  while((target - position).get_magnitude() > 6) {
+    set_straight_point_drive_pid(target, speed);
+    pros::delay(util::DELAY_TIME);
+  }
   set_straight_point_drive_pid(target, speed);
   wait_drive();
 }

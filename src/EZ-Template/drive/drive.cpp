@@ -108,6 +108,8 @@ void Drive::reset_drive_sensor() {
     right_rotation.reset_position();
     return;
   }
+
+  middle_tracker.reset();
 }
 
 int Drive::right_sensor() {
@@ -150,6 +152,10 @@ double Drive::left_mA() {
 bool Drive::left_over_current() { 
   if (back_wheels) { return left_motors.back().is_over_current(); }
   return left_motors.front().is_over_current();
+}
+
+int Drive::middle_sensor() {
+  return middle_tracker.get_value();
 }
 
 void Drive::reset_gyro(double new_heading) { imu.set_rotation(new_heading); }
