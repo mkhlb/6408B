@@ -17,8 +17,10 @@ using namespace ez;
 void Drive::set_defaults() {
   // PID Constants
   headingPID = {11, 0, 20, 0};
-  forward_drivePID = {0.45, 0, 5, 0};
-  backward_drivePID = {0.45, 0, 5, 0};
+  left_forward_drivePID = {0.45, 0, 5, 0};
+  right_forward_drivePID = {0.45, 0, 5, 0};
+  left_backward_drivePID = {0.45, 0, 5, 0};
+  right_backward_drivePID = {0.45, 0, 5, 0};
   turnPID = {5, 0.003, 35, 15};
   swingPID = {7, 0, 45, 0};
   leftPID = {0.45, 0, 5, 0};
@@ -93,7 +95,10 @@ void Drive::set_drive_current_limit(int mA) {
 // Motor telemetry
 void Drive::reset_drive_sensor() {
   left_motors.front().tare_position();
+  left_motors.back().tare_position();
   right_motors.front().tare_position();
+  right_motors.back().tare_position();
+
   if (is_tracker == DRIVE_ADI_ENCODER) {
     left_tracker.reset();
     right_tracker.reset();
@@ -110,22 +115,42 @@ int Drive::right_sensor() {
     return right_tracker.get_value();
   else if (is_tracker == DRIVE_ROTATION)
     return right_rotation.get_position();
+  else if (back_wheels) { return right_motors.back().get_position(); }
   return right_motors.front().get_position();
 }
-int Drive::right_velocity() { return right_motors.front().get_actual_velocity(); }
-double Drive::right_mA() { return right_motors.front().get_current_draw(); }
-bool Drive::right_over_current() { return right_motors.front().is_over_current(); }
+int Drive::right_velocity() { 
+  if (back_wheels) { return right_motors.back().get_actual_velocity(); }
+  return right_motors.front().get_actual_velocity(); 
+}
+double Drive::right_mA() { 
+  if (back_wheels) { return right_motors.back().get_current_draw(); }
+  return right_motors.front().get_current_draw();
+}
+bool Drive::right_over_current() { 
+  if (back_wheels) { return right_motors.back().is_over_current(); }
+  return right_motors.front().is_over_current();  
+}
 
 int Drive::left_sensor() {
   if (is_tracker == DRIVE_ADI_ENCODER)
     return left_tracker.get_value();
   else if (is_tracker == DRIVE_ROTATION)
     return left_rotation.get_position();
+  else if (back_wheels) { return left_motors.back().get_position(); }
   return left_motors.front().get_position();
 }
-int Drive::left_velocity() { return left_motors.front().get_actual_velocity(); }
-double Drive::left_mA() { return left_motors.front().get_current_draw(); }
-bool Drive::left_over_current() { return left_motors.front().is_over_current(); }
+int Drive::left_velocity() { 
+  if (back_wheels) { return left_motors.back().get_actual_velocity(); }
+  return left_motors.front().get_actual_velocity();
+}
+double Drive::left_mA() { 
+  if (back_wheels) { return left_motors.back().get_current_draw(); }
+  return left_motors.front().get_current_draw();
+}
+bool Drive::left_over_current() { 
+  if (back_wheels) { return left_motors.back().is_over_current(); }
+  return left_motors.front().is_over_current();
+}
 
 void Drive::reset_gyro(double new_heading) { imu.set_rotation(new_heading); }
 double Drive::get_gyro() { return imu.get_rotation(); }

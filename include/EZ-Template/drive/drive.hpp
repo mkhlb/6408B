@@ -86,10 +86,12 @@ public:
    */
   PID headingPID;
   PID turnPID;
-  PID forward_drivePID;
+  PID left_forward_drivePID;
+  PID right_forward_drivePID;
+  PID left_backward_drivePID;
+  PID right_backward_drivePID;
   PID leftPID;
   PID rightPID;
-  PID backward_drivePID;
   PID swingPID;
 
   /**
@@ -821,6 +823,8 @@ public:
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 
 private: // !Auton
+  bool back_wheels = false;
+
   double swing_offside_multiplier = 0;
   double width;
 

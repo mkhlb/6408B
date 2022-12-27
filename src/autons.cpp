@@ -32,12 +32,30 @@ const int INTK_IN = 0.9*200*84/36;
 void default_constants() {
   chassis.set_slew_min_power(80, 80);
   chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 8.7, 0, 22, 0);
-  chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5.1, 0.003, 35, 15);
-  chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
+  chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
+  chassis.set_pid_constants(&chassis.left_forward_drivePID, 0.51, 0.0016, 3.8, 600);
+  chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.51, 0.0016, 3.8, 600);
+  chassis.set_pid_constants(&chassis.left_backward_drivePID, .75, 0, 4, 0);
+  chassis.set_pid_constants(&chassis.right_backward_drivePID, .75, 0, 4, 0);
+  chassis.set_pid_constants(&chassis.turnPID, 5.8, 0.0016, 54, 15);
+  chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
+}
+
+void wide_swing_constants() { // offside = .3
+  chassis.set_pid_constants(&chassis.swingPID, 7.5, 0, 45, 0);
+}
+
+void very_wide_swing_constants() { // offside = .6
+  chassis.set_pid_constants(&chassis.swingPID, 8.3, 0, 38, 0);
+}
+
+void narrow_swing_constants() { // offside = -.3
+  chassis.set_pid_constants(&chassis.swingPID, 6.3, 0, 49, 0);
+}
+
+void very_narrow_swing_constants() { // offside = -.6
+  chassis.set_pid_constants(&chassis.swingPID, 5.8, 0, 50.5, 0);
 }
 
 void exit_condition_defaults() {
@@ -52,9 +70,9 @@ void exit_condition_early_drive() { // made to exit the drive way earlier, more 
 }
 
 void modified_exit_condition() {
-  chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
-  chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
-  chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
+  chassis.set_exit_condition(chassis.turn_exit, 100, 3, 50000, 7, 50000, 50000);
+  chassis.set_exit_condition(chassis.swing_exit, 100, 3, 50000, 7, 50000, 50000);
+  chassis.set_exit_condition(chassis.drive_exit, 80, 25, 30000, 150, 50000, 50000);
 }
 
 
@@ -95,11 +113,14 @@ void roll_time(double max_dist, double back_distance, double speed, double roll_
 void roll_test() {
   default_constants();
   exit_condition_defaults();
-  roll(30, -.4, 50, 180);
-  // cata_intake.roller_pid_move(-180, 110);
-  // cata_intake.wait_roller();
-  // cata_intake.roller_pid_move(360, 110);
-  // cata_intake.wait_roller();
+  modified_exit_condition();
+  very_narrow_swing_constants();
+  chassis.set_swing_pid(ez::LEFT_SWING, 90, SWING_SPEED, -.6);
+  chassis.wait_drive();
+  chassis.set_swing_pid(ez::LEFT_SWING, 0, SWING_SPEED, -.6);
+  chassis.wait_drive();
+
+
 }
 
 void skills() {
@@ -110,7 +131,7 @@ void skills() {
 void skills1() {
   default_constants();
   exit_condition_defaults();
-  chassis.reset_position(Vector2(32, -11.5), Angle::from_deg(92));
+  chassis.reset_position(Vector2(32, -11.5), Angle::from_deg(91.5));
   pros::delay(10); // Wait for odometry to use the reset orientation
   chassis.set_orientation_turn_pid(Angle::from_deg(90), TURN_SPEED); // Set heading PID
   cata_intake.cata_prime();
@@ -131,7 +152,7 @@ void skills1() {
   cata_intake.intake_velocity(INTK_IN); // Continue intaking in case discs aren't settled
   chassis.set_target_relative_turn_pid(0, TURN_SPEED);
   chassis.wait_drive();
-  chassis.set_drive_pid(-59, DRIVE_SPEED, true); 
+  chassis.set_drive_pid(-60, DRIVE_SPEED, true); 
   chassis.wait_drive(); // Drive to far goal
   chassis.set_target_relative_turn_pid(15, TURN_SPEED);
   chassis.wait_drive(); // Turn for first shot

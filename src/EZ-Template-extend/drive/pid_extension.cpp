@@ -38,6 +38,8 @@ void Drive::set_swing_pid(e_swing type, double target, int speed, double offside
 
   // Run task
   set_mode(SWING);
+
+  back_wheels = false;
 }
 
 void Drive::set_offside_multiplier(double offside_multiplier) {

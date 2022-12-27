@@ -44,7 +44,7 @@ Drive chassis(
     // Cartridge RPM
     //   (or tick per rotation if using tracking wheels)
     ,
-    200
+    360
 
     // External Gear Ratio (MUST BE DECIMAL)
     //    (or gear ratio of tracking wheel)
@@ -55,15 +55,15 @@ Drive chassis(
     1.0
 
     // Uncomment if using tracking wheels
-    /*
+    
     // Left Tracking Wheel Ports (negative port will reverse it!)
-    // ,{1, 2} // 3 wire encoder
+    ,{7, 8} // 3 wire encoder
     // ,8 // Rotation sensor
 
     // Right Tracking Wheel Ports (negative port will reverse it!)
-    // ,{-3, -4} // 3 wire encoder
+    ,{5, 6} // 3 wire encoder
     // ,-9 // Rotation sensor
-    */
+    
 
     // Uncomment if tracking wheels are plugged into a 3 wire expander
     // 3 Wire Port Expander Smart Port
@@ -172,7 +172,7 @@ void autonomous() {
 
   // auto selection
   //roll_test();
-  skills();
+  roll_test();
 }
 
 /**

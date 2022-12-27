@@ -15,8 +15,10 @@ void Drive::reset_pid_targets() {
   headingPID.set_target(0);
   leftPID.set_target(0);
   rightPID.set_target(0);
-  forward_drivePID.set_target(0);
-  backward_drivePID.set_target(0);
+  left_forward_drivePID.set_target(0);
+  right_forward_drivePID.set_target(0);
+  left_backward_drivePID.set_target(0);
+  right_backward_drivePID.set_target(0);
   turnPID.set_target(0);
 }
 
@@ -50,27 +52,32 @@ void Drive::set_drive_pid(double target, int speed, bool slew_on, bool toggle_he
   set_max_speed(speed);
   heading_on = toggle_heading;
   bool is_backwards = false;
-  l_start = left_sensor();
-  r_start = right_sensor();
 
   double l_target_encoder, r_target_encoder;
+
+  // Figure out if going forward or backward
+  if (target < 0) {
+    auto left_consts = left_backward_drivePID.get_constants();
+    auto right_consts = right_backward_drivePID.get_constants();
+    leftPID.set_constants(left_consts.kp, left_consts.ki, left_consts.kd, left_consts.start_i);
+    rightPID.set_constants(right_consts.kp, right_consts.ki, right_consts.kd, right_consts.start_i);
+    is_backwards = true;
+  } else {
+    auto left_consts = left_forward_drivePID.get_constants();
+    auto right_consts = right_forward_drivePID.get_constants();
+    leftPID.set_constants(left_consts.kp, left_consts.ki, left_consts.kd, left_consts.start_i);
+    rightPID.set_constants(right_consts.kp, right_consts.ki, right_consts.kd, right_consts.start_i);
+    is_backwards = false;
+  }
+
+  back_wheels = !is_backwards;
+
+  l_start = left_sensor();
+  r_start = right_sensor();
 
   // Figure actual target value
   l_target_encoder = l_start + (target * TICK_PER_INCH);
   r_target_encoder = r_start + (target * TICK_PER_INCH);
-
-  // Figure out if going forward or backward
-  if (l_target_encoder < l_start && r_target_encoder < r_start) {
-    auto consts = backward_drivePID.get_constants();
-    leftPID.set_constants(consts.kp, consts.ki, consts.kd, consts.start_i);
-    rightPID.set_constants(consts.kp, consts.ki, consts.kd, consts.start_i);
-    is_backwards = true;
-  } else {
-    auto consts = forward_drivePID.get_constants();
-    leftPID.set_constants(consts.kp, consts.ki, consts.kd, consts.start_i);
-    rightPID.set_constants(consts.kp, consts.ki, consts.kd, consts.start_i);
-    is_backwards = false;
-  }
 
   // Set PID targets
   leftPID.set_target(l_target_encoder);
@@ -88,6 +95,8 @@ void Drive::set_drive_pid(double target, int speed, bool slew_on, bool toggle_he
 void Drive::set_turn_pid(double target, int speed) {
   // Print targets
   if (print_toggle) printf("Turn Started... Target Value: %f\n", target);
+
+  back_wheels = false; 
 
   // Set PID targets
   turnPID.set_target(target);
