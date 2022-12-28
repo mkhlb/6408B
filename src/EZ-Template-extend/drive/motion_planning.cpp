@@ -20,7 +20,6 @@ void Drive::set_heading_relative_turn_pid(double target, int speed) {
 void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset) {
   //calculate direction vector from current position to target
   Vector2 position_to_target_unit = (target - position).get_normalized();
-
   double angle = Angle::shortest_error(orientation, position_to_target_unit.get_angle_direction() + offset);
   //set_turn_pid(position_to_target_unit.get_angle_direction().get_deg() + offset.get_deg(), 100);
   set_heading_relative_turn_pid(angle * Angle::RAD_TO_DEG, speed);

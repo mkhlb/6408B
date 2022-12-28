@@ -832,6 +832,8 @@ public:
 private: // !Auton
   bool back_wheels = false;
 
+  Angle last_orientation;
+
   double swing_offside_multiplier = 0;
   double width;
   double length = 0;

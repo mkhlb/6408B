@@ -11,7 +11,7 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
   int last_right_sensor = right_sensor();
   int last_middle_sensor = middle_sensor();
 
-  Angle last_orientation = Angle::from_rad(orientation.get_rad());
+  last_orientation = Angle::from_rad(orientation.get_rad());
 
   printf("starting odom task");
 
@@ -72,8 +72,8 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
 }
 
 void Drive::reset_position(Vector2 set_position, Angle w) {
-  position = set_position;
-  set_angle(w.get_deg());
-  orientation = w;
-  
+  position = Vector2(set_position.x, set_position.y);
+  last_orientation.set_deg(w.get_deg());
+  reset_gyro(w.get_deg());
+  orientation.set_deg(w.get_deg());
 }

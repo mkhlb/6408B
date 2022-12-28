@@ -44,6 +44,7 @@
 #include "EZ-Template/api.hpp"
 #include "autons.hpp"
 #include "cata_intake.hpp"
+#include "positions.hpp"
 
 // More includes here...
 //

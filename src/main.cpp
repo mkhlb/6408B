@@ -4,6 +4,7 @@
 #include "EZ-Template/sdcard.hpp"
 #include "EZ-Template/util.hpp"
 #include "autons.hpp"
+#include "positions.hpp"
 #include "pros/adi.h"
 #include "pros/adi.hpp"
 #include "pros/misc.h"
@@ -24,7 +25,7 @@ Drive chassis(
     // Track width of chassis in inches
     9.5
     , 
-    -1.45
+    -1.475 // 1.45, overshoots : 1.4, undershoot
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
@@ -198,23 +199,27 @@ void autonomous() {
 
 void print_odom() {
   return;
+  int counter_max = 5000;
+  int counter = 50;
+  double odom_error = 0;
+  double last_degs = chassis.orientation.get_deg();
+  printf("initializing printer \n");
   while (true) {
-    Vector2 position_to_target_unit =
-        (Vector2() - chassis.position).get_normalized();
-    // master.print(0, 0, "%f",
-    // (float)Angle::shortest_error(Angle::from_degrees(90),
-    // Angle::from_degrees(0)));
-    printf("angle: %f ",
-           (float)(-position_to_target_unit.get_angle_direction()).get_deg());
-    printf("shortest error: %f ",
-           (float)Angle::shortest_error(
-               chassis.orientation,
-               -position_to_target_unit.get_angle_direction()) *
-               Angle::RAD_TO_DEG);
-    printf("x: %f, y: %f, w: %f \n", (float)chassis.position.x,
-           (float)chassis.position.y, (float)chassis.orientation.get_deg());
-    // master.print(1,1, "silly");
-    pros::delay(500);
+
+    odom_error += chassis.orientation.get_deg() - last_degs;
+
+    last_degs = chassis.orientation.get_deg();
+
+    pros::delay(5);
+
+    counter = counter - 1;
+    if(counter <= 0) {
+      counter = counter_max;
+      printf("error: %f \n", (float)(odom_error));
+      odom_error = 0;
+      
+    }
+    
   }
 }
 
@@ -277,19 +282,18 @@ void opcontrol() {
 
   chassis.set_mode(ez::DISABLE);
 
-  chassis.reset_position(Vector2(11.5, -29.5), Angle::from_deg(180));
+  chassis.reset_position(near_lateral_roller, Angle::from_deg(180));
+  //chassis.reset_position(Vector2(), Angle::from_deg(180));
   pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94
-  Vector2 firing_spot = Vector2(19.5, -82);
-  Vector2 firing_spot_2 = Vector2(54, -126);
-  Vector2 far_goal = Vector2(17.5, -125.5);
+  // field is about 141
 
   while (true) {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
       chasing_heading_constants();
-      chassis.drive_to_point(firing_spot, 110, true);
+      chassis.drive_to_point(far_goal_left_firing_spot, 110, true);
       default_constants();
       //chassis.set_orientation_turn_pid(Angle(), 110);
       chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
@@ -299,7 +303,7 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       chasing_heading_constants();
-      chassis.drive_to_point(firing_spot_2, 110, true);
+      chassis.drive_to_point(far_goal_right_firing_spot, 110, true);
       default_constants();
       chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();

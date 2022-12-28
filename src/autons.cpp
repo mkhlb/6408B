@@ -37,7 +37,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.51, 0.0016, 3.8, 600);
   chassis.set_pid_constants(&chassis.left_backward_drivePID, .75, 0, 4, 0);
   chassis.set_pid_constants(&chassis.right_backward_drivePID, .75, 0, 4, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5.8, 0.0016, 54, 15);
+  chassis.set_pid_constants(&chassis.turnPID, 6.0, 0.0016, 54, 15);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
 }
