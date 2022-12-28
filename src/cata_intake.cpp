@@ -85,9 +85,9 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   roller_pid = PID(.5, 0, 5, 0);
 
   switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 480; break;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 160; break;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 80; break;
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 360; break;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 120; break;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 60; break;
     case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
   }
 }
@@ -136,7 +136,7 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value()) // Stop when limit switch is pressed
   {
-    cata_move_relative(-8.3 / 36.0 * 84.0, _cata_max_velocity);
+    cata_move_relative(-7.4 / 36.0 * 84.0, _cata_max_velocity);
     cata_primed = true;
     cata_state = e_cata_state::HOLD;
   }

@@ -78,14 +78,14 @@ void Drive::wait_until_orientation(Angle target) {
 }
 
 void Drive::drive_to_point(Vector2 target, int speed, bool backwards) {
-  while(headingPID.exit_condition() == ez::RUNNING) {
+  do {
     Angle offset = Angle();
     if(backwards) { offset = Angle::from_deg(180); }
     set_point_turn_pid(target, speed, offset);
     set_straight_point_drive_pid(target, speed);
     pros::delay(util::DELAY_TIME);
-  }
-  while((target - position).get_magnitude() > 6) {
+  } while(headingPID.exit_condition() == ez::RUNNING && ((target-position).get_magnitude() > 6));
+  while((target - position).get_magnitude() > 4) {
     set_straight_point_drive_pid(target, speed);
     pros::delay(util::DELAY_TIME);
   }

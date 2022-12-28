@@ -100,7 +100,7 @@ mkhlib::CatapultIntakeController cata_intake(
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  cata_intake.cata_prime();
+  cata_intake.cata_hold();
   // Print our branding over your terminal :D
   ez::print_ez_template();
 
@@ -168,8 +168,6 @@ void autonomous() {
   chassis.reset_drive_sensor();              // Reset drive sensors to 0.
   chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps
                                              // autonomous consistency.
-
-  cata_intake.cata_hold();
 
 
   // drive_example();
@@ -286,7 +284,7 @@ void opcontrol() {
   //chassis.reset_position(Vector2(), Angle::from_deg(180));
   pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94
-  // field is about 141
+  // field is about 142
 
   while (true) {
 
