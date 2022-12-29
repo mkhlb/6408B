@@ -24,7 +24,7 @@ void Drive::swing_pid_task() {
 }
 
 // Set swing PID
-void Drive::set_swing_pid(e_swing type, double target, int speed, double offside_multiplier) {
+void Drive::set_swing_pid(e_swing type, double target, int speed, double offside_multiplier, bool mode_set) {
   swing_offside_multiplier = offside_multiplier;
   
   // Print targets
@@ -37,7 +37,7 @@ void Drive::set_swing_pid(e_swing type, double target, int speed, double offside
   set_max_speed(speed);
 
   // Run task
-  set_mode(SWING);
+  if(mode_set) { set_mode(SWING); }
 
   back_wheels = false;
 }

@@ -16,6 +16,11 @@ public:
     _rad = 0;
   }
 
+  Angle(const Angle &copy) {
+    _deg = copy._deg;
+    _rad = copy._rad;
+  }
+
   //Angle(double value) { SetDeg(value); }
 
   static Angle from_deg(double deg) {Angle a; a.set_deg(deg); return a;}
@@ -65,6 +70,11 @@ public:
   Vector2(double xValue=0, double yValue=0) {
     x = xValue;
     y = yValue;
+  }
+
+  Vector2(const Vector2 &copy) {
+    x = copy.x;
+    y = copy.y;
   }
 
   static Vector2 from_polar(double magnitude, Angle angle) {

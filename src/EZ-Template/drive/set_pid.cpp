@@ -40,7 +40,7 @@ int Drive::get_swing_min() { return swing_min; }
 e_mode Drive::get_mode() { return mode; }
 
 // Set drive PID
-void Drive::set_drive_pid(double target, int speed, bool slew_on, bool toggle_heading) {
+void Drive::set_drive_pid(double target, int speed, bool slew_on, bool toggle_heading, bool mode_set) {
   TICK_PER_INCH = get_tick_per_inch();
 
   // Print targets
@@ -88,11 +88,11 @@ void Drive::set_drive_pid(double target, int speed, bool slew_on, bool toggle_he
   slew_initialize(right_slew, slew_on, max_speed, r_target_encoder, right_sensor(), r_start, is_backwards);
 
   // Run task
-  set_mode(DRIVE);
+  if(mode_set) { set_mode(DRIVE); }
 }
 
 // Set turn PID
-void Drive::set_turn_pid(double target, int speed) {
+void Drive::set_turn_pid(double target, int speed, bool mode_set) {
   // Print targets
   if (print_toggle) printf("Turn Started... Target Value: %f\n", target);
 
@@ -104,6 +104,6 @@ void Drive::set_turn_pid(double target, int speed) {
   set_max_speed(speed);
 
   // Run task
-  set_mode(TURN);
+  if(mode_set) { set_mode(TURN); }
 }
 

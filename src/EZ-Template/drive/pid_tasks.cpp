@@ -4,6 +4,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+#include "EZ-Template/util.hpp"
 #include "main.h"
 #include "pros/misc.hpp"
 
@@ -18,6 +19,10 @@ void Drive::ez_auto_task() {
       turn_pid_task();
     else if (get_mode() == SWING)
       swing_pid_task();
+    else if (get_mode() == POINT)
+      point_pid_task();
+    else if (get_mode() == PATH)
+      path_pid_task();
 
     if (pros::competition::is_autonomous() && !util::AUTON_RAN)
       util::AUTON_RAN = true;
@@ -72,4 +77,38 @@ void Drive::turn_pid_task() {
   // Set motors
   if (drive_toggle)
     set_tank(gyro_out, -gyro_out);
+}
+
+void Drive::point_pid_task() {
+  if((point_target - position).get_magnitude() > 6) {
+    //figure out offset
+    Angle offset = Angle();
+    switch (point_orientation) {
+      case FORWARD: offset = Angle::from_deg(0); break;
+      case BACKWARD: offset = Angle::from_deg(180); break;
+      case AGNOSTIC: {
+        if(abs(error_to_point(point_target)) > 180) {
+          offset = Angle::from_deg(180);
+        }
+        else {
+          offset = Angle::from_deg(0);
+        }
+        break;
+      }
+    }
+    //set PIDs
+    set_point_heading_pid(point_target);
+    set_straight_point_drive_pid(point_target, max_speed, false, true, false);
+    
+  }
+  else if((point_target - position).get_magnitude() > 4) {
+    set_straight_point_drive_pid(point_target, max_speed, false, true, false);
+  }
+  else {
+    set_straight_point_drive_pid(point_target, max_speed);
+  }
+}
+
+void Drive::path_pid_task() {
+
 }
