@@ -69,7 +69,14 @@ enum exit_output { RUNNING = 1,
 enum e_mode { DISABLE = 0,
               SWING = 1,
               TURN = 2,
-              DRIVE = 3 };
+              DRIVE = 3,
+              POINT = 4,
+              PATH = 5, };
+
+
+enum e_point_orientation { FORWARD = 0,
+                           BACKWARD = 1,
+                           AGNOSTIC = 2, };
 
 /**
  * Outputs string for exit_condition enum.
@@ -83,6 +90,8 @@ extern bool AUTON_RAN;
  * Returns 1 if input is positive and -1 if input is negative
  */
 int sgn(double input);
+
+int sgn2(double input);
 
 /**
  * Returns true if the input is < 0

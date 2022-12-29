@@ -178,6 +178,7 @@ void autonomous() {
 
   // auto selection
   //roll_test();
+  //path_test();
   skills();
 }
 
@@ -290,22 +291,33 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
-      chasing_heading_constants();
-      chassis.drive_to_point(far_goal_left_firing_spot, 110, true);
-      default_constants();
-      //chassis.set_orientation_turn_pid(Angle(), 110);
+      int start = chassis.position.y > far_goal_left_firing_path.begin()->y ? 1 : 0;
+
+      chassis.set_path_pid(far_goal_left_firing_path, 110, 16, ez::AGNOSTIC, start);
+      chassis.wait_until_absolute_points_passed(1);
+      chassis.set_point_path_orientation(ez::BACKWARD);
+      chassis.wait_until_absolute_points_passed(2);
+      chassis.set_max_speed(80);
+      chassis.wait_drive();
+      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.wait_drive();
+      chassis.set_mode(ez::DISABLE);
+    }
+
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      // chasing_heading_constants();
+      // chassis.set_point_drive_pid(far_goal_right_firing_spot, 110, ez::AGNOSTIC);
+      // chassis.wait_drive();
+      // default_constants();
       chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();
       chassis.set_mode(ez::e_mode::DISABLE);
     }
 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      chasing_heading_constants();
-      chassis.drive_to_point(far_goal_right_firing_spot, 110, true);
-      default_constants();
-      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
-      chassis.wait_drive();
-      chassis.set_mode(ez::e_mode::DISABLE);
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+      master.print(0,0, "%f", (float)chassis.orientation.get_deg());
+      pros::delay(2000);
+      master.clear();
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {

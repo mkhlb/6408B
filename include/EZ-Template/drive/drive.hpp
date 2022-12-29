@@ -8,7 +8,9 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include <functional>
 #include <iostream>
+#include <queue>
 #include <tuple>
+#include <vector>
 
 #include "EZ-Template/PID.hpp"
 #include "EZ-Template/datatypes.hpp"
@@ -569,7 +571,7 @@ public:
    * correction
    */
   void set_drive_pid(double target, int speed, bool slew_on = false,
-                     bool toggle_heading = true);
+                     bool toggle_heading = true, bool mode_set = true);
 
   /**
    * Sets the robot to turn using PID.
@@ -579,7 +581,7 @@ public:
    * \param speed
    *        0 to 127, max speed during motion
    */
-  void set_turn_pid(double target, int speed);
+  void set_turn_pid(double target, int speed, bool mode_set = true);
 
   /**
    * Sets the robot to turn relative to current heading target using PID.
@@ -589,7 +591,7 @@ public:
    * \param speed
    *        0 to 127, max speed during motion
    */
-  void set_target_relative_turn_pid(double target, int speed);
+  void set_target_relative_turn_pid(double target, int speed, bool mode_set = true);
 
   /**
    * Sets the robot to turn relative to current heading using PID.
@@ -599,7 +601,7 @@ public:
    * \param speed
    *        0 to 127, max speed during motion
    */
-  void set_heading_relative_turn_pid(double target, int speed);
+  void set_heading_relative_turn_pid(double target, int speed, bool mode_set = true);
 
   /**
    * Turn using only the left or right side.
@@ -611,15 +613,13 @@ public:
    * \param speed
    *        0 to 127, max speed during motion
    */
-  void set_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0);
+  void set_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0, bool mode_set = true);
 
-  void set_target_relative_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0);
+  void set_target_relative_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0, bool mode_set = true);
 
-  void set_heading_relative_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0);
+  void set_heading_relative_swing_pid(e_swing type, double target, int speed, double offside_multiplier = 0, bool mode_set = true);
 
-  void wait_until_target_relative(double target);
-
-  void wait_until_heading_relative(double target);
+  
 
   /**
    * Resets all PID targets to 0.
@@ -636,13 +636,21 @@ public:
    */
   void wait_drive();
 
-  /**
-   * Lock the code in a while loop until this position has passed.
-   *
-   * \param target
-   *        when driving, this is inches.  when turning, this is degrees.
-   */
-  void wait_until(double target);
+  void wait_until_distance_travelled(double target);
+
+  void wait_until_distance_remaining(double target);
+
+  void wait_until_heading(double target);
+
+  void wait_until_orientation(Angle target);
+
+  void wait_until_target_relative(double target);
+
+  void wait_until_heading_relative(double target);
+
+  void wait_until_relative_points_passed(int target);
+  
+  void wait_until_absolute_points_passed(int target);
 
   /**
    * Autonomous interference detection.  Returns true when interfered, and false
@@ -813,23 +821,57 @@ public:
 
   // MOTION PLANNER
 
-  void set_orientation_turn_pid(Angle target, int speed);
+  void set_orientation_turn_pid(Angle target, int speed, bool mode_set = true);
 
-  void set_point_turn_pid(Vector2 target, int speed, Angle offset = Angle());
+  void set_point_turn_pid(Vector2 target, int speed, Angle offset = Angle(), bool mode_set = true);
 
-  void set_straight_point_drive_pid(Vector2 target, int speed);
+  void set_straight_point_drive_pid(Vector2 target, int speed, bool slew_on = false, bool heading = true, bool mode_set = true);
 
-  void set_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier = 0);
+  void set_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier = 0, bool mode_set = true);
 
-  void wait_until_orientation(Angle target);
+  double straight_to_point(Vector2 target);
 
   double error_to_point(Vector2 target, Angle offset = Angle());
 
-  void drive_to_point(Vector2 target, int speed, bool backwards = false);
+  void set_point_drive_pid(Vector2 target, int speed, e_point_orientation orientation = AGNOSTIC);
+
+  void set_orientation_heading_pid(Angle target);
+
+  void set_point_heading_pid(Vector2 target, Angle offset = Angle());
+
+  void set_heading_relative_heading_pid(double target);
+
+  void set_target_relative_heading_pid(double target);
+
+  // PATH TRACKING
+
+  void set_point_path_orientation(e_point_orientation orientation);
+
+  void reset_path();
+
+  void add_point(Vector2 point);
+
+  void add_points(std::list<Vector2> points);
+
+  void drive_to_points(int speed);
+
+  void set_path_pid(int speed, double lookahead, e_point_orientation orientation, int start_point=0);
+
+  void set_path_pid(std::list<Vector2> target, int speed, double lookahead, e_point_orientation orientation, int start_point=0);
+
+  void path_set_target();
 
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 
 private: // !Auton
+
+  std::vector<Vector2> path;
+  int path_advance;
+  Vector2 point_target;
+  e_point_orientation point_orientation = AGNOSTIC;
+
+  double path_lookahead;
+
   bool back_wheels = false;
 
   Angle last_orientation;
@@ -877,6 +919,8 @@ private: // !Auton
   void drive_pid_task();
   void swing_pid_task();
   void turn_pid_task();
+  void point_pid_task();
+  void path_pid_task();
   void ez_auto_task();
   void ez_odometry_task();
 
@@ -891,6 +935,8 @@ private: // !Auton
    */
   double l_start = 0;
   double r_start = 0;
+
+  Vector2 point_start;
 
   /**
    * Enable/disable modifying controller curve with controller.
