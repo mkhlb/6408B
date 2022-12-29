@@ -132,11 +132,19 @@ bool is_reversed(double input) {
 }
 
 int sgn(double input) {
-  if (input > 0)
-    return 1;
-  else if (input < 0)
+    
+  if (input < 0)
     return -1;
+  else if(input > 0) {
+    return 1;
+  }
   return 0;
+}
+
+int sgn2(double input) {
+  if (input < 0)
+    return -1;
+  return 1;
 }
 
 double clip_num(double input, double max, double min) {

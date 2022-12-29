@@ -91,6 +91,8 @@ extern bool AUTON_RAN;
  */
 int sgn(double input);
 
+int sgn2(double input);
+
 /**
  * Returns true if the input is < 0
  */

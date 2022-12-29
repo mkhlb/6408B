@@ -23,6 +23,7 @@ void Drive::add_points(std::list<Vector2> points) {
 void Drive::drive_to_points(int speed) {
   for(auto it = path.begin(); it != path.end(); ++it) {
     set_point_drive_pid(*it, speed);
+    wait_drive();
   }
 }
 
@@ -40,7 +41,7 @@ void Drive::path_set_target() {
 
   if(local_second_point.get_magnitude() < path_lookahead) { // second point is within lookahead, go right to it and start searching next line segment
     point_target = second_point;
-    path_advance++; // if point is found!
+    path_advance = path_advance + 1; // if point is found!
   }
   else {
     double line_x = local_second_point.x - local_first_point.x;
@@ -51,24 +52,24 @@ void Drive::path_set_target() {
 
     if(discriminant >= 0) { // found!
       Vector2 first_intersect = Vector2(
-        (cross * line_y + util::sgn(line_y) * line_x * sqrt(discriminant)) / (line_length * line_length),
+        (cross * line_y + util::sgn2(line_y) * line_x * sqrt(discriminant)) / (line_length * line_length),
         (-cross * line_x + fabs(line_y) * sqrt(discriminant)) / (line_length * line_length)
       );
       Vector2 second_intersect = Vector2(
-        (cross * line_y - util::sgn(line_y) * line_x * sqrt(discriminant)) / (line_length * line_length),
+        (cross * line_y - util::sgn2(line_y) * line_x * sqrt(discriminant)) / (line_length * line_length),
         (-cross * line_x - fabs(line_y) * sqrt(discriminant)) / (line_length * line_length)
       );
-      bool first_intersect_legal = false;
-      bool second_intersect_legal = false;
+      bool first_intersect_legal = true;
+      bool second_intersect_legal = true;
       
       Vector2 lower_bound = Vector2(fmin(local_first_point.x, local_second_point.x), fmin(local_first_point.y, local_second_point.y));
       Vector2 upper_bound = Vector2(fmax(local_first_point.x, local_second_point.x), fmax(local_first_point.y, local_second_point.y));
 
-      if(first_intersect.x > lower_bound.x && first_intersect.y > lower_bound.y && first_intersect.x < upper_bound.x && first_intersect.y < upper_bound.y) {
-        first_intersect_legal = true;
+      if(first_intersect.x < lower_bound.x || first_intersect.y < lower_bound.y || first_intersect.x > upper_bound.x || first_intersect.y > upper_bound.y) {
+        first_intersect_legal = false;
       }
-      if(second_intersect.x > lower_bound.x && second_intersect.y > lower_bound.y && second_intersect.x < upper_bound.x && second_intersect.y < upper_bound.y) {
-        second_intersect_legal = true;
+      if(second_intersect.x < lower_bound.x || second_intersect.y < lower_bound.y || second_intersect.x > upper_bound.x || second_intersect.y > upper_bound.y) {
+        second_intersect_legal = false;
       }
 
       if(first_intersect_legal && second_intersect_legal) {
@@ -93,17 +94,27 @@ void Drive::path_set_target() {
   }
 }
 
-void Drive::set_path_pid(int speed, double lookahead, e_point_orientation orientation) {
+void Drive::set_path_pid(int speed, double lookahead, e_point_orientation orientation, int start_point) {
   path_lookahead = lookahead;
   set_max_speed(speed);
   point_orientation = orientation;
-  path_advance = 0;
-  point_target = path[0];
+  Vector2 first = position;
+  path.insert(path.begin(), first);
+  path_advance = start_point;
+  point_target = path[start_point + 1];
+  point_start = position;
+  headingPID.reset_variables();
 
   set_mode(PATH);
 }
 
-void Drive::wait_until_points_passed(int target) {
+void Drive::set_path_pid(std::list<Vector2> target, int speed, double lookahead, e_point_orientation orientation, int start_point) {
+  reset_path();
+  add_points(target);
+  set_path_pid(speed, lookahead, orientation, start_point);
+}
+
+void Drive::wait_until_relative_points_passed(int target) {
   int relative_target = target + path_advance;
   while(true) {
     if(path_advance >= relative_target) {
@@ -111,6 +122,19 @@ void Drive::wait_until_points_passed(int target) {
     }
     if(mode != PATH) {
       wait_drive();
+      return;
+    }
+    pros::delay(ez::util::DELAY_TIME);
+  }
+}
+
+void Drive::wait_until_absolute_points_passed(int target) {
+  while(true) {
+    pros::delay(ez::util::DELAY_TIME);
+    if(path_advance >= target) {
+      return;
+    }
+    if(mode != PATH) {
       return;
     }
   }

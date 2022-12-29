@@ -186,7 +186,10 @@ void Drive::wait_until_distance_remaining(double target) {
   }
   else if(mode == POINT || mode == PATH) {
     while(true) {
-      if((point_target - position).get_magnitude() < target) {
+      if(mode == POINT && (point_target - position).get_magnitude() < target) {
+        return;
+      }
+      if(mode == PATH && (*path.end() - position).get_magnitude() < target) {
         return;
       }
       if(mode == DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
@@ -237,4 +240,8 @@ void Drive::set_point_drive_pid(Vector2 target, int speed, e_point_orientation o
   point_orientation = orientation;
   headingPID.reset_variables();
   set_mode(POINT);
+}
+
+void Drive::set_point_path_orientation(e_point_orientation orientation) {
+  point_orientation = orientation;
 }

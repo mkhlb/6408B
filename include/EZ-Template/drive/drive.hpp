@@ -10,6 +10,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #include <iostream>
 #include <queue>
 #include <tuple>
+#include <vector>
 
 #include "EZ-Template/PID.hpp"
 #include "EZ-Template/datatypes.hpp"
@@ -647,7 +648,9 @@ public:
 
   void wait_until_heading_relative(double target);
 
-  void wait_until_points_passed(int target);
+  void wait_until_relative_points_passed(int target);
+  
+  void wait_until_absolute_points_passed(int target);
 
   /**
    * Autonomous interference detection.  Returns true when interfered, and false
@@ -842,6 +845,8 @@ public:
 
   // PATH TRACKING
 
+  void set_point_path_orientation(e_point_orientation orientation);
+
   void reset_path();
 
   void add_point(Vector2 point);
@@ -850,7 +855,9 @@ public:
 
   void drive_to_points(int speed);
 
-  void set_path_pid(int speed, double lookahead, e_point_orientation orientation);
+  void set_path_pid(int speed, double lookahead, e_point_orientation orientation, int start_point=0);
+
+  void set_path_pid(std::list<Vector2> target, int speed, double lookahead, e_point_orientation orientation, int start_point=0);
 
   void path_set_target();
 

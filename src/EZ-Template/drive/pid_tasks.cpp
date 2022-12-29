@@ -115,7 +115,7 @@ void Drive::path_pid_task() {
   path_set_target();
 
   if(path_advance == path.size() - 1) { // reached the end, time to straight drive
-    set_point_drive_pid(point_target, max_speed);
+    set_mode(ez::POINT);
   }
   else {
     //figure out offset
@@ -136,6 +136,8 @@ void Drive::path_pid_task() {
     //set PIDs
     set_point_heading_pid(point_target, offset);
     set_straight_point_drive_pid(point_target, max_speed, false, true, false);
+  
+    drive_pid_task();
   }
   
 }

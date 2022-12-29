@@ -38,7 +38,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.51, 0.0016, 3.8, 600);
   chassis.set_pid_constants(&chassis.left_backward_drivePID, .75, 0, 4, 0);
   chassis.set_pid_constants(&chassis.right_backward_drivePID, .75, 0, 4, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 6.9, 0.0016, 50, 15);
+  chassis.set_pid_constants(&chassis.turnPID, 6.9, 0.0026, 50, 10);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
 }
@@ -133,10 +133,26 @@ void roll_test() {
 
 void path_test() {
   chassis.reset_path();
+  chassis.add_point(Vector2(0,0));
   chassis.add_point(Vector2(24, 0));
+  chassis.add_point(Vector2(48, -18));
+  chassis.add_point(Vector2(48, -30));
   chassis.add_point(Vector2(24, -48));
   chassis.add_point(Vector2(0, -48));
-  chassis.set_path_pid(DRIVE_SPEED, 8, ez::AGNOSTIC);
+  //chassis.drive_to_points(DRIVE_SPEED);
+  //chassis.drive_to_points(DRIVE_SPEED);
+
+  chassis.set_path_pid(DRIVE_SPEED, 18, ez::AGNOSTIC);
+  chassis.wait_until_distance_travelled(10);
+  chassis.set_max_speed(70);
+  chassis.wait_until_absolute_points_passed(3);
+  chassis.set_max_speed(110);
+  chassis.wait_until_distance_remaining(24);
+  chassis.set_max_speed(50);
+  chassis.wait_drive();
+  chassis.set_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED);
+  chassis.wait_drive();
+  
 }
 
 void aim_and_fire_far_goal() {
@@ -156,21 +172,16 @@ void skills1() {
   exit_condition_defaults();
   cata_intake.cata_prime();
   chassis.reset_position(skills_start, Angle::from_deg(91.5));
-  chassis.set_heading_relative_turn_pid(0, TURN_SPEED);
-
+  chassis.set_heading_relative_heading_pid(0);
+  
+  chassis.wait_drive();
   roll(30, -.5, 50, 200);
 
-  
-  chassis.set_orientation_swing_pid(ez::RIGHT_SWING, Angle::from_deg(-135), SWING_SPEED);
-  chassis.wait_until_orientation(Angle::from_deg(-180));
+  chassis.set_path_pid(skills_second_roller_path, DRIVE_SPEED, 8, ez::BACKWARD, 0);
+  chassis.wait_until_absolute_points_passed(1);
   cata_intake.intake_velocity(INTK_IN);
-  // narrow_swing_constants();
-  // chassis.set_orientation_swing_pid(ez::LEFT_SWING, Angle::from_deg(-135), SWING_SPEED, -.3);
-  // chassis.wait_until_orientation(Angle::from_deg(-140));
-  chasing_heading_constants();
-  chassis.set_point_drive_pid(skills_second_roller, DRIVE_SPEED, ez::FORWARD);
-  default_constants();
-  cata_intake.intake_stop();
+  chassis.set_point_path_orientation(ez::FORWARD);
+  chassis.wait_drive();
   chassis.set_orientation_turn_pid(Angle::from_deg(180), TURN_SPEED);
   chassis.wait_drive();
   roll(30, -.6, 50, 200);
