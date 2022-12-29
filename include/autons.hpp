@@ -11,6 +11,7 @@ extern mkhlib::CatapultIntakeController cata_intake;
 
 void roll_test();
 void swing_test();
+void path_test();
 void skills();
 void skills1();
 void skills2();

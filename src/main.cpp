@@ -291,7 +291,7 @@ void opcontrol() {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
       chasing_heading_constants();
-      chassis.drive_to_point(far_goal_left_firing_spot, 110, true);
+      chassis.set_point_drive_pid(far_goal_left_firing_spot, 110, ez::BACKWARD);
       default_constants();
       //chassis.set_orientation_turn_pid(Angle(), 110);
       chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
@@ -301,7 +301,7 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       chasing_heading_constants();
-      chassis.drive_to_point(far_goal_right_firing_spot, 110, true);
+      chassis.set_point_drive_pid(far_goal_right_firing_spot, 110, ez::BACKWARD);
       default_constants();
       chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();

@@ -97,7 +97,7 @@ void Drive::point_pid_task() {
       }
     }
     //set PIDs
-    set_point_heading_pid(point_target);
+    set_point_heading_pid(point_target, offset);
     set_straight_point_drive_pid(point_target, max_speed, false, true, false);
     
   }
@@ -110,5 +110,30 @@ void Drive::point_pid_task() {
 }
 
 void Drive::path_pid_task() {
+  path_set_target();
 
+  if(path_advance == path.size() - 1) { // reached the end, time to straight drive
+    set_point_drive_pid(point_target, max_speed);
+  }
+  else {
+    //figure out offset
+    Angle offset = Angle();
+    switch (point_orientation) {
+      case FORWARD: offset = Angle::from_deg(0); break;
+      case BACKWARD: offset = Angle::from_deg(180); break;
+      case AGNOSTIC: {
+        if(abs(error_to_point(point_target)) > 180) {
+          offset = Angle::from_deg(180);
+        }
+        else {
+          offset = Angle::from_deg(0);
+        }
+        break;
+      }
+    }
+    //set PIDs
+    set_point_heading_pid(point_target, offset);
+    set_straight_point_drive_pid(point_target, max_speed, false, true, false);
+  }
+  
 }

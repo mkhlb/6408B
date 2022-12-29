@@ -647,6 +647,8 @@ public:
 
   void wait_until_heading_relative(double target);
 
+  void wait_until_points_passed(int count);
+
   /**
    * Autonomous interference detection.  Returns true when interfered, and false
    * when nothing happened.
@@ -838,13 +840,30 @@ public:
 
   void set_target_relative_heading_pid(double target);
 
+  // PATH TRACKING
+
+  void reset_path();
+
+  void add_point(Vector2 point);
+
+  void add_points(std::list<Vector2> points);
+
+  void drive_to_points(int speed);
+
+  void set_path_pid(int speed, double lookahead, e_point_orientation orientation);
+
+  void path_set_target();
+
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 
 private: // !Auton
 
-  std::queue<Vector2> path;
+  std::vector<Vector2> path;
+  int path_advance;
   Vector2 point_target;
   e_point_orientation point_orientation = AGNOSTIC;
+
+  double path_lookahead;
 
   bool back_wheels = false;
 
