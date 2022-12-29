@@ -861,6 +861,8 @@ public:
 
   void path_set_target();
 
+  void set_path_lookahead(double target);
+
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 
 private: // !Auton

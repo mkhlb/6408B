@@ -4,7 +4,9 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+#include "datatypes.hpp"
 #include "main.h"
+#include <vector>
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
@@ -124,6 +126,12 @@ std::string exit_to_string(exit_output input) {
   return "Error: Out of bounds!";
 }
 namespace util {
+
+struct PathPoint {
+  Vector2 position;
+  double advance_distance;
+};
+
 bool AUTON_RAN = true;
 
 bool is_reversed(double input) {

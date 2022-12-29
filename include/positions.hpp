@@ -19,6 +19,7 @@ extern Vector2 skills_third_roller;
 extern Vector2 skills_fourth_roller;
 
 extern Vector2 skills_first_shot;
+extern std::list<Vector2> skills_first_shot_path;
 extern Vector2 skills_second_shot;
 extern Vector2 skills_third_shot;
 extern Vector2 skills_fourth_shot;

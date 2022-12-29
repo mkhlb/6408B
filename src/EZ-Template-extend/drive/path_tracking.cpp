@@ -27,6 +27,10 @@ void Drive::drive_to_points(int speed) {
   }
 }
 
+void Drive::set_path_lookahead(double target) {
+  path_lookahead = target;
+}
+
 void Drive::path_set_target() {
 
   std::vector<Vector2>::iterator it = path.begin();
