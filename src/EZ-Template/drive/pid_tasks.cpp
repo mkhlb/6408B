@@ -87,7 +87,7 @@ void Drive::point_pid_task() {
       case FORWARD: offset = Angle::from_deg(0); break;
       case BACKWARD: offset = Angle::from_deg(180); break;
       case AGNOSTIC: {
-        if(abs(error_to_point(point_target)) > 180) {
+        if(abs(error_to_point(point_target)) > 90) {
           offset = Angle::from_deg(180);
         }
         else {
@@ -99,6 +99,8 @@ void Drive::point_pid_task() {
     //set PIDs
     set_point_heading_pid(point_target, offset);
     set_straight_point_drive_pid(point_target, max_speed, false, true, false);
+
+    drive_pid_task();
     
   }
   else if((point_target - position).get_magnitude() > 4) {

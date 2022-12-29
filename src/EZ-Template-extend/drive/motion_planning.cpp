@@ -18,11 +18,7 @@ void Drive::set_heading_relative_turn_pid(double target, int speed, bool mode_se
 }
 
 void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset, bool mode_set) {
-  //calculate direction vector from current position to target
-  Vector2 position_to_target_unit = (target - position).get_normalized();
-  double angle = Angle::shortest_error(orientation, position_to_target_unit.get_angle_direction() + offset);
-  //set_turn_pid(position_to_target_unit.get_angle_direction().get_deg() + offset.get_deg(), 100);
-  set_heading_relative_turn_pid(angle * Angle::RAD_TO_DEG, speed, mode_set);
+  set_heading_relative_turn_pid(error_to_point(target, offset), speed, mode_set);
 }
 
 double Drive::error_to_point(Vector2 target, Angle offset) {
@@ -170,7 +166,7 @@ void Drive::wait_until_distance_travelled(double target) {
       pros::delay(util::DELAY_TIME);
     }
   }
-  else if(mode == POINT) {
+  else if(mode == POINT || mode == PATH) {
     while(true) {
       if((position - point_start).get_magnitude() > target) {
         return;
@@ -188,7 +184,7 @@ void Drive::wait_until_distance_remaining(double target) {
     double travelled_target = target * TICK_PER_INCH;
     wait_until_distance_travelled((leftPID.get_target() - l_start) - travelled_target);
   }
-  else if(mode == POINT) {
+  else if(mode == POINT || mode == PATH) {
     while(true) {
       if((point_target - position).get_magnitude() < target) {
         return;
@@ -227,11 +223,7 @@ void Drive::set_target_relative_heading_pid(double target) {
 }
 
 void Drive::set_point_heading_pid(Vector2 target, Angle offset) {
-  //calculate direction vector from current position to target
-  Vector2 position_to_target_unit = (target - position).get_normalized();
-  double angle = Angle::shortest_error(orientation, position_to_target_unit.get_angle_direction() + offset);
-  //set_turn_pid(position_to_target_unit.get_angle_direction().get_deg() + offset.get_deg(), 100);
-  set_heading_relative_heading_pid(angle * Angle::RAD_TO_DEG);
+  set_heading_relative_heading_pid(error_to_point(target, offset));
 }
 
 void Drive::set_heading_relative_heading_pid(double target) {

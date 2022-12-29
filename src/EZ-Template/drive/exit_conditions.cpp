@@ -27,52 +27,61 @@ void Drive::set_exit_condition(int type, int p_small_exit_time, double p_small_e
 
 // User wrapper for exit condition
 void Drive::wait_drive() {
-  while(mode == POINT || mode == PATH) {
+  do {
     // Let the PID run at least 1 iteration
     pros::delay(util::DELAY_TIME);
 
-    if (mode == DRIVE) {
-      exit_output left_exit = RUNNING;
-      exit_output right_exit = RUNNING;
-      while (left_exit == RUNNING || right_exit == RUNNING) {
-        left_exit = left_exit != RUNNING ? left_exit : leftPID.exit_condition(left_motors[0]);
-        right_exit = right_exit != RUNNING ? right_exit : rightPID.exit_condition(right_motors[0]);
-        pros::delay(util::DELAY_TIME);
-      }
-      if (print_toggle) std::cout << "  Left: " << exit_to_string(left_exit) << " Exit.   Right: " << exit_to_string(right_exit) << " Exit.\n";
+  } while((mode == POINT || mode == PATH));
 
-      if (left_exit == mA_EXIT || left_exit == VELOCITY_EXIT || right_exit == mA_EXIT || right_exit == VELOCITY_EXIT) {
-        interfered = true;
-      }
+  if (mode == DRIVE) {
+    exit_output left_exit = RUNNING;
+    exit_output right_exit = RUNNING;
+    while (left_exit == RUNNING || right_exit == RUNNING) {
+      left_exit = left_exit != RUNNING ? left_exit : leftPID.exit_condition(left_motors[0]);
+      right_exit = right_exit != RUNNING ? right_exit : rightPID.exit_condition(right_motors[0]);
+      pros::delay(util::DELAY_TIME);
     }
+    if (print_toggle)
+      std::cout << "  Left: " << exit_to_string(left_exit)
+                << " Exit.   Right: " << exit_to_string(right_exit)
+                << " Exit.\n";
 
-    // Turn Exit
-    else if (mode == TURN) {
-      exit_output turn_exit = RUNNING;
-      while (turn_exit == RUNNING) {
-        turn_exit = turn_exit != RUNNING ? turn_exit : turnPID.exit_condition({left_motors[0], right_motors[0]});
-        pros::delay(util::DELAY_TIME);
-      }
-      if (print_toggle) std::cout << "  Turn: " << exit_to_string(turn_exit) << " Exit.\n";
-
-      if (turn_exit == mA_EXIT || turn_exit == VELOCITY_EXIT) {
-        interfered = true;
-      }
+    if (left_exit == mA_EXIT || left_exit == VELOCITY_EXIT || right_exit == mA_EXIT || right_exit == VELOCITY_EXIT) {
+      interfered = true;
     }
+  }
 
-    // Swing Exit
-    else if (mode == SWING) {
-      exit_output swing_exit = RUNNING;
-      pros::Motor& sensor = current_swing == ez::LEFT_SWING ? left_motors[0] : right_motors[0];
-      while (swing_exit == RUNNING) {
-        swing_exit = swing_exit != RUNNING ? swing_exit : swingPID.exit_condition(sensor);
-        pros::delay(util::DELAY_TIME);
-      }
-      if (print_toggle) std::cout << "  Swing: " << exit_to_string(swing_exit) << " Exit.\n";
+  // Turn Exit
+  else if (mode == TURN) {
+    exit_output turn_exit = RUNNING;
+    while (turn_exit == RUNNING) {
+      turn_exit =
+          turn_exit != RUNNING ? turn_exit : turnPID.exit_condition({left_motors[0], right_motors[0]});
+      pros::delay(util::DELAY_TIME);
+    }
+    if (print_toggle)
+      std::cout << "  Turn: " << exit_to_string(turn_exit) << " Exit.\n";
 
-      if (swing_exit == mA_EXIT || swing_exit == VELOCITY_EXIT) {
-        interfered = true;
-      }
+    if (turn_exit == mA_EXIT || turn_exit == VELOCITY_EXIT) {
+      interfered = true;
+    }
+  }
+
+  // Swing Exit
+  else if (mode == SWING) {
+    exit_output swing_exit = RUNNING;
+    pros::Motor &sensor =
+        current_swing == ez::LEFT_SWING ? left_motors[0] : right_motors[0];
+    while (swing_exit == RUNNING) {
+      swing_exit =
+          swing_exit != RUNNING ? swing_exit : swingPID.exit_condition(sensor);
+      pros::delay(util::DELAY_TIME);
+    }
+    if (print_toggle)
+      std::cout << "  Swing: " << exit_to_string(swing_exit) << " Exit.\n";
+
+    if (swing_exit == mA_EXIT || swing_exit == VELOCITY_EXIT) {
+      interfered = true;
     }
   }
 }
