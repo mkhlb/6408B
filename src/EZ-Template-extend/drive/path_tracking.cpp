@@ -1,6 +1,7 @@
 #include "EZ-Template/datatypes.hpp"
 #include "EZ-Template/drive/drive.hpp"
 #include "EZ-Template/util.hpp"
+#include "pros/rtos.hpp"
 #include <iterator>
 #include <sys/types.h>
 #include <vector>
@@ -100,4 +101,17 @@ void Drive::set_path_pid(int speed, double lookahead, e_point_orientation orient
   point_target = path[0];
 
   set_mode(PATH);
+}
+
+void Drive::wait_until_points_passed(int target) {
+  int relative_target = target + path_advance;
+  while(true) {
+    if(path_advance >= relative_target) {
+      return;
+    }
+    if(mode != PATH) {
+      wait_drive();
+      return;
+    }
+  }
 }

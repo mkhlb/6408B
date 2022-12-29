@@ -647,7 +647,7 @@ public:
 
   void wait_until_heading_relative(double target);
 
-  void wait_until_points_passed(int count);
+  void wait_until_points_passed(int target);
 
   /**
    * Autonomous interference detection.  Returns true when interfered, and false
