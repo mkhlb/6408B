@@ -22,17 +22,25 @@ std::list<PathPoint> skills_far_low_goal_horizontal_line_path = {
 
 std::list<PathPoint> skills_far_low_goal_lateral_line_path {
     {Vector2(55, -84), 7},
-    {Vector2(54, -100), 16},
-    {Vector2(53, -119), 19},
+    {Vector2(53, -100), 16},
+    {Vector2(52, -119), 19},
     {Vector2(55, -123), 8},
-    {Vector2(69, -129), 8},
-    {Vector2(53, -128), 15},
+    {Vector2(69, -126), 8},
+    {Vector2(53, -127), 15}, // in position for shot
 };
 
 std::list<PathPoint> skills_near_line_path {
     {Vector2(30, -56), 8}, // first disc is at 36, -60
     {Vector2(59, -92), 28}, // third disc is at 60, -84
     {Vector2(60, -80), 14}, // in position to fire w/ run up
+};
+
+std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitting at about 108, -108
+    {Vector2(108, -108), 10},
+    {Vector2(104, -94), 10},
+    {Vector2(117, -105), 10},
+    {Vector2(120, -110), 14},
+    {Vector2(127, -111), 14},
 };
 
 std::list<Vector2> far_goal_left_firing_path = {

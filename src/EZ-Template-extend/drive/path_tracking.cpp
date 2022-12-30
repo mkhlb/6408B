@@ -157,7 +157,19 @@ void Drive::wait_until_absolute_points_passed(int target) {
       return;
     }
     if(mode != PATH) {
+      wait_drive();
+    }
+  }
+}
+
+void Drive::wait_until_distance_from_point(Vector2 target, double distance) {
+  while(mode != TURN && mode != SWING) {
+    if((target - position).get_magnitude() < distance) {
+      return;
+    }
+    if(mode == DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
       return;
     }
   }
+  
 }

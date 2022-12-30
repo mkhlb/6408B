@@ -640,6 +640,8 @@ public:
 
   void wait_until_distance_remaining(double target);
 
+  void wait_until_distance_from_point(Vector2 target, double distance);
+
   void wait_until_heading(double target);
 
   void wait_until_orientation(Angle target);

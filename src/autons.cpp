@@ -35,8 +35,8 @@ void default_constants() {
   chassis.set_slew_min_power(80, 80);
   chassis.set_slew_distance(7, 7);
   chassis.set_pid_constants(&chassis.headingPID, 4.2, 0, 45, 0);
-  chassis.set_pid_constants(&chassis.left_forward_drivePID, 0.51, 0.0016, 3.8, 600);
-  chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.51, 0.0016, 3.8, 600);
+  chassis.set_pid_constants(&chassis.left_forward_drivePID, 0.525, 0.0016, 3.7, 600);
+  chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.525, 0.0016, 3.7, 600);
   chassis.set_pid_constants(&chassis.left_backward_drivePID, .75, 0, 4, 0);
   chassis.set_pid_constants(&chassis.right_backward_drivePID, .75, 0, 4, 0);
   chassis.set_pid_constants(&chassis.turnPID, 6.9, 0.0026, 50, 10);
@@ -244,24 +244,28 @@ void skills2() {
   Vector2 expansion = Vector2(120, -120);
 
   roll(30, Angle::from_deg(-88.5), -.5, 50, 180);
-  return;
-  chassis.set_target_relative_swing_pid(ez::RIGHT_SWING, 140, SWING_SPEED, .14);
-  chassis.wait_drive();
-  chassis.set_drive_pid(7, DRIVE_SPEED);
-  chassis.wait_until_distance_travelled(5.5);
+  
+  chassis.set_drive_pid(-10, DRIVE_SPEED);
+  chassis.wait_until_distance_travelled(-4);
+  chassis.set_heading_relative_turn_pid(200, TURN_SPEED);
+  chassis.wait_until_heading_relative(180);
+  chassis.set_path_pid(skills_far_corner_triple_stack_path, DRIVE_SPEED, 14, ez::FORWARD);
+  chassis.set_point_path_orientation(ez::FORWARD);
+  chassis.wait_until_distance_from_point(far_corner_triple_stack, 8.5);
+  chassis.set_max_speed(DRIVE_SPEED * .2);
+  chassis.set_path_lookahead(14);
+  pros::delay(50);
   cata_intake.intake_velocity(INTK_IN);
-  chassis.wait_drive();
-  chassis.set_drive_pid(6, DRIVE_SPEED * .2);
-  chassis.wait_drive();
-  chassis.set_drive_pid(11, DRIVE_SPEED * .6);
-  chassis.wait_drive();
-  chassis.set_orientation_turn_pid(Angle::from_deg(-42), TURN_SPEED);
-  chassis.wait_drive();
-  chassis.set_drive_pid(16, DRIVE_SPEED);
+  pros::delay(900);
+  chassis.set_max_speed(DRIVE_SPEED * .7);
+  chassis.wait_until_absolute_points_passed(4);
+  chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
   cata_intake.intake_stop();
+  
   roll(30, Angle::from_deg(1.5), -1, 60, 190);
 
+  return;
 
   chassis.set_target_relative_swing_pid(ez::LEFT_SWING, -95.5, SWING_SPEED); 
   chassis.wait_drive(); // Swing into far goal
