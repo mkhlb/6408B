@@ -27,3 +27,6 @@ extern Vector2 skills_fifth_shot;
 
 extern Vector2 skills_near_line_start;
 extern Vector2 skills_near_line_end;
+
+extern Vector2 skills_far_expansion;
+extern Vector2 skills_near_expansion;

@@ -27,3 +27,6 @@ Vector2 skills_fifth_shot = Vector2(57, -128); // similar to first shot
 
 Vector2 skills_near_line_start = Vector2(36, -60);
 Vector2 skills_near_line_end = Vector2(58, -80);
+
+Vector2 skills_near_expansion = Vector2(23, -23);
+Vector2 skills_far_expansion = Vector2(119, -119);
