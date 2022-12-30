@@ -7,8 +7,8 @@ Vector2 far_goal_left_firing_spot = Vector2(18, -80); // field is about 141
 Vector2 far_goal_right_firing_spot = Vector2(64, -124);
 Vector2 near_lateral_roller = Vector2(12, -29.5); //middle wheel is at 13.5
 Vector2 near_horizontal_roller = Vector2(29.5, -12);
-Vector2 far_lateral_roller = Vector2(132, -114.5);
-Vector2 far_horizontal_roller = Vector2(112.5, -132);
+Vector2 far_lateral_roller = Vector2(130, -114.5);
+Vector2 far_horizontal_roller = Vector2(112.5, -130);
 
 Vector2 far_corner_triple_stack = Vector2(108, -108);
 

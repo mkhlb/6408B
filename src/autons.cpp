@@ -244,6 +244,8 @@ void skills2() {
 
   roll(30, Angle::from_deg(-88.5), -.5, 50, 180);
   
+  chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y), chassis.orientation);
+  chassis.set_heading_relative_heading_pid(0);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
   chassis.wait_until_distance_travelled(-4);
   chassis.set_heading_relative_turn_pid(200, TURN_SPEED);
@@ -262,7 +264,10 @@ void skills2() {
   chassis.wait_drive();
   cata_intake.intake_stop();
   
-  roll(30, Angle::from_deg(1.5), -1, 60, 190);
+  roll(30, Angle::from_deg(1.5), -.5, 60, 190);
+
+  chassis.reset_position(Vector2(far_lateral_roller.x, chassis.position.y), chassis.orientation);
+  chassis.set_heading_relative_heading_pid(0);
 
   // start driving towards first shot
   chassis.set_path_pid(skills_near_goal_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);

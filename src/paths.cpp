@@ -53,7 +53,7 @@ std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitti
 std::list<PathPoint> skills_near_goal_first_shot_path {
     {Vector2(126, -112), 4},
     {Vector2(129, -67), 12},
-    {Vector2(130.5, -53), 16}, // in position for shot
+    {Vector2(130, -53), 16}, // in position for shot
 };
 
 std::list<Vector2> far_goal_left_firing_path = {

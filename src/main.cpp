@@ -282,7 +282,7 @@ void opcontrol() {
 
   chassis.set_mode(ez::DISABLE);
 
-  chassis.reset_position(near_lateral_roller, Angle::from_deg(180));
+  chassis.reset_position(skills_start, Angle::from_deg(91.5));
   //chassis.reset_position(Vector2(), Angle::from_deg(180));
   pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94
