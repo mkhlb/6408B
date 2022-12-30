@@ -217,7 +217,7 @@ void skills1() {
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.set_point_path_orientation(ez::BACKWARD);
   chassis.wait_drive();
-  aim_and_fire_far_goal(Angle::from_deg(-2)); // place a little to the left
+  aim_and_fire_far_goal(Angle::from_deg(-3)); // place a little to the left
 
   chassis.set_path_pid(skills_near_line_path, DRIVE_SPEED, 19, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
@@ -263,16 +263,17 @@ void skills2() {
   
   roll(30, Angle::from_deg(1.5), -.5, 60, 190);
 
-  chassis.reset_position(Vector2(far_lateral_roller.x, chassis.position.y), chassis.orientation);
+  chassis.reset_position(Vector2(far_lateral_roller.x + 1.0, chassis.position.y), chassis.orientation);
   chassis.set_heading_relative_heading_pid(0);
-
   // start driving towards first shot
   chassis.set_path_pid(skills_near_goal_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);
   chassis.wait_until_absolute_points_passed(1);
   chassis.set_path_lookahead(12);
-  cata_intake.intake_velocity(INTK_IN);
+  cata_intake.intake_velocity(-INTK_IN);
   chassis.wait_drive();
   aim_and_fire_near_goal();
+  
+  cata_intake.intake_velocity(INTK_IN);
 
   chassis.set_orientation_turn_pid(Angle::from_deg(-175), TURN_SPEED);
   chassis.wait_drive();
@@ -287,9 +288,23 @@ void skills2() {
   chassis.wait_until_absolute_points_passed(3);
   chassis.set_point_path_orientation(ez::BACKWARD);
   chassis.wait_drive();
-  aim_and_fire_near_goal();
+  aim_and_fire_near_goal(Angle::from_deg(2.5));
 
-  return;
+  chassis.set_path_pid(skills_near_low_goal_lateral_line_path, DRIVE_SPEED * .7, 19, ez::FORWARD);
+  chassis.wait_until_absolute_points_passed(5);
+  chassis.set_point_path_orientation(ez::BACKWARD);
+  chassis.set_max_speed(DRIVE_SPEED);
+  // chassis.wait_until_distance_from_point(near_goal, 34);
+  // //aim_and_fire_near_goal(Angle::from_deg(1)); // place a tad bit to the right
+  // cata_intake.cata_shoot();
+  // cata_intake.wait_cata_done_shot();
+  chassis.wait_drive();
+  aim_and_fire_near_goal();
+  chassis.set_point_drive_pid(skills_near_expansion, DRIVE_SPEED);
+  chassis.wait_until_distance_from_point(skills_near_expansion, 4);
+  chassis.set_orientation_turn_pid(Angle::from_deg(135), TURN_SPEED);
+  chassis.wait_drive();
+  
 }
 
 void turn_test() {

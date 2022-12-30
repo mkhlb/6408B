@@ -1,6 +1,7 @@
 #include "points.hpp"
 #include "paths.hpp"
 #include "EZ-Template/datatypes.hpp"
+#include <list>
 
 std::list<PathPoint> skills_second_roller_path = {
     {Vector2(40, -23), 8},
@@ -36,6 +37,16 @@ std::list<PathPoint> skills_far_low_goal_lateral_line_path {
     {Vector2(52, -128.5), 15}, // in position for shot
 };
 
+std::list<PathPoint> skills_near_low_goal_lateral_line_path {
+    {Vector2(85, -58), 7},
+    {Vector2(88, -42), 16},
+    {Vector2(89, -33), 19},
+    {Vector2(86, -19), 8},
+    {Vector2(72, -13), 8},
+    {Vector2(90, -12.5), 7}, // in position for shot
+    //{Vector2(124.5, -19.5), 60} // drive a bit towards the goal to aim while moving
+};
+
 std::list<PathPoint> skills_near_line_path {
     {Vector2(30, -56), 8}, // first disc is at 36, -60
     {Vector2(59, -92), 28}, // third disc is at 60, -84
@@ -46,7 +57,7 @@ std::list<PathPoint> skills_far_line_path {
     {Vector2(80, -58), 10}, // first disc at 83, -59
     {Vector2(97, -69), 15}, // second disc at 95, -71
     {Vector2(107, -83), 14}, // final disc is at 107, -83
-    {Vector2(107, -59), 15},
+    {Vector2(107, -58), 15},
 };
 
 std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitting at about 108, -108
