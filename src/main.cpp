@@ -310,7 +310,7 @@ void opcontrol() {
       // chassis.set_point_drive_pid(far_goal_right_firing_spot, 110, ez::AGNOSTIC);
       // chassis.wait_drive();
       // default_constants();
-      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.set_point_turn_pid(near_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();
       chassis.set_mode(ez::e_mode::DISABLE);
     }

@@ -4,6 +4,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+#include "EZ-Template/datatypes.hpp"
 #include "EZ-Template/util.hpp"
 #include "main.h"
 #include "pros/misc.hpp"
@@ -120,9 +121,28 @@ void Drive::path_pid_task() {
   else {
     //figure out offset
     Angle offset = Angle();
+    
+    //set PIDs
+    Vector2 position_to_target = (position - point_target);
+    position_to_target.set_magnitude(1); // normalize
+    Vector2 orientation_unit = Vector2::from_polar(1, orientation);
+    double power_scalar = position_to_target * orientation_unit;
+    double power = 0;
     switch (point_orientation) {
-      case FORWARD: offset = Angle::from_deg(0); break;
-      case BACKWARD: offset = Angle::from_deg(180); break;
+      case FORWARD: { 
+        offset = Angle::from_deg(0);
+        if(util::sgn(power_scalar) == 1) {
+          power = power_scalar * max_speed;
+        }
+        break;
+      }
+      case BACKWARD: { 
+        offset = Angle::from_deg(180);
+        if(util::sgn(power_scalar) == -1) {
+          power = power_scalar * max_speed;
+        }
+        break;
+      }
       case AGNOSTIC: {
         if(abs(error_to_point(point_target)) > 180) {
           offset = Angle::from_deg(180);
@@ -130,14 +150,12 @@ void Drive::path_pid_task() {
         else {
           offset = Angle::from_deg(0);
         }
+        power = power_scalar * max_speed;
         break;
       }
     }
-    //set PIDs
+
     set_point_heading_pid(point_target, offset);
-    set_straight_point_drive_pid(point_target, max_speed, false, true, false);
-  
-    drive_pid_task();
+    set_tank(power, power);
   }
-  
 }

@@ -3,7 +3,7 @@
 #include "EZ-Template/datatypes.hpp"
 
 std::list<PathPoint> skills_second_roller_path = {
-    {Vector2(40, -23), 8.0},
+    {Vector2(40, -23), 8},
     {Vector2(14.5, -27), 14} // in front of roller
 };
 
@@ -43,11 +43,16 @@ std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitti
     {Vector2(127, -111), 14},
 };
 
+std::list<PathPoint> skills_near_goal_first_shot_path {
+    {Vector2(126, -112), 4},
+    {Vector2(129, -67), 12},
+    {Vector2(130.5, 54), 16}, // in position for shot
+};
+
 std::list<Vector2> far_goal_left_firing_path = {
     Vector2(58, -80),
     Vector2(11, -72),
     Vector2(14, -95),
-
 };
 
 std::list<Vector2> far_goal_right_firing_path = {
