@@ -274,6 +274,12 @@ void skills2() {
 
   chassis.set_orientation_turn_pid(Angle::from_deg(-175), TURN_SPEED);
   chassis.wait_drive();
+  chassis.set_path_pid(skills_near_low_goal_horizontal_line_path, DRIVE_SPEED * .7, 14, ez::FORWARD);
+  chassis.wait_until_absolute_points_passed(2);
+  chassis.set_max_speed(DRIVE_SPEED);
+  chassis.set_point_path_orientation(ez::BACKWARD);
+  chassis.wait_drive();
+  aim_and_fire_near_goal(Angle::from_deg(-2)); // place a little to the left
 
   return;
 

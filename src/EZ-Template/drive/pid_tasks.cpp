@@ -123,7 +123,7 @@ void Drive::path_pid_task() {
     Angle offset = Angle();
     
     //set PIDs
-    Vector2 position_to_target = (position - point_target);
+    Vector2 position_to_target = (point_target - position);
     position_to_target.set_magnitude(1); // normalize
     Vector2 orientation_unit = Vector2::from_polar(1, orientation);
     double power_scalar = position_to_target * orientation_unit;
@@ -131,14 +131,14 @@ void Drive::path_pid_task() {
     switch (point_orientation) {
       case FORWARD: { 
         offset = Angle::from_deg(0);
-        if(util::sgn(power_scalar) == 1) {
+        if(util::sgn(power_scalar) > 0) {
           power = power_scalar * max_speed;
         }
         break;
       }
       case BACKWARD: { 
         offset = Angle::from_deg(180);
-        if(util::sgn(power_scalar) == -1) {
+        if(util::sgn(power_scalar) < 0) {
           power = power_scalar * max_speed;
         }
         break;
@@ -156,6 +156,7 @@ void Drive::path_pid_task() {
     }
 
     set_point_heading_pid(point_target, offset);
-    set_tank(power, power);
+    headingPID.compute(get_gyro());
+    set_tank(power + headingPID.output, power - headingPID.output);
   }
 }

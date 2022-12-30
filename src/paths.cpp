@@ -20,13 +20,20 @@ std::list<PathPoint> skills_far_low_goal_horizontal_line_path = {
     {Vector2(35, -82), 14}, // in position for shot
 };
 
+std::list<PathPoint> skills_near_low_goal_horizontal_line_path = {
+    {Vector2(120, -54), 12},
+    {Vector2(92, -55), 8},
+    {Vector2(99, -64), 9},
+    {Vector2(107, -59), 14}, // in position for shot
+};
+
 std::list<PathPoint> skills_far_low_goal_lateral_line_path {
     {Vector2(55, -84), 7},
     {Vector2(53, -100), 16},
     {Vector2(52, -119), 19},
     {Vector2(55, -123), 8},
-    {Vector2(69, -126), 8},
-    {Vector2(53, -127), 15}, // in position for shot
+    {Vector2(69, -127), 8},
+    {Vector2(52, -128.5), 15}, // in position for shot
 };
 
 std::list<PathPoint> skills_near_line_path {
@@ -46,7 +53,7 @@ std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitti
 std::list<PathPoint> skills_near_goal_first_shot_path {
     {Vector2(126, -112), 4},
     {Vector2(129, -67), 12},
-    {Vector2(130.5, 54), 16}, // in position for shot
+    {Vector2(130.5, -53), 16}, // in position for shot
 };
 
 std::list<Vector2> far_goal_left_firing_path = {
