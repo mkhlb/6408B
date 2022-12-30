@@ -127,10 +127,7 @@ std::string exit_to_string(exit_output input) {
 }
 namespace util {
 
-struct PathPoint {
-  Vector2 position;
-  double advance_distance;
-};
+
 
 bool AUTON_RAN = true;
 

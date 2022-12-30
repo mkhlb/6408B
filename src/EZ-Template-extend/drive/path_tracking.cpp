@@ -10,19 +10,29 @@ void Drive::reset_path() {
   path.clear();
 }
 
-void Drive::add_point(Vector2 point) {
+void Drive::add_point(PathPoint point) {
   path.push_back(point);
 }
 
-void Drive::add_points(std::list<Vector2> points) {
+void Drive::add_point(Vector2 point, double advance) {
+  path.push_back({point, advance});
+}
+
+void Drive::add_points(std::list<PathPoint> points) {
   for(auto it = points.cbegin(); it != points.cend(); ++it) {
     path.push_back(*it);
   }
 }
 
+void Drive::add_points(std::list<Vector2> points, double advance) {
+  for(auto it = points.cbegin(); it != points.cend(); ++it) {
+    path.push_back({*it, advance});
+  }
+}
+
 void Drive::drive_to_points(int speed) {
   for(auto it = path.begin(); it != path.end(); ++it) {
-    set_point_drive_pid(*it, speed);
+    set_point_drive_pid(it->position, speed);
     wait_drive();
   }
 }
@@ -33,19 +43,22 @@ void Drive::set_path_lookahead(double target) {
 
 void Drive::path_set_target() {
 
-  std::vector<Vector2>::iterator it = path.begin();
+  std::vector<PathPoint>::iterator it = path.begin();
   if(path_advance > 0) { std::advance(it, path_advance); }
 
-  Vector2 first_point = *it;
+  PathPoint first_point = *it;
   ++it;
-  Vector2 second_point = *it;
+  PathPoint second_point = *it;
 
-  Vector2 local_first_point = first_point - position;
-  Vector2 local_second_point = second_point - position;
+  Vector2 local_first_point = first_point.position - position;
+  Vector2 local_second_point = second_point.position - position;
 
-  if(local_second_point.get_magnitude() < path_lookahead) { // second point is within lookahead, go right to it and start searching next line segment
-    point_target = second_point;
+  if(local_second_point.get_magnitude() < second_point.advance_distance) { // second point is within lookahead, go right to it and start searching next line segment
+    point_target = second_point.position;
     path_advance = path_advance + 1; // if point is found!
+  }
+  else if (local_second_point.get_magnitude() < path_lookahead) {
+    point_target = second_point.position;
   }
   else {
     double line_x = local_second_point.x - local_first_point.x;
@@ -102,19 +115,24 @@ void Drive::set_path_pid(int speed, double lookahead, e_point_orientation orient
   path_lookahead = lookahead;
   set_max_speed(speed);
   point_orientation = orientation;
-  Vector2 first = position;
-  path.insert(path.begin(), first);
+  path.insert(path.begin(), {position, lookahead});
   path_advance = start_point;
-  point_target = path[start_point + 1];
+  point_target = path[start_point + 1].position;
   point_start = position;
   headingPID.reset_variables();
 
   set_mode(PATH);
 }
 
-void Drive::set_path_pid(std::list<Vector2> target, int speed, double lookahead, e_point_orientation orientation, int start_point) {
+void Drive::set_path_pid(std::list<PathPoint> target, int speed, double lookahead, e_point_orientation orientation, int start_point) {
   reset_path();
   add_points(target);
+  set_path_pid(speed, lookahead, orientation, start_point);
+}
+
+void Drive::set_path_pid(std::list<Vector2> target, int speed, double lookahead, e_point_orientation orientation, int start_point) {
+  reset_path();
+  add_points(target, lookahead);
   set_path_pid(speed, lookahead, orientation, start_point);
 }
 

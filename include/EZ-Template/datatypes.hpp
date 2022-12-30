@@ -112,3 +112,8 @@ Vector2 operator+(Vector2 const &obj1, Vector2 const &obj2);
 Vector2 operator*(double const &scal, Vector2 const &vec);
 
 Vector2 operator*(Vector2 const &vec, double const &scal);
+
+struct PathPoint {
+  Vector2 position;
+  double advance_distance;
+};

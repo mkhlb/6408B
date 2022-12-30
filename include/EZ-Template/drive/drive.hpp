@@ -849,15 +849,21 @@ public:
 
   void reset_path();
 
-  void add_point(Vector2 point);
+  void add_point(PathPoint point);
 
-  void add_points(std::list<Vector2> points);
+  void add_point(Vector2 point, double advance);
+
+  void add_points(std::list<PathPoint> points);
+
+  void add_points(std::list<Vector2> points, double advance);
 
   void drive_to_points(int speed);
 
   void set_path_pid(int speed, double lookahead, e_point_orientation orientation, int start_point=0);
 
-  void set_path_pid(std::list<Vector2> target, int speed, double lookahead, e_point_orientation orientation, int start_point=0);
+  void set_path_pid(std::list<PathPoint> target, int speed, double lookahead, e_point_orientation orientation, int start_point=0);
+
+  void set_path_pid(std::list<Vector2>, int speed, double lookahead, e_point_orientation orientation, int start_point=0);
 
   void path_set_target();
 
@@ -867,7 +873,7 @@ public:
 
 private: // !Auton
 
-  std::vector<Vector2> path;
+  std::vector<PathPoint> path;
   int path_advance;
   Vector2 point_target;
   e_point_orientation point_orientation = AGNOSTIC;

@@ -76,5 +76,5 @@ void Drive::reset_position(Vector2 set_position, Angle w) {
   last_orientation.set_deg(w.get_deg());
   reset_gyro(w.get_deg());
   orientation.set_deg(w.get_deg());
-  pros::delay(15);
+  pros::delay(20);
 }

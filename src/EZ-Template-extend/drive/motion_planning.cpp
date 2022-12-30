@@ -189,7 +189,7 @@ void Drive::wait_until_distance_remaining(double target) {
       if(mode == POINT && (point_target - position).get_magnitude() < target) {
         return;
       }
-      if(mode == PATH && (*path.end() - position).get_magnitude() < target) {
+      if(mode == PATH && (path.end()->position - position).get_magnitude() < target) {
         return;
       }
       if(mode == DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
@@ -218,7 +218,7 @@ void Drive::wait_until_orientation(Angle target) {
 }
 
 void Drive::set_orientation_heading_pid(Angle target) {
-  headingPID.set_target(Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG);
+  set_heading_relative_heading_pid(Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG);
 }
 
 void Drive::set_target_relative_heading_pid(double target) {
