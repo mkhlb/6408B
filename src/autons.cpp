@@ -290,7 +290,9 @@ void skills2() {
   chassis.wait_drive();
   aim_and_fire_near_goal(Angle::from_deg(2.5));
 
-  chassis.set_path_pid(skills_near_low_goal_lateral_line_path, DRIVE_SPEED * .7, 19, ez::FORWARD);
+  chassis.set_path_pid(skills_near_low_goal_lateral_line_path, DRIVE_SPEED, 19, ez::FORWARD);
+  chassis.wait_until_absolute_points_passed(1);
+  chassis.set_max_speed(DRIVE_SPEED * .7);
   chassis.wait_until_absolute_points_passed(5);
   chassis.set_point_path_orientation(ez::BACKWARD);
   chassis.set_max_speed(DRIVE_SPEED);

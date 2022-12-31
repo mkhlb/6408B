@@ -873,6 +873,12 @@ public:
 
   // void turn_drive_to_point(Vector2 target, Angle offset = Angle());
 
+
+  void reset_starts();
+
+  void set_acceleration(double left, double right); // percentage per second
+  void set_deceleration(double left, double right);
+
 private: // !Auton
 
   std::vector<PathPoint> path;
@@ -894,6 +900,14 @@ private: // !Auton
   bool print_toggle = true;
   int swing_min = 0;
   int turn_min = 0;
+
+  double l_stick = 0;
+  double r_stick = 0;
+
+  double l_acceleration = 0; // percentage per tick
+  double r_acceleration = 0; // percentage per tick
+  double l_deceleration = 0;
+  double r_deceleration = 0;
 
   /**
    * Heading bool.

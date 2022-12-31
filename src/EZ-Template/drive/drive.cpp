@@ -112,6 +112,11 @@ void Drive::reset_drive_sensor() {
   middle_tracker.reset();
 }
 
+void Drive::reset_starts() {
+  l_start = left_sensor();
+  r_start = right_sensor();
+}
+
 int Drive::right_sensor() {
   if (is_tracker == DRIVE_ADI_ENCODER)
     return right_tracker.get_value();

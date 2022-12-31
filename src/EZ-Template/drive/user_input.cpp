@@ -4,7 +4,9 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+#include "EZ-Template/util.hpp"
 #include "main.h"
+#include "pros/misc.h"
 
 // Set curve defaults
 void Drive::set_curve_default(double left, double right) {
@@ -154,26 +156,86 @@ void Drive::modify_curve_with_controller() {
     master.set_text(2, 0, sl);
 }
 
+void Drive::set_deceleration(double left, double right) {
+  l_deceleration = left / 1000 * util::DELAY_TIME;
+  r_deceleration = right / 1000 * util::DELAY_TIME;
+}
+
+void Drive::set_acceleration(double left, double right) {
+  l_acceleration = left / 1000 * util::DELAY_TIME;
+  r_deceleration = right / 1000 * util::DELAY_TIME;
+}
+
 // Left curve function
 double Drive::left_curve_function(double x) {
+  double target = x;
   if (left_curve_scale != 0) {
     // if (CURVE_TYPE)
-    return (powf(2.718, -(left_curve_scale / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(left_curve_scale / 10)))) * x;
+    target = (powf(2.718, -(left_curve_scale / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(left_curve_scale / 10)))) * x;
     // else
     // return powf(2.718, ((abs(x)-127)*RIGHT_CURVE_SCALE)/100)*x;
   }
-  return x;
+
+  // figure out if accelerating or decelerating
+  // move l_stick towards target
+
+  double delta = target - l_stick;
+
+  if(util::sgn(delta) != util::sgn(l_stick)) { // decelerating, moving down in magnitude from l_stick
+    if(l_deceleration == 0) {
+      l_stick = target;
+    }
+    else
+    {
+      l_stick += util::clip_num(delta, l_deceleration, -l_deceleration);
+    }
+  }
+  else { // accelerating
+    if(l_acceleration == 0) {
+      l_stick = target;
+    }
+    else
+    {
+      l_stick += util::clip_num(delta, l_acceleration, -l_acceleration);
+    }
+  }
+
+  return l_stick;
 }
 
 // Right curve fnuction
 double Drive::right_curve_function(double x) {
+  double target = x;
   if (right_curve_scale != 0) {
     // if (CURVE_TYPE)
-    return (powf(2.718, -(right_curve_scale / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(right_curve_scale / 10)))) * x;
+    target = (powf(2.718, -(right_curve_scale / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(right_curve_scale / 10)))) * x;
     // else
     // return powf(2.718, ((abs(x)-127)*RIGHT_CURVE_SCALE)/100)*x;
   }
-  return x;
+
+  // figure out if accelerating or decelerating
+  // move l_stick towards target
+
+  double delta = target - r_stick;
+
+  if(util::sgn(delta) != util::sgn(r_stick)) { // decelerating, moving down in magnitude from l_stick
+    if(r_deceleration == 0) {
+      r_stick = target;
+    }
+    else {
+      r_stick += util::clip_num(delta, r_deceleration, -r_deceleration);
+    }
+  }
+  else { // accelerating
+    if(r_acceleration == 0) {
+      r_stick = target;
+    }
+    else {
+      r_stick += util::clip_num(delta, r_acceleration, -r_acceleration);
+    }
+  }
+
+  return r_stick;
 }
 
 // Set active brake constant
@@ -193,11 +255,12 @@ void Drive::joy_thresh_opcontrol(int l_stick, int r_stick) {
   // Threshold if joysticks don't come back to perfect 0
   if (abs(l_stick) > JOYSTICK_THRESHOLD || abs(r_stick) > JOYSTICK_THRESHOLD) {
     set_tank(l_stick, r_stick);
-    if (active_brake_kp != 0) reset_drive_sensor();
+    //if (active_brake_kp != 0) reset_drive_sensor();
+    if(active_brake_kp != 0) reset_starts();
   }
   // When joys are released, run active brake (P) on drive
   else {
-    set_tank((0 - left_sensor()) * active_brake_kp, (0 - right_sensor()) * active_brake_kp);
+    set_tank((l_start - left_sensor()) * active_brake_kp, (r_start - right_sensor()) * active_brake_kp);
   }
 }
 
@@ -210,8 +273,8 @@ void Drive::tank() {
   modify_curve_with_controller();
 
   // Put the joysticks through the curve function
-  int l_stick = left_curve_function(master.get_analog(ANALOG_LEFT_Y));
-  int r_stick = left_curve_function(master.get_analog(ANALOG_RIGHT_Y));
+  int l_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+  int r_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
   joy_thresh_opcontrol(l_stick, r_stick);
@@ -229,12 +292,12 @@ void Drive::arcade_standard(e_type stick_type) {
   // Check arcade type (split vs single, normal vs flipped)
   if (stick_type == SPLIT) {
     // Put the joysticks through the curve function
-    fwd_stick = left_curve_function(master.get_analog(ANALOG_LEFT_Y));
-    turn_stick = right_curve_function(master.get_analog(ANALOG_RIGHT_X));
+    fwd_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+    turn_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
   } else if (stick_type == SINGLE) {
     // Put the joysticks through the curve function
-    fwd_stick = left_curve_function(master.get_analog(ANALOG_LEFT_Y));
-    turn_stick = right_curve_function(master.get_analog(ANALOG_LEFT_X));
+    fwd_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+    turn_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
   }
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
@@ -253,12 +316,12 @@ void Drive::arcade_flipped(e_type stick_type) {
   // Check arcade type (split vs single, normal vs flipped)
   if (stick_type == SPLIT) {
     // Put the joysticks through the curve function
-    fwd_stick = right_curve_function(master.get_analog(ANALOG_RIGHT_Y));
-    turn_stick = left_curve_function(master.get_analog(ANALOG_LEFT_X));
+    fwd_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+    turn_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
   } else if (stick_type == SINGLE) {
     // Put the joysticks through the curve function
-    fwd_stick = right_curve_function(master.get_analog(ANALOG_RIGHT_Y));
-    turn_stick = left_curve_function(master.get_analog(ANALOG_RIGHT_X));
+    fwd_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+    turn_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
   }
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
