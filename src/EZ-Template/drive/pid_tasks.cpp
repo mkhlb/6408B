@@ -56,6 +56,13 @@ void Drive::drive_pid_task() {
   double l_out = l_drive_out + gyro_out;
   double r_out = r_drive_out - gyro_out;
 
+  double max_power = fmax(l_out, r_out);
+
+  if(max_power > 127) {
+    l_out = l_out / max_power * 127;
+    r_out = r_out / max_power * 127;
+  }
+
   // Set motors
   if (drive_toggle)
     set_tank(l_out, r_out);
@@ -157,6 +164,15 @@ void Drive::path_pid_task() {
 
     set_point_heading_pid(point_target, offset);
     headingPID.compute(get_gyro());
-    set_tank(power + headingPID.output, power - headingPID.output);
+    double left_power = power + headingPID.output;
+    double right_power = power - headingPID.output;
+    double max_power = fmax(left_power, right_power);
+
+    if(max_power > 127) {
+      left_power = left_power / max_power * 127;
+      right_power = right_power / max_power * 127;
+    }
+
+    set_tank(left_power, right_power);
   }
 }
