@@ -136,7 +136,7 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value()) // Stop when limit switch is pressed
   {
-    cata_move_relative(-3 / 36.0 * 84.0, _cata_max_velocity);
+    cata_move_relative(-4 / 36.0 * 84.0, _cata_max_velocity);
     cata_primed = true;
     cata_state = e_cata_state::HOLD;
   }

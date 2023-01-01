@@ -50,7 +50,7 @@ void Drive::drive_pid_task() {
   double r_drive_out = util::clip_num(rightPID.output, r_slew_out, -r_slew_out);
 
   // Toggle heading
-  double gyro_out = heading_on ? headingPID.output : 0;
+  double gyro_out = heading_on ? util::clip_num(headingPID.output, 254, -254) : 0;
 
   // Combine heading and drive
   double l_out = l_drive_out + gyro_out;
@@ -164,8 +164,9 @@ void Drive::path_pid_task() {
 
     set_point_heading_pid(point_target, offset);
     headingPID.compute(get_gyro());
-    double left_power = power + headingPID.output;
-    double right_power = power - headingPID.output;
+    double imu_out = util::clip_num(headingPID.output, 130, -130);
+    double left_power = power + imu_out;
+    double right_power = power - imu_out;
     double max_power = fmax(left_power, right_power);
 
     if(max_power > 127) {

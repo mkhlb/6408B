@@ -115,8 +115,8 @@ void initialize() {
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
   chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
-  chassis.set_acceleration(200, 0);
-  chassis.set_deceleration(127, 0);
+  chassis.set_acceleration(0, 0);
+  chassis.set_deceleration(0, 0);
   cata_intake.intake_roller_set_active_brake(.9);
   chassis.set_curve_default(1, 2.4); // Defaults for curve. If using tank, only
                                    // the first parameter is used.
@@ -307,25 +307,31 @@ void opcontrol() {
       chassis.wait_until_absolute_points_passed(2);
       chassis.set_max_speed(80);
       chassis.wait_drive();
+      
       chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      // chasing_heading_constants();
-      // chassis.set_point_drive_pid(far_goal_right_firing_spot, 110, ez::AGNOSTIC);
-      // chassis.wait_drive();
-      // default_constants();
-      chassis.set_point_turn_pid(near_goal, 110, Angle::from_deg(180));
+      int start = chassis.position.y > far_goal_left_firing_path.begin()->y ? 1 : 0;
+
+      chassis.set_path_pid(far_goal_right_firing_path, 110, 16, ez::AGNOSTIC, start);
+      chassis.wait_until_absolute_points_passed(1);
+      chassis.set_point_path_orientation(ez::BACKWARD);
+      chassis.wait_until_absolute_points_passed(2);
+      chassis.set_max_speed(80);
+      chassis.wait_drive();
+
+      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      master.print(0,0, "%f", (float)chassis.orientation.get_deg());
-      pros::delay(2000);
-      master.clear();
+      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.wait_drive();
+      reset_for_driver();
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
