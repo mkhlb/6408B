@@ -32,7 +32,7 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
   roller_state = e_roller_state::IDLE;
 
 
-  max_speed = 600; // Max speed internally is in terms of the intake motor, but when set you pass it in terms of the roller
+  intake_max_speed = 600; // Max speed internally is in terms of the intake motor, but when set you pass it in terms of the roller
 
   roller_interfered = false;
 
@@ -43,11 +43,12 @@ CatapultIntakeController::CatapultIntakeController(int cata_port, int intake_por
 
   // Default PID for e_roller_state::PID_MOVE
   roller_pid = PID(.5, 0, 5, 0);
+  cata_pid = PID(.5, 0, 5, 0);
 
   switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 360; break;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 120; break;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 60; break;
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600; break;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200; break;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100; break;
     case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
   }
 }
@@ -72,7 +73,7 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   cata_state = e_cata_state::HOLD; 
   roller_state = e_roller_state::IDLE;
 
-  max_speed = 600; // Max speed internally is in terms of the intake motor, but when set you pass it in terms of the roller
+  intake_max_speed = 600; // Max speed internally is in terms of the intake motor, but when set you pass it in terms of the roller
 
   roller_interfered = false;
 
@@ -83,11 +84,12 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
 
   // Default PID for e_roller_state::PID_MOVE
   roller_pid = PID(.5, 0, 5, 0);
+  cata_pid = PID(.5, 0, 5, 0);
 
   switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 360; break;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 120; break;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 60; break;
+    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600; break;
+    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200; break;
+    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100; break;
     case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
   }
 }
@@ -98,7 +100,11 @@ void CatapultIntakeController::master_cata_task() {
   while (true) {  
     if( cata_state == e_cata_state::HOLD) // Lock motors during hold state.
     {
-      //cata_move_velocity(0);
+      // cata_pid.compute(cata_motors.front().get_position());
+      // cata_move_voltage(cata_pid.output);
+      // if(cata_pid.exit_condition() != ez::RUNNING) {
+      //   cata_move_velocity(0);
+      // }
     }
     else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
     {
@@ -117,6 +123,12 @@ void CatapultIntakeController::master_cata_task() {
   }
 }
 
+void CatapultIntakeController::cata_move_voltage(double voltage) {
+  for (auto i : cata_motors) { // Iterate all motors
+    i.move_voltage(voltage / 127 * 12000); // Move at max speed into prime position
+  }
+}
+
 void CatapultIntakeController::cata_move_velocity(double velocity) {
   for (auto i : cata_motors) { // Iterate all motors
     i.move_velocity(velocity); // Move at max speed into prime position
@@ -128,6 +140,7 @@ void CatapultIntakeController::cata_move_relative(double position, double veloci
   for (auto i : cata_motors) { // Iterate all motors
     i.move_relative(position, velocity); // Move at max speed into prime position
   }
+  // cata_pid.set_target(cata_motors.front().get_position() - position);
 }
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
@@ -214,7 +227,7 @@ void CatapultIntakeController::roller_pid_task() {
   roller_pid.compute(intake.get_position());
 
   //clip output
-  double out = ez::util::clip_num(roller_pid.output, max_speed, -max_speed);
+  double out = ez::util::clip_num(roller_pid.output, intake_max_speed, -intake_max_speed);
 
   intake.move_voltage(out * 12000.0 / 127.0);
 
@@ -280,7 +293,7 @@ void CatapultIntakeController::intake_time( int time, double velocity) {
 
 void CatapultIntakeController::roller_pid_move(double target, int speed) { //Target should be in degrees of the roller, speed should again be in speed of the roller
   
-  max_speed = speed; // Convert between given roller RPM and the motor RPM
+  intake_max_speed = speed; // Convert between given roller RPM and the motor RPM
 
   _roller_start = intake.get_position();
 
@@ -299,6 +312,14 @@ void CatapultIntakeController::roller_set_exit_condition(int p_small_exit_time, 
 
 void CatapultIntakeController::roller_set_pid_constants(double kp, double ki, double kd, double start_i) {
   roller_pid.set_constants(kp, ki, kd, start_i / MOTOR_TO_ROLLER);
+}
+
+void CatapultIntakeController::cata_set_pid_constants(double kp, double ki, double kd, double start_i) {
+  cata_pid.set_constants(kp, ki, kd, start_i);
+}
+
+void CatapultIntakeController::cata_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout) {
+  cata_pid.set_exit_condition(p_small_exit_time, p_small_error, p_big_exit_time, p_big_error, p_velocity_exit_time, p_mA_timeout);
 }
 
 void CatapultIntakeController::wait_roller() {

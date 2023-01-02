@@ -42,6 +42,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.turnPID, 6.9, 0.0026, 50, 10);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
+  cata_intake.cata_set_pid_constants(5, 0.000, 14, 0);
 }
 
 void chasing_heading_constants() {
@@ -70,6 +71,7 @@ void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 1000, 500);
   chassis.headingPID.set_exit_condition(120, 3, 700, 7, 1000, 500);
   cata_intake.roller_set_exit_condition(100, 10, 500, 50, 2000, 3000);
+  cata_intake.cata_set_exit_condition(100, 50, 500, 100, 1000, 1000);
 }
 
 void exit_condition_early_drive() { // made to exit the drive way earlier, more error so only use with position tracking or if planning on recording error, made when distance forward and backwards doesn't matter too much

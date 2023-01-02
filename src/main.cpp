@@ -80,7 +80,7 @@ Drive chassis(
 
 mkhlib::CatapultIntakeController cata_intake(
     // Port of the catapult motor
-    {-12, 19},
+    {19, -12},
     // Port of the intake motor
     -20,
     // Port of the limit switch

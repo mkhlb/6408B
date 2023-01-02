@@ -80,6 +80,10 @@ public:
    */
   void wait_cata_done_shot();
 
+  void cata_set_pid_constants(double kp, double ki, double kd, double start_i);
+
+  void cata_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout);
+
   e_cata_state cata_state;
 
   bool cata_primed;
@@ -91,7 +95,9 @@ public:
 
   PID roller_pid;
 
-  double max_speed;
+  PID cata_pid;
+
+  double intake_max_speed;
 
   bool roller_interfered;
 
@@ -185,6 +191,7 @@ private:
   void master_intake_task();
 
   void cata_move_velocity(double velocity);
+  void cata_move_voltage(double voltage);
   void cata_move_relative(double position, double velocity);
 
   void cata_prime_task();
@@ -201,6 +208,8 @@ private:
   double _intake_velocity;
 
   int _cata_max_velocity;
+
+  double _cata_pid_max_speed = 100;
 
   double _intake_roller_active_brake_kp = 0;
 
