@@ -867,7 +867,7 @@ public:
 
   void set_path_pid(std::list<Vector2>, int speed, double lookahead, e_point_orientation orientation, int start_point=0);
 
-  void path_set_target();
+  PathPoint path_set_target();
 
   void set_path_lookahead(double target);
 

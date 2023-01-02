@@ -120,12 +120,14 @@ void Drive::point_pid_task() {
 }
 
 void Drive::path_pid_task() {
-  path_set_target();
-
+  PathPoint point = path_set_target();
+  double speed = point.speed <= 0 ? max_speed : point.speed;
   if(path_advance == path.size() - 1) { // reached the end, time to straight drive
     set_mode(ez::POINT);
+    max_speed = speed;
   }
   else {
+
     //figure out offset
     Angle offset = Angle();
     
@@ -139,14 +141,14 @@ void Drive::path_pid_task() {
       case FORWARD: { 
         offset = Angle::from_deg(0);
         if(util::sgn(power_scalar) > 0) {
-          power = power_scalar * max_speed;
+          power = power_scalar * speed;
         }
         break;
       }
       case BACKWARD: { 
         offset = Angle::from_deg(180);
         if(util::sgn(power_scalar) < 0) {
-          power = power_scalar * max_speed;
+          power = power_scalar * speed;
         }
         break;
       }
@@ -157,7 +159,7 @@ void Drive::path_pid_task() {
         else {
           offset = Angle::from_deg(0);
         }
-        power = power_scalar * max_speed;
+        power = power_scalar * speed;
         break;
       }
     }

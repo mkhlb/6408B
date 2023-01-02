@@ -41,7 +41,7 @@ void Drive::set_path_lookahead(double target) {
   path_lookahead = target;
 }
 
-void Drive::path_set_target() {
+PathPoint Drive::path_set_target() {
 
   std::vector<PathPoint>::iterator it = path.begin();
   if(path_advance > 0) { std::advance(it, path_advance); }
@@ -53,11 +53,16 @@ void Drive::path_set_target() {
   Vector2 local_first_point = first_point.position - position;
   Vector2 local_second_point = second_point.position - position;
 
-  if(local_second_point.get_magnitude() < second_point.advance_distance) { // second point is within lookahead, go right to it and start searching next line segment
+  double lookahead = second_point.lookahead <= 0 ? path_lookahead : second_point.lookahead;
+
+  double advance_distance = second_point.advance_distance <= 0 ? lookahead : second_point.advance_distance;
+
+  if(local_second_point.get_magnitude() < advance_distance) { // second point is within lookahead, go right to it and start searching next line segment
     point_target = second_point.position;
     path_advance = path_advance + 1; // if point is found!
+    second_point = *(++it);
   }
-  else if (local_second_point.get_magnitude() < path_lookahead) {
+  else if (local_second_point.get_magnitude() < lookahead) {
     point_target = second_point.position;
   }
   else {
@@ -65,7 +70,7 @@ void Drive::path_set_target() {
     double line_y = local_second_point.y - local_first_point.y;
     double line_length = sqrt(line_x*line_x + line_y*line_y);
     double cross = local_first_point.x * local_second_point.y - local_second_point.x * local_first_point.y;
-    double discriminant = path_lookahead*path_lookahead*line_length*line_length - cross*cross;
+    double discriminant = lookahead*lookahead*line_length*line_length - cross*cross;
 
     if(discriminant >= 0) { // found!
       Vector2 first_intersect = Vector2(
@@ -103,12 +108,9 @@ void Drive::path_set_target() {
       else if(second_intersect_legal) {
         point_target = second_intersect + position;
       }
-
-      
-    }
-    else { // nothing :[
     }
   }
+  return second_point;
 }
 
 void Drive::set_path_pid(int speed, double lookahead, e_point_orientation orientation, int start_point) {

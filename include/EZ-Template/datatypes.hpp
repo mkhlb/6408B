@@ -115,5 +115,8 @@ Vector2 operator*(Vector2 const &vec, double const &scal);
 
 struct PathPoint {
   Vector2 position;
-  double advance_distance;
+  double advance_distance = -1;
+  e_endpoint_behaviour endpoint_behaviour = POINT_DRIVE;
+  double lookahead = -1;
+  double speed = -1;
 };
