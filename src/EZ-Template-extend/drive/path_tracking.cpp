@@ -165,7 +165,7 @@ void Drive::wait_until_absolute_points_passed(int target) {
 }
 
 void Drive::wait_until_distance_from_point(Vector2 target, double distance) {
-  while(mode != TURN && mode != SWING) {
+  while(mode == DRIVE || mode == POINT || mode == PATH) {
     if((target - position).get_magnitude() < distance) {
       return;
     }
