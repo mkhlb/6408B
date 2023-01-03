@@ -108,6 +108,8 @@ void Drive::point_pid_task() {
     set_point_heading_pid(point_target, offset);
     set_straight_point_drive_pid(point_target, max_speed, false, true, false);
 
+    heading_on = true;
+
     drive_pid_task();
     
   }
@@ -121,49 +123,59 @@ void Drive::point_pid_task() {
 
 void Drive::path_pid_task() {
   PathPoint point = path_set_target();
-  double speed = point.speed <= 0 ? max_speed : point.speed;
+  double max = point.speed <= 0 ? max_speed : point.speed;
   if(path_advance == path.size() - 1) { // reached the end, time to straight drive
     set_mode(ez::POINT);
-    max_speed = speed;
+    max_speed = max;
   }
   else {
 
     //figure out offset
     Angle offset = Angle();
-    
-    //set PIDs
-    Vector2 position_to_target = (point_target - position);
-    position_to_target.set_magnitude(1); // normalize
-    Vector2 orientation_unit = Vector2::from_polar(1, orientation);
-    double power_scalar = position_to_target * orientation_unit;
+
     double power = 0;
-    switch (point_orientation) {
-      case FORWARD: { 
-        offset = Angle::from_deg(0);
-        if(util::sgn(power_scalar) > 0) {
-          power = power_scalar * speed;
-        }
-        break;
-      }
-      case BACKWARD: { 
-        offset = Angle::from_deg(180);
-        if(util::sgn(power_scalar) < 0) {
-          power = power_scalar * speed;
-        }
-        break;
-      }
-      case AGNOSTIC: {
-        if(abs(error_to_point(point_target)) > 180) {
-          offset = Angle::from_deg(180);
-        }
-        else {
+    
+    if(point.toggle_pid) {
+      //set PIDs
+      set_straight_point_drive_pid(point_target, max, false, false, false);
+
+      leftPID.compute(left_sensor());
+
+      power = util::clip_num(leftPID.output, max, -max);
+    }
+    else {
+      //drive at max speed
+      Vector2 position_to_target = (point_target - position);
+      position_to_target.set_magnitude(1); // normalize
+      Vector2 orientation_unit = Vector2::from_polar(1, orientation);
+      double power_scalar = position_to_target * orientation_unit;
+      switch (point_orientation) {
+        case FORWARD: { 
           offset = Angle::from_deg(0);
+          if(util::sgn(power_scalar) > 0) {
+            power = power_scalar * max;
+          }
+          break;
         }
-        power = power_scalar * speed;
-        break;
+        case BACKWARD: { 
+          offset = Angle::from_deg(180);
+          if(util::sgn(power_scalar) < 0) {
+            power = power_scalar * max;
+          }
+          break;
+        }
+        case AGNOSTIC: {
+          if(abs(error_to_point(point_target)) > 180) {
+            offset = Angle::from_deg(180);
+          }
+          else {
+            offset = Angle::from_deg(0);
+          }
+          power = power_scalar * max;
+          break;
+        }
       }
     }
-
     set_point_heading_pid(point_target, offset);
     headingPID.compute(get_gyro());
     double imu_out = util::clip_num(headingPID.output, 130, -130);
