@@ -17,7 +17,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 using namespace ez;
 
 // Constructor for integrated encoders
-Drive::Drive(double width, std::vector<int> left_motor_ports,
+Drive::Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
              std::vector<int> right_motor_ports, int imu_port,
              double wheel_diameter, double ticks, double ratio)
     : imu(imu_port), left_tracker(-1, -1, false), // Default value
@@ -26,7 +26,7 @@ Drive::Drive(double width, std::vector<int> left_motor_ports,
       left_rotation(-1), right_rotation(-1),
       ez_auto([this] { this->ez_auto_task(); }),
       ez_position_tracker([this] { this->ez_odometry_task(); }),
-      width(width) {
+      l_width(left_width), r_width(right_width) {
   is_tracker = DRIVE_INTEGRATED;
 
   // Set ports to a global vector
@@ -49,7 +49,7 @@ Drive::Drive(double width, std::vector<int> left_motor_ports,
 }
 
 // Constructor for tracking wheels plugged into the brain
-Drive::Drive(double width, double length, std::vector<int> left_motor_ports,
+Drive::Drive(double left_width, double right_width, double length, std::vector<int> left_motor_ports,
              std::vector<int> right_motor_ports, int imu_port,
              double wheel_diameter, double ticks, double ratio,
              std::vector<int> left_tracker_ports,
@@ -66,7 +66,7 @@ Drive::Drive(double width, double length, std::vector<int> left_motor_ports,
       left_rotation(-1), right_rotation(-1),
       ez_auto([this] { this->ez_auto_task(); }),
       ez_position_tracker([this] { this->ez_odometry_task(); }),
-      width(width),
+      l_width(left_width), r_width(right_width),
       length(length) {
   is_tracker = DRIVE_ADI_ENCODER;
 
@@ -92,7 +92,7 @@ Drive::Drive(double width, double length, std::vector<int> left_motor_ports,
 }
 
 // Constructor for tracking wheels plugged into a 3 wire expander
-Drive::Drive(double width, std::vector<int> left_motor_ports,
+Drive::Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
              std::vector<int> right_motor_ports, int imu_port,
              double wheel_diameter, double ticks, double ratio,
              std::vector<int> left_tracker_ports,
@@ -108,7 +108,7 @@ Drive::Drive(double width, std::vector<int> left_motor_ports,
       left_rotation(-1), right_rotation(-1),
       ez_auto([this] { this->ez_auto_task(); }),
       ez_position_tracker([this] { this->ez_odometry_task(); }),
-      width(width) {
+      l_width(left_width), r_width(right_width) {
   is_tracker = DRIVE_ADI_ENCODER;
 
   // Set ports to a global vector
@@ -131,7 +131,7 @@ Drive::Drive(double width, std::vector<int> left_motor_ports,
 }
 
 // Constructor for rotation sensors
-Drive::Drive(double width, std::vector<int> left_motor_ports,
+Drive::Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
              std::vector<int> right_motor_ports, int imu_port,
              double wheel_diameter, double ratio, int left_rotation_port,
              int right_rotation_port)
@@ -142,7 +142,7 @@ Drive::Drive(double width, std::vector<int> left_motor_ports,
       right_rotation(abs(right_rotation_port)),
       ez_auto([this] { this->ez_auto_task(); }),
       ez_position_tracker([this] { this->ez_odometry_task(); }),
-      width(width) {
+      l_width(left_width), r_width(right_width) {
   is_tracker = DRIVE_ROTATION;
   left_rotation.set_reversed(util::is_reversed(left_rotation_port));
   right_rotation.set_reversed(util::is_reversed(right_rotation_port));

@@ -24,7 +24,8 @@
 // Chassis constructor
 Drive chassis(
     // Track width of chassis in inches
-    9.5
+    4.75,
+    4.75
     , 
     -1.475 // 1.45, overshoots : 1.4, undershoot
     // Left Chassis Ports (negative port will reverse it!)

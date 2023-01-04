@@ -70,7 +70,8 @@ void Drive::set_drive_pid(double target, int speed, bool slew_on, bool toggle_he
     is_backwards = false;
   }
 
-  back_wheels = !is_backwards;
+  //back_wheels = !is_backwards;
+  back_wheels = false;
 
   l_start = left_sensor();
   r_start = right_sensor();

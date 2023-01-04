@@ -141,7 +141,7 @@ public:
    * \param ratio
    *        External gear ratio, wheel gear / motor gear.
    */
-  Drive(double width, std::vector<int> left_motor_ports,
+  Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
         double ticks, double ratio);
 
@@ -165,7 +165,7 @@ public:
    * \param right_tracker_ports
    *        Input {3, 4}.  Make ports negative if reversed!
    */
-  Drive(double width, double length, std::vector<int> left_motor_ports,
+  Drive(double left_width, double right_width, double length, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
         double ticks, double ratio, std::vector<int> left_tracker_ports,
         std::vector<int> right_tracker_ports, std::vector<int> middle_tracker_ports, double middle_tracker_diameter);
@@ -192,7 +192,7 @@ public:
    * \param expander_smart_port
    *        Port the expander is plugged into.
    */
-  Drive(double width, std::vector<int> left_motor_ports,
+  Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
         double ticks, double ratio, std::vector<int> left_tracker_ports,
         std::vector<int> right_tracker_ports, int expander_smart_port);
@@ -217,7 +217,7 @@ public:
    * \param right_tracker_port
    *        Make ports negative if reversed!
    */
-  Drive(double width, std::vector<int> left_motor_ports,
+  Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
         double ratio, int left_rotation_port, int right_rotation_port);
 
@@ -893,7 +893,8 @@ private: // !Auton
   Angle last_orientation;
 
   double swing_offside_multiplier = 0;
-  double width;
+  double l_width;
+  double r_width;
   double length = 0;
 
   bool drive_toggle = true;
