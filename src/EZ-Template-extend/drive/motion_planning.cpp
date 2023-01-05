@@ -17,7 +17,7 @@ void Drive::set_heading_relative_turn_pid(double target, int speed, bool mode_se
   set_turn_pid(absolute_target, speed, mode_set);
 }
 
-void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset, bool mode_set) {
+void Drive::plan_point_turn_pid(Vector2 target, int speed, Angle offset, bool mode_set) {
   set_heading_relative_turn_pid(error_to_point(target, offset), speed, mode_set);
 }
 
@@ -37,12 +37,12 @@ double Drive::straight_to_point(Vector2 target) {
   return position_to_target * orientation_unit; // dot product with a unit vector is just a regular projection
 }
 
-void Drive::set_straight_point_drive_pid(Vector2 target, int speed, bool slew_on, bool heading, bool mode_set) {
+void Drive::plan_straight_point_drive_pid(Vector2 target, int speed, bool slew_on, bool heading, bool mode_set) {
   
   set_drive_pid(straight_to_point(target), speed, slew_on, heading, mode_set);
 }
 
-void Drive::set_orientation_turn_pid(Angle target, int speed, bool mode_set) {
+void Drive::plan_orientation_turn_pid(Angle target, int speed, bool mode_set) {
   double error = Angle::shortest_error(orientation, target);
 
   set_heading_relative_turn_pid(error * Angle::RAD_TO_DEG, speed, mode_set);
@@ -56,12 +56,12 @@ void Drive::set_target_relative_swing_pid(e_swing type, double target, int speed
   set_swing_pid(type, headingPID.get_target() + target, speed, offside_multiplier, mode_set);
 }
 
-void Drive::set_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier, bool mode_set) {
+void Drive::plan_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier, bool mode_set) {
   set_heading_relative_swing_pid(swing_type, Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG, speed, offside_multiplier, mode_set);
 }
 
 void Drive::wait_until_heading(double target) {
-  if (mode == TURN || mode == SWING) {
+  if (mode == ENCODER_TURN || mode == SWING) {
     // Calculate error between current and target (target needs to be an in between position)
     int g_error = target - get_gyro();
     int g_sgn = util::sgn(g_error);
@@ -75,7 +75,7 @@ void Drive::wait_until_heading(double target) {
       g_error = target - get_gyro();
 
       // If turning...
-      if (mode == TURN) {
+      if (mode == ENCODER_TURN) {
         // Before robot has reached target, use the exit conditions to avoid getting stuck in this while loop
         if (util::sgn(g_error) == g_sgn) {
           if (turn_exit == RUNNING) {
@@ -126,7 +126,7 @@ void Drive::wait_until_heading(double target) {
 }
 
 void Drive::wait_until_distance_travelled(double target) {
-  if (mode == DRIVE) {
+  if (mode == ENCODER_DRIVE) {
     // Calculate error between current and target (target needs to be an in between position)
     int l_tar = l_start + (target * TICK_PER_INCH);
     int r_tar = r_start + (target * TICK_PER_INCH);
@@ -166,12 +166,12 @@ void Drive::wait_until_distance_travelled(double target) {
       pros::delay(util::DELAY_TIME);
     }
   }
-  else if(mode == POINT || mode == PATH) {
+  else if(mode == POINT_DRIVE || mode == PATH_DRIVE) {
     while(true) {
       if((position - point_start).get_magnitude() > target) {
         return;
       }
-      if(mode == DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
+      if(mode == ENCODER_DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
         return;
       }
       pros::delay(util::DELAY_TIME);
@@ -180,19 +180,19 @@ void Drive::wait_until_distance_travelled(double target) {
 }
 
 void Drive::wait_until_distance_remaining(double target) {
-  if (mode == DRIVE) {
+  if (mode == ENCODER_DRIVE) {
     double travelled_target = target * TICK_PER_INCH;
     wait_until_distance_travelled((leftPID.get_target() - l_start) - travelled_target);
   }
-  else if(mode == POINT || mode == PATH) {
+  else if(mode == POINT_DRIVE || mode == PATH_DRIVE) {
     while(true) {
-      if(mode == POINT && (point_target - position).get_magnitude() < target) {
+      if(mode == POINT_DRIVE && (point_target - position).get_magnitude() < target) {
         return;
       }
-      if(mode == PATH && (path.end()->position - position).get_magnitude() < target) {
+      if(mode == PATH_DRIVE && (path.end()->position - position).get_magnitude() < target) {
         return;
       }
-      if(mode == DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
+      if(mode == ENCODER_DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
         return;
       }
       pros::delay(util::DELAY_TIME);
@@ -205,7 +205,7 @@ void Drive::wait_until_heading_relative(double target) {
 }
 
 void Drive::wait_until_target_relative(double target) {
-  if(mode == TURN) {
+  if(mode == ENCODER_TURN) {
     wait_until_heading(turnPID.get_target() + target);
   }
   else if(mode == SWING) {
@@ -217,7 +217,7 @@ void Drive::wait_until_orientation(Angle target) {
   wait_until_heading_relative(Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG);
 }
 
-void Drive::set_orientation_heading_pid(Angle target) {
+void Drive::plan_orientation_heading_pid(Angle target) {
   set_heading_relative_heading_pid(Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG);
 }
 
@@ -225,7 +225,7 @@ void Drive::set_target_relative_heading_pid(double target) {
   headingPID.set_target(headingPID.get_target() + target);
 }
 
-void Drive::set_point_heading_pid(Vector2 target, Angle offset) {
+void Drive::plan_point_heading_pid(Vector2 target, Angle offset) {
   set_heading_relative_heading_pid(error_to_point(target, offset));
 }
 
@@ -239,9 +239,16 @@ void Drive::set_point_drive_pid(Vector2 target, int speed, e_point_orientation o
   set_max_speed(speed);
   point_orientation = orientation;
   headingPID.reset_variables();
-  set_mode(POINT);
+  set_mode(POINT_DRIVE);
 }
 
 void Drive::set_point_path_orientation(e_point_orientation orientation) {
   point_orientation = orientation;
+}
+
+void Drive::set_point_turn_pid(Vector2 target, int speed, Angle offset) {
+  point_target = target;
+  set_max_speed(speed);
+  point_turn_offset = offset;
+  set_mode(POINT_TURN);
 }

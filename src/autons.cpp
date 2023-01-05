@@ -94,7 +94,7 @@ void exit_condition_hit_wall() { // made to exit as soon as velocity is 0, for d
 
 void roll(double max_dist, Angle target_orientation, double back_distance, double speed, double roll_amount) // roll_amount is degrees
 {
-  chassis.set_orientation_heading_pid(target_orientation);
+  chassis.plan_orientation_heading_pid(target_orientation);
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
   pros::delay(200);
   exit_condition_hit_wall(); // set exit conditions to conditions very sensitive to interference
@@ -127,9 +127,9 @@ void roll_test() {
   chasing_heading_constants();
   chassis.reset_position(Vector2(10.5, -29.5), Angle::from_deg(180));
   pros::delay(10);
-  chassis.set_orientation_turn_pid(Angle::from_deg(170), TURN_SPEED);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(170), TURN_SPEED);
   chassis.wait_drive();
-  chassis.set_orientation_turn_pid(Angle::from_deg(180), TURN_SPEED);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(180), TURN_SPEED);
   chassis.wait_drive();
   
   //chassis.drive_to_point(Vector2(20, -15), DRIVE_SPEED, true);
@@ -154,13 +154,13 @@ void path_test() {
   chassis.wait_until_distance_remaining(24);
   chassis.set_max_speed(50);
   chassis.wait_drive();
-  chassis.set_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED);
   chassis.wait_drive();
   
 }
 
 void aim_and_fire_far_goal(Angle offset = Angle(), double runup = 0) {
-  chassis.set_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180) + offset);
+  chassis.plan_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180) + offset);
   chassis.wait_drive();
   if(runup != 0) {
     chassis.set_drive_pid(runup, DRIVE_SPEED);
@@ -172,7 +172,7 @@ void aim_and_fire_far_goal(Angle offset = Angle(), double runup = 0) {
 }
 
 void aim_and_fire_near_goal(Angle offset = Angle(), double runup = 0) {
-  chassis.set_point_turn_pid(near_goal, TURN_SPEED, Angle::from_deg(180) + offset);
+  chassis.plan_point_turn_pid(near_goal, TURN_SPEED, Angle::from_deg(180) + offset);
   chassis.wait_drive();
   if(runup != 0) {
     chassis.set_drive_pid(runup, DRIVE_SPEED);
@@ -212,7 +212,7 @@ void skills1() {
   chassis.wait_drive();
   aim_and_fire_far_goal();
 
-  chassis.set_orientation_turn_pid(Angle::from_deg(5), TURN_SPEED);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(5), TURN_SPEED);
   chassis.wait_drive();
   chassis.set_path_pid(skills_far_low_goal_horizontal_line_path, DRIVE_SPEED * .6, 14, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
@@ -277,7 +277,7 @@ void skills2() {
   
   cata_intake.intake_velocity(INTK_IN);
 
-  chassis.set_orientation_turn_pid(Angle::from_deg(-175), TURN_SPEED);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(-175), TURN_SPEED);
   chassis.wait_drive();
   chassis.set_path_pid(skills_near_low_goal_horizontal_line_path, DRIVE_SPEED * .6, 14, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
@@ -303,13 +303,13 @@ void skills2() {
   aim_and_fire_near_goal();
   chassis.set_point_drive_pid(skills_near_expansion, DRIVE_SPEED);
   chassis.wait_until_distance_from_point(skills_near_expansion, 4);
-  chassis.set_orientation_turn_pid(Angle::from_deg(135), TURN_SPEED);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(135), TURN_SPEED);
   chassis.wait_drive();
   
 }
 
 void turn_test() {
-  chassis.set_point_turn_pid(Vector2(), 80);
+  chassis.plan_point_turn_pid(Vector2(), 80);
 }
 
 void swing_test() {

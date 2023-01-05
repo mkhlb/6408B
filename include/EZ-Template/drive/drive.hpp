@@ -141,9 +141,9 @@ public:
    * \param ratio
    *        External gear ratio, wheel gear / motor gear.
    */
-  Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
+  Drive(double left_width, double right_width, double length, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
-        double ticks, double ratio);
+        double ticks, double ratio, std::vector<int> middle_tracker_ports, double middle_tracker_diameter);
 
   /**
    * Creates a Drive Controller using encoders plugged into the brain.
@@ -192,10 +192,11 @@ public:
    * \param expander_smart_port
    *        Port the expander is plugged into.
    */
-  Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
+  Drive(double left_width, double right_width, double length, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
         double ticks, double ratio, std::vector<int> left_tracker_ports,
-        std::vector<int> right_tracker_ports, int expander_smart_port);
+        std::vector<int> right_tracker_ports, int expander_smart_port, 
+        std::vector<int> middle_tracker_ports, double middle_tracker_diameter);
 
   /**
    * Creates a Drive Controller using rotation sensors.
@@ -217,9 +218,10 @@ public:
    * \param right_tracker_port
    *        Make ports negative if reversed!
    */
-  Drive(double left_width, double right_width, std::vector<int> left_motor_ports,
+  Drive(double left_width, double right_width, double length, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
-        double ratio, int left_rotation_port, int right_rotation_port);
+        double ratio, int left_rotation_port, int right_rotation_port, 
+        std::vector<int> middle_tracker_ports, double middle_tracker_diameter);
 
   /**
    * Sets drive defaults.
@@ -823,13 +825,13 @@ public:
 
   // MOTION PLANNER
 
-  void set_orientation_turn_pid(Angle target, int speed, bool mode_set = true);
+  void plan_orientation_turn_pid(Angle target, int speed, bool mode_set = true);
 
-  void set_point_turn_pid(Vector2 target, int speed, Angle offset = Angle(), bool mode_set = true);
+  void plan_point_turn_pid(Vector2 target, int speed, Angle offset = Angle(), bool mode_set = true);
 
-  void set_straight_point_drive_pid(Vector2 target, int speed, bool slew_on = false, bool heading = true, bool mode_set = true);
+  void plan_straight_point_drive_pid(Vector2 target, int speed, bool slew_on = false, bool heading = true, bool mode_set = true);
 
-  void set_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier = 0, bool mode_set = true);
+  void plan_orientation_swing_pid(e_swing swing_type, Angle target, int speed, double offside_multiplier = 0, bool mode_set = true);
 
   double straight_to_point(Vector2 target);
 
@@ -837,13 +839,15 @@ public:
 
   void set_point_drive_pid(Vector2 target, int speed, e_point_orientation orientation = AGNOSTIC);
 
-  void set_orientation_heading_pid(Angle target);
+  void plan_orientation_heading_pid(Angle target);
 
-  void set_point_heading_pid(Vector2 target, Angle offset = Angle());
+  void plan_point_heading_pid(Vector2 target, Angle offset = Angle());
 
   void set_heading_relative_heading_pid(double target);
 
   void set_target_relative_heading_pid(double target);
+
+  void set_point_turn_pid(Vector2 target, int speed, Angle offset = Angle());
 
   // PATH TRACKING
 
@@ -885,6 +889,8 @@ private: // !Auton
   int path_advance;
   Vector2 point_target;
   e_point_orientation point_orientation = AGNOSTIC;
+
+  Angle point_turn_offset;
 
   double path_lookahead;
 
@@ -941,11 +947,12 @@ private: // !Auton
   /**
    * Tasks
    */
-  void drive_pid_task();
+  void encoder_drive_pid_task();
   void swing_pid_task();
-  void turn_pid_task();
-  void point_pid_task();
-  void path_pid_task();
+  void encoder_turn_pid_task();
+  void point_turn_pid_task();
+  void point_drive_pid_task();
+  void path_drive_pid_task();
   void ez_auto_task();
   void ez_odometry_task();
 

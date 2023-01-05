@@ -89,7 +89,7 @@ void Drive::set_drive_pid(double target, int speed, bool slew_on, bool toggle_he
   slew_initialize(right_slew, slew_on, max_speed, r_target_encoder, right_sensor(), r_start, is_backwards);
 
   // Run task
-  if(mode_set) { set_mode(DRIVE); }
+  if(mode_set) { set_mode(ENCODER_DRIVE); }
 }
 
 // Set turn PID
@@ -105,6 +105,6 @@ void Drive::set_turn_pid(double target, int speed, bool mode_set) {
   set_max_speed(speed);
 
   // Run task
-  if(mode_set) { set_mode(TURN); }
+  if(mode_set) { set_mode(ENCODER_TURN); }
 }
 

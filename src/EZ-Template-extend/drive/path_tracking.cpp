@@ -123,7 +123,7 @@ void Drive::set_path_pid(int speed, double lookahead, e_point_orientation orient
   point_start = position;
   headingPID.reset_variables();
 
-  set_mode(PATH);
+  set_mode(PATH_DRIVE);
 }
 
 void Drive::set_path_pid(std::list<PathPoint> target, int speed, double lookahead, e_point_orientation orientation, int start_point) {
@@ -144,7 +144,7 @@ void Drive::wait_until_relative_points_passed(int target) {
     if(path_advance >= relative_target) {
       return;
     }
-    if(mode != PATH) {
+    if(mode != PATH_DRIVE) {
       wait_drive();
       return;
     }
@@ -158,18 +158,18 @@ void Drive::wait_until_absolute_points_passed(int target) {
     if(path_advance >= target) {
       return;
     }
-    if(mode != PATH) {
+    if(mode != PATH_DRIVE) {
       wait_drive();
     }
   }
 }
 
 void Drive::wait_until_distance_from_point(Vector2 target, double distance) {
-  while(mode == DRIVE || mode == POINT || mode == PATH) {
+  while(mode == ENCODER_DRIVE || mode == POINT_DRIVE || mode == PATH_DRIVE) {
     if((target - position).get_magnitude() < distance) {
       return;
     }
-    if(mode == DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
+    if(mode == ENCODER_DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
       return;
     }
   }

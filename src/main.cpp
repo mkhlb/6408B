@@ -31,12 +31,12 @@ Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {18, 16}
+    {-18, -16} // 18 front, 16 back
 
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {-13, -3}
+    {13, 3} // -13 front, -3 back
 
     // IMU Port
     ,
@@ -50,7 +50,7 @@ Drive chassis(
     // Cartridge RPM
     //   (or tick per rotation if using tracking wheels)
     ,
-    360
+    200
 
     // External Gear Ratio (MUST BE DECIMAL)
     //    (or gear ratio of tracking wheel)
@@ -58,16 +58,16 @@ Drive chassis(
     // be 2.333. eg. if your drive is 36:60 where the 60t is powered, your RATIO
     // would be 0.6.
     ,
-    1.0
+    36.0/60.0
 
     // Uncomment if using tracking wheels
     
     // Left Tracking Wheel Ports (negative port will reverse it!)
-    ,{7, 8} // 3 wire encoder
+    //,{7, 8} // 3 wire encoder
     // ,8 // Rotation sensor
 
     // Right Tracking Wheel Ports (negative port will reverse it!)
-    ,{5, 6} // 3 wire encoder
+    //,{5, 6} // 3 wire encoder
     // ,-9 // Rotation sensor
 
     ,{-3,-4}
@@ -299,7 +299,7 @@ void opcontrol() {
   while (true) {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      //chassis.set_point_turn_pid(far_goal, 80, Angle::from_deg(180));
+      //chassis.plan_point_turn_pid(far_goal, 80, Angle::from_deg(180));
       int start = chassis.position.y > far_goal_left_firing_path.begin()->y ? 1 : 0;
 
       chassis.set_path_pid(far_goal_left_firing_path, 110, 16, ez::AGNOSTIC, start);
@@ -309,7 +309,7 @@ void opcontrol() {
       chassis.set_max_speed(80);
       chassis.wait_drive();
       
-      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.plan_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }
@@ -324,20 +324,20 @@ void opcontrol() {
       chassis.set_max_speed(80);
       chassis.wait_drive();
 
-      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.plan_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      chassis.set_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.plan_point_turn_pid(far_goal, 110, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       interpolator_end -= 5;
-      master.print(0, 0, "%f", interpolator_end);
+      master.print(0, 0, "%i", cata_intake.limit.get_value());
     } else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
       interpolator_end += 5;
       master.print(0, 0, "%f", interpolator_end);

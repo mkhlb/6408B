@@ -145,11 +145,11 @@ void CatapultIntakeController::cata_move_relative(double position, double veloci
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  cata_move_velocity(-_cata_max_velocity);
+  cata_move_velocity(-_cata_max_velocity * 1.0);
     
-  if(limit.get_value()) // Stop when limit switch is pressed
+  if(limit.get_value() == 1) // Stop when limit switch is pressed
   {
-    cata_move_relative(-4 / 36.0 * 84.0, _cata_max_velocity);
+    cata_move_relative(-18 / 36.0 * 84.0, _cata_max_velocity);
     cata_primed = true;
     cata_state = e_cata_state::HOLD;
   }
@@ -162,7 +162,7 @@ void CatapultIntakeController::cata_shoot_task() {
 
   if(!limit.get_value())
   {
-    pros::delay(500); // Wait short while before priming in case limit switch is pressed again on the way up
+    pros::delay(400); // Wait short while before priming in case limit switch is pressed again on the way up
 
     cata_state = e_cata_state::PRIME;
   }

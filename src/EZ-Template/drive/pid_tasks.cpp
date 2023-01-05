@@ -14,16 +14,19 @@ using namespace ez;
 void Drive::ez_auto_task() {
   while (true) {
     // Autonomous PID
-    if (get_mode() == DRIVE)
-      drive_pid_task();
-    else if (get_mode() == TURN)
-      turn_pid_task();
+    if (get_mode() == ENCODER_DRIVE)
+      encoder_drive_pid_task();
+    else if (get_mode() == ENCODER_TURN)
+      encoder_turn_pid_task();
     else if (get_mode() == SWING)
       swing_pid_task();
-    else if (get_mode() == POINT)
-      point_pid_task();
-    else if (get_mode() == PATH)
-      path_pid_task();
+    else if (get_mode() == POINT_DRIVE)
+      point_drive_pid_task();
+    else if (get_mode() == PATH_DRIVE)
+      path_drive_pid_task();
+    else if(get_mode() == POINT_TURN) {
+      point_turn_pid_task();
+    }
 
     if (pros::competition::is_autonomous() && !util::AUTON_RAN)
       util::AUTON_RAN = true;
@@ -35,7 +38,7 @@ void Drive::ez_auto_task() {
 }
 
 // Drive PID task
-void Drive::drive_pid_task() {
+void Drive::encoder_drive_pid_task() {
   // Compute PID
   leftPID.compute(left_sensor());
   rightPID.compute(right_sensor());
@@ -69,7 +72,7 @@ void Drive::drive_pid_task() {
 }
 
 // Turn PID task
-void Drive::turn_pid_task() {
+void Drive::encoder_turn_pid_task() {
   // Compute PID
   turnPID.compute(get_gyro());
 
@@ -87,7 +90,7 @@ void Drive::turn_pid_task() {
     set_tank(gyro_out, -gyro_out);
 }
 
-void Drive::point_pid_task() {
+void Drive::point_drive_pid_task() {
   if((point_target - position).get_magnitude() > 6) {
     //figure out offset
     Angle offset = Angle();
@@ -105,27 +108,34 @@ void Drive::point_pid_task() {
       }
     }
     //set PIDs
-    set_point_heading_pid(point_target, offset);
-    set_straight_point_drive_pid(point_target, max_speed, false, true, false);
+    plan_point_heading_pid(point_target, offset);
+    plan_straight_point_drive_pid(point_target, max_speed, false, true, false);
 
     heading_on = true;
 
-    drive_pid_task();
+    encoder_drive_pid_task();
     
   }
   else if((point_target - position).get_magnitude() > 4) {
-    set_straight_point_drive_pid(point_target, max_speed, false, true, false);
+    plan_straight_point_drive_pid(point_target, max_speed, false, true, false);
   }
   else {
-    set_straight_point_drive_pid(point_target, max_speed);
+    plan_straight_point_drive_pid(point_target, max_speed);
   }
 }
 
-void Drive::path_pid_task() {
+void Drive::point_turn_pid_task() {
+
+  plan_point_turn_pid(point_target, max_speed, point_turn_offset, false);
+
+  encoder_turn_pid_task();
+}
+
+void Drive::path_drive_pid_task() {
   PathPoint point = path_set_target();
   double max = point.speed <= 0 ? max_speed : point.speed;
   if(path_advance == path.size() - 1) { // reached the end, time to straight drive
-    set_mode(ez::POINT);
+    set_mode(ez::POINT_DRIVE);
     max_speed = max;
   }
   else {
@@ -137,7 +147,7 @@ void Drive::path_pid_task() {
     
     if(point.toggle_pid) {
       //set PIDs
-      set_straight_point_drive_pid(point_target, max, false, false, false);
+      plan_straight_point_drive_pid(point_target, max, false, false, false);
 
       leftPID.compute(left_sensor());
 
@@ -176,7 +186,7 @@ void Drive::path_pid_task() {
         }
       }
     }
-    set_point_heading_pid(point_target, offset);
+    plan_point_heading_pid(point_target, offset);
     headingPID.compute(get_gyro());
     double imu_out = util::clip_num(headingPID.output, 130, -130);
     double left_power = power + imu_out;

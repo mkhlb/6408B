@@ -31,9 +31,9 @@ void Drive::wait_drive() {
     // Let the PID run at least 1 iteration
     pros::delay(util::DELAY_TIME);
 
-  } while((mode == POINT || mode == PATH));
+  } while((mode == POINT_DRIVE || mode == PATH_DRIVE));
 
-  if (mode == DRIVE) {
+  if (mode == ENCODER_DRIVE) {
     exit_output left_exit = RUNNING;
     exit_output right_exit = RUNNING;
     while (left_exit == RUNNING || right_exit == RUNNING) {
@@ -52,7 +52,7 @@ void Drive::wait_drive() {
   }
 
   // Turn Exit
-  else if (mode == TURN) {
+  else if (mode == ENCODER_TURN) {
     exit_output turn_exit = RUNNING;
     while (turn_exit == RUNNING) {
       turn_exit =
