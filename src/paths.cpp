@@ -3,9 +3,6 @@
 #include "EZ-Template/datatypes.hpp"
 #include <list>
 
-//COMMENT UR CODE
-//BALLSACK CODE
-
 std::list<PathPoint> skills_second_roller_path = {
     {Vector2(40, -23), 8},
     {Vector2(15.5, -29), 2} // in front of roller
@@ -82,7 +79,7 @@ std::list<Vector2> far_goal_left_firing_path = {
     Vector2(11, -72),
     Vector2(14, -95),
 };
-//8==D
+
 std::list<Vector2> far_goal_right_firing_path = {
     Vector2(62, -84),
     Vector2(70, -131),

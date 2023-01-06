@@ -31,12 +31,13 @@ Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {-18, -16} // 18 front, 16 back
-
+    {-13, -3} // -13 front, -3 back
+    
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {13, 3} // -13 front, -3 back
+    {18, 16} // 18 front, 16 back
+
 
     // IMU Port
     ,
@@ -117,9 +118,9 @@ void initialize() {
               // joysticks
   chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
-  chassis.set_deceleration(0, 0);
+  chassis.set_deceleration(800, 1100);
   cata_intake.intake_roller_set_active_brake(.9);
-  chassis.set_curve_default(1, 2.4); // Defaults for curve. If using tank, only
+  chassis.set_curve_default(3, 3); // Defaults for curve. If using tank, only
                                    // the first parameter is used.
   default_constants(); // Set the drive to your own constants from autons.cpp!
   exit_condition_defaults();
@@ -181,9 +182,9 @@ void autonomous() {
   //     selector.
 
   // auto selection
-  //roll_test();
+  roll_test();
   //path_test();
-  skills();
+  //skills();
 }
 
 /**

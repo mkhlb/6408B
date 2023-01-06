@@ -169,12 +169,19 @@ void Drive::set_acceleration(double left, double right) {
 // Left curve function
 double Drive::left_curve_function(double x) {
   double target = x;
+
+  if(abs(target) > JOYSTICK_THRESHOLD) {
+    if(active_brake_kp != 0) reset_starts();
+  }
+
   if (left_curve_scale != 0) {
     // if (CURVE_TYPE)
-    target = (powf(2.718, -(left_curve_scale / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(left_curve_scale / 10)))) * x;
+    target = 1.0 * (powf(2.718, -(left_curve_scale / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(left_curve_scale / 10)))) * x;
     // else
     // return powf(2.718, ((abs(x)-127)*RIGHT_CURVE_SCALE)/100)*x;
   }
+
+  target = target;
 
   // figure out if accelerating or decelerating
   // move l_stick towards target
@@ -206,12 +213,18 @@ double Drive::left_curve_function(double x) {
 // Right curve fnuction
 double Drive::right_curve_function(double x) {
   double target = x;
+  if(abs(target) > JOYSTICK_THRESHOLD) {
+    target = util::sgn(target) * util::clip_num(((abs(target) - 127) * (10 - 127) / -127 + 127), 127, 10);
+    if(active_brake_kp != 0) reset_starts();
+  }
   if (right_curve_scale != 0) {
     // if (CURVE_TYPE)
-    target = (powf(2.718, -(right_curve_scale / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(right_curve_scale / 10)))) * x;
+    target = (powf(2.718, -(right_curve_scale / 10)) + powf(2.718, (fabs(target) - 127) / 10) * (1 - powf(2.718, -(right_curve_scale / 10)))) * target;
     // else
     // return powf(2.718, ((abs(x)-127)*RIGHT_CURVE_SCALE)/100)*x;
   }
+
+  target = target;
 
   // figure out if accelerating or decelerating
   // move l_stick towards target
@@ -256,7 +269,6 @@ void Drive::joy_thresh_opcontrol(int l_stick, int r_stick) {
   if (abs(l_stick) > JOYSTICK_THRESHOLD || abs(r_stick) > JOYSTICK_THRESHOLD) {
     set_tank(l_stick, r_stick);
     //if (active_brake_kp != 0) reset_drive_sensor();
-    if(active_brake_kp != 0) reset_starts();
   }
   // When joys are released, run active brake (P) on drive
   else {
@@ -299,6 +311,8 @@ void Drive::arcade_standard(e_type stick_type) {
     fwd_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
     turn_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
   }
+  
+  turn_stick = turn_stick * .7;
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
   joy_thresh_opcontrol(fwd_stick + turn_stick, fwd_stick - turn_stick);
@@ -323,6 +337,8 @@ void Drive::arcade_flipped(e_type stick_type) {
     fwd_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
     turn_stick = left_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
   }
+
+  turn_stick = turn_stick * .7;
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
   joy_thresh_opcontrol(fwd_stick + turn_stick, fwd_stick - turn_stick);

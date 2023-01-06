@@ -26,7 +26,7 @@ void Drive::add_points(std::list<PathPoint> points) {
 
 void Drive::add_points(std::list<Vector2> points, double advance) {
   for(auto it = points.cbegin(); it != points.cend(); ++it) {
-    path.push_back({*it, advance});
+    path.push_back(PathPoint(*it, advance));
   }
 }
 

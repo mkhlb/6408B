@@ -61,7 +61,7 @@ void Drive::plan_orientation_swing_pid(e_swing swing_type, Angle target, int spe
 }
 
 void Drive::wait_until_heading(double target) {
-  if (mode == ENCODER_TURN || mode == SWING) {
+  if (mode == ENCODER_TURN || mode == SWING || mode == POINT_TURN) {
     // Calculate error between current and target (target needs to be an in between position)
     int g_error = target - get_gyro();
     int g_sgn = util::sgn(g_error);
@@ -205,7 +205,7 @@ void Drive::wait_until_heading_relative(double target) {
 }
 
 void Drive::wait_until_target_relative(double target) {
-  if(mode == ENCODER_TURN) {
+  if(mode == ENCODER_TURN || mode == POINT_TURN) {
     wait_until_heading(turnPID.get_target() + target);
   }
   else if(mode == SWING) {
