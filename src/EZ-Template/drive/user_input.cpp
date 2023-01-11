@@ -170,8 +170,11 @@ void Drive::set_acceleration(double left, double right) {
 double Drive::left_curve_function(double x) {
   double target = x;
 
-  if(abs(target) > JOYSTICK_THRESHOLD) {
+  if(abs(target) > JOYSTICK_THRESHOLD ) {
     if(active_brake_kp != 0) reset_starts();
+  }
+  else {
+    if(active_brake_kp != 0 && abs(l_stick) > 20) reset_starts();
   }
 
   if (left_curve_scale != 0) {
@@ -214,9 +217,14 @@ double Drive::left_curve_function(double x) {
 double Drive::right_curve_function(double x) {
   double target = x;
   if(abs(target) > JOYSTICK_THRESHOLD) {
-    target = util::sgn(target) * util::clip_num(((abs(target) - 127) * (10 - 127) / -127 + 127), 127, 10);
+    target -= 4;
+    target = util::sgn(target) * util::clip_num(((abs(target) - 127) * (24 - 127) / -127 + 127), 127, 24);
     if(active_brake_kp != 0) reset_starts();
   }
+  else {
+    if(active_brake_kp != 0 && abs(r_stick) > 30) reset_starts();
+  }
+  
   if (right_curve_scale != 0) {
     // if (CURVE_TYPE)
     target = (powf(2.718, -(right_curve_scale / 10)) + powf(2.718, (fabs(target) - 127) / 10) * (1 - powf(2.718, -(right_curve_scale / 10)))) * target;
@@ -247,6 +255,8 @@ double Drive::right_curve_function(double x) {
       r_stick += util::clip_num(delta, r_acceleration, -r_acceleration);
     }
   }
+
+  
 
   return r_stick;
 }

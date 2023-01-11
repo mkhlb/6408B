@@ -35,8 +35,8 @@ void default_constants() {
   chassis.set_slew_min_power(80, 80);
   chassis.set_slew_distance(7, 7);
   chassis.set_pid_constants(&chassis.headingPID, 4.2, 0, 45, 0);
-  chassis.set_pid_constants(&chassis.left_forward_drivePID, 0.44, 0.000, 5.0, 600);
-  chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.44, 0.000, 5.0, 600);
+  chassis.set_pid_constants(&chassis.left_forward_drivePID, 0.28, 0.001, .89, 600);
+  chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.28, 0.001, .89, 600);
   chassis.set_pid_constants(&chassis.left_backward_drivePID, .75, 0, 4, 0);
   chassis.set_pid_constants(&chassis.right_backward_drivePID, .75, 0, 4, 0);
   chassis.set_pid_constants(&chassis.turnPID, 6.9, 0.0026, 50, 10);
@@ -125,10 +125,12 @@ void roll_test() {
   default_constants();
   exit_condition_defaults();
   chasing_heading_constants();
-  chassis.reset_position(Vector2(10.5, -29.5), Angle::from_deg(180));
-  pros::delay(10);
-  chassis.set_heading_relative_heading_pid(0);
-  chassis.set_drive_pid(24, DRIVE_SPEED);
+  //chassis.reset_position(Vector2(10.5, -29.5), Angle::from_deg(180));
+  //pros::delay(10);
+  //chassis.set_heading_relative_heading_pid(0);
+  chassis.set_drive_pid(2, DRIVE_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(42, DRIVE_SPEED);
   chassis.wait_drive();
   pros::delay(1000);
   chassis.set_drive_pid(-24, DRIVE_SPEED);

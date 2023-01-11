@@ -51,7 +51,7 @@ Drive chassis(
     // Cartridge RPM
     //   (or tick per rotation if using tracking wheels)
     ,
-    200
+    360
 
     // External Gear Ratio (MUST BE DECIMAL)
     //    (or gear ratio of tracking wheel)
@@ -59,16 +59,16 @@ Drive chassis(
     // be 2.333. eg. if your drive is 36:60 where the 60t is powered, your RATIO
     // would be 0.6.
     ,
-    36.0/60.0
+    1
 
     // Uncomment if using tracking wheels
     
     // Left Tracking Wheel Ports (negative port will reverse it!)
-    //,{7, 8} // 3 wire encoder
+    ,{-5, -6} // 3 wire encoder
     // ,8 // Rotation sensor
 
     // Right Tracking Wheel Ports (negative port will reverse it!)
-    //,{5, 6} // 3 wire encoder
+    ,{-7, -8} // 3 wire encoder
     // ,-9 // Rotation sensor
 
     ,{-3,-4}
@@ -116,11 +116,11 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(0.20); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
-  chassis.set_deceleration(800, 1100);
+  chassis.set_deceleration(600, 1900);
   cata_intake.intake_roller_set_active_brake(.9);
-  chassis.set_curve_default(3, 3); // Defaults for curve. If using tank, only
+  chassis.set_curve_default(3, 3.2); // Defaults for curve. If using tank, only
                                    // the first parameter is used.
   default_constants(); // Set the drive to your own constants from autons.cpp!
   exit_condition_defaults();
@@ -202,27 +202,26 @@ void autonomous() {
  */
 
 void print_odom() {
-  return;
   int counter_max = 5000;
   int counter = 50;
   double odom_error = 0;
   double last_degs = chassis.orientation.get_deg();
   printf("initializing printer \n");
   while (true) {
+    
+    // odom_error += chassis.orientation.get_deg() - last_degs;
 
-    odom_error += chassis.orientation.get_deg() - last_degs;
+    // last_degs = chassis.orientation.get_deg();
 
-    last_degs = chassis.orientation.get_deg();
+    // pros::delay(5);
 
-    pros::delay(5);
-
-    counter = counter - 1;
-    if(counter <= 0) {
-      counter = counter_max;
-      printf("error: %f \n", (float)(odom_error));
-      odom_error = 0;
+    // counter = counter - 1;
+    // if(counter <= 0) {
+    //   counter = counter_max;
+    //   printf("error: %f \n", (float)(odom_error));
+    //   odom_error = 0;
       
-    }
+    // }
     
   }
 }
