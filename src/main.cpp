@@ -116,7 +116,7 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(0.20); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(0.13); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
   chassis.set_deceleration(600, 1900);
   cata_intake.intake_roller_set_active_brake(.9);
@@ -208,21 +208,9 @@ void print_odom() {
   double last_degs = chassis.orientation.get_deg();
   printf("initializing printer \n");
   while (true) {
-    
-    // odom_error += chassis.orientation.get_deg() - last_degs;
-
-    // last_degs = chassis.orientation.get_deg();
-
-    // pros::delay(5);
-
-    // counter = counter - 1;
-    // if(counter <= 0) {
-    //   counter = counter_max;
-    //   printf("error: %f \n", (float)(odom_error));
-    //   odom_error = 0;
-      
-    // }
-    
+    //master.print(0,0, "%f, %f", chassis.position.x, chassis.position.y);
+    master.print(0,0, "%f, %f", (float)chassis.left_sensor(), (float)chassis.right_sensor());
+    pros::delay(500);
   }
 }
 
@@ -290,7 +278,7 @@ void opcontrol() {
 
   chassis.set_mode(ez::DISABLE);
 
-  chassis.reset_position(skills_start, Angle::from_deg(91.5));
+  //chassis.reset_position(skills_start, Angle::from_deg(91.5));
   //chassis.reset_position(Vector2(), Angle::from_deg(180));
   pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94

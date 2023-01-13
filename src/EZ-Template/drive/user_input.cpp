@@ -222,7 +222,7 @@ double Drive::right_curve_function(double x) {
     if(active_brake_kp != 0) reset_starts();
   }
   else {
-    if(active_brake_kp != 0 && abs(r_stick) > 30) reset_starts();
+    if(active_brake_kp != 0 && abs(r_stick) > 20) reset_starts();
   }
   
   if (right_curve_scale != 0) {

@@ -19,9 +19,11 @@ const int DRIVE_SPEED =
          // it's only correcting by making one side slower.  When this is 87%,
          // it's correcting by making one side faster and one side slower,
          // giving better heading correction.
+const int LONG_INTAKE_DRIVE_SPEED = 90;
+const int SHORT_INTAKE_DRIVE_SPEED = 70;
 const int TURN_SPEED = 127;
 const int SWING_SPEED = 110;
-const int INTK_IN = 0.9*200*84/36;
+const int INTK_IN = 0.95*200*84/36;
 
 ///
 // Constants
@@ -34,19 +36,19 @@ const int INTK_IN = 0.9*200*84/36;
 void default_constants() {
   chassis.set_slew_min_power(80, 80);
   chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 4.2, 0, 45, 0);
-  chassis.set_pid_constants(&chassis.left_forward_drivePID, 0.28, 0.001, .89, 600);
-  chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.28, 0.001, .89, 600);
-  chassis.set_pid_constants(&chassis.left_backward_drivePID, .75, 0, 4, 0);
-  chassis.set_pid_constants(&chassis.right_backward_drivePID, .75, 0, 4, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 6.9, 0.0026, 50, 10);
+  chassis.set_pid_constants(&chassis.headingPID, 2.7, 0.0028, 27, 10);
+  chassis.set_pid_constants(&chassis.left_forward_drivePID, 0.245, 0.0018, 1.15, 300);
+  chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.245, 0.0018, 1.15, 300);
+  chassis.set_pid_constants(&chassis.left_backward_drivePID, .265, 0, 1.38, 0);
+  chassis.set_pid_constants(&chassis.right_backward_drivePID, .265, 0, 1.38, 0);
+  chassis.set_pid_constants(&chassis.turnPID, 2.7, 0.0028, 27, 10);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
   cata_intake.cata_set_pid_constants(5, 0.000, 14, 0);
 }
 
 void chasing_heading_constants() {
-  chassis.set_pid_constants(&chassis.headingPID, 4.2, 0, 45, 0);
+  //chassis.set_pid_constants(&chassis.headingPID, 4.2, 0, 45, 0);
 }
 
 void wide_swing_constants() { // offside = .3
@@ -125,16 +127,22 @@ void roll_test() {
   default_constants();
   exit_condition_defaults();
   chasing_heading_constants();
+  //chassis.set_point_drive_pid(Vector2(24, -10), DRIVE_SPEED);
+  //chassis.wait_drive();
+  chassis.set_turn_pid(90);
+  chassis.wait_drive();
+  chassis.set_point_turn_pid(Vector2(7, 0), TURN_SPEED);
+  chassis.wait_drive();
   //chassis.reset_position(Vector2(10.5, -29.5), Angle::from_deg(180));
   //pros::delay(10);
   //chassis.set_heading_relative_heading_pid(0);
-  chassis.set_drive_pid(2, DRIVE_SPEED);
-  chassis.wait_drive();
-  chassis.set_drive_pid(42, DRIVE_SPEED);
-  chassis.wait_drive();
-  pros::delay(1000);
-  chassis.set_drive_pid(-24, DRIVE_SPEED);
-  chassis.wait_drive();
+  // chassis.set_turn_pid(14, TURN_SPEED);
+  // chassis.wait_drive();
+  // //pros::delay(000);
+  // chassis.set_turn_pid(90, TURN_SPEED);
+  // chassis.wait_drive();
+  // chassis.set_turn_pid(0, TURN_SPEED);
+  // chassis.wait_drive();
   
   //chassis.drive_to_point(Vector2(20, -15), DRIVE_SPEED, true);
 }
