@@ -91,7 +91,7 @@ void Drive::encoder_turn_pid_task() {
 }
 
 void Drive::point_drive_pid_task() {
-  if((point_target - position).get_magnitude() > 6) {
+  if((point_target - position).get_magnitude() > 12) {
     //figure out offset
     Angle offset = Angle();
     switch (point_orientation) {
@@ -116,7 +116,7 @@ void Drive::point_drive_pid_task() {
     encoder_drive_pid_task();
     
   }
-  else if((point_target - position).get_magnitude() > 4) {
+  else if((point_target - position).get_magnitude() > 9) {
     plan_straight_point_drive_pid(point_target, max_speed, false, true, false);
   }
   else {
@@ -136,7 +136,8 @@ void Drive::path_drive_pid_task() {
   double max = point.speed <= 0 ? max_speed : point.speed;
   if(path_advance == path.size() - 1) { // reached the end, time to straight drive
     set_mode(ez::POINT_DRIVE);
-    max_speed = max;
+    set_max_speed(speed);
+    headingPID.reset_variables();
   }
   else {
 
@@ -150,6 +151,7 @@ void Drive::path_drive_pid_task() {
       plan_straight_point_drive_pid(point_target, max, false, false, false);
 
       leftPID.compute(left_sensor());
+      rightPID.compute(right_sensor());
 
       power = util::clip_num(leftPID.output, max, -max);
     }

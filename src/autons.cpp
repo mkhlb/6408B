@@ -36,15 +36,15 @@ const int INTK_IN = 0.95*200*84/36;
 void default_constants() {
   chassis.set_slew_min_power(80, 80);
   chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 2.7, 0.0028, 27, 10);
+  chassis.set_pid_constants(&chassis.headingPID, 2.20, 0.000, 22, 0);
   chassis.set_pid_constants(&chassis.left_forward_drivePID, 0.245, 0.0018, 1.15, 300);
   chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.245, 0.0018, 1.15, 300);
-  chassis.set_pid_constants(&chassis.left_backward_drivePID, .265, 0, 1.38, 0);
-  chassis.set_pid_constants(&chassis.right_backward_drivePID, .265, 0, 1.38, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 2.7, 0.0028, 27, 10);
+  chassis.set_pid_constants(&chassis.left_backward_drivePID, .277, 0, 1.38, 0);
+  chassis.set_pid_constants(&chassis.right_backward_drivePID, .277, 0, 1.38, 0);
+  chassis.set_pid_constants(&chassis.turnPID, 2.75, 0.0028, 27, 10);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
-  cata_intake.cata_set_pid_constants(5, 0.000, 14, 0);
+  cata_intake.cata_set_pid_constants(7.8, 0.001, 22, 50);
 }
 
 void chasing_heading_constants() {
@@ -70,7 +70,7 @@ void very_narrow_swing_constants() { // offside = -.6
 void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 1000, 500);
   chassis.set_exit_condition(chassis.swing_exit, 100, 1.5, 500, 7, 1000, 500);
-  chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 1000, 500);
+  chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
   chassis.headingPID.set_exit_condition(120, 3, 700, 7, 1000, 500);
   cata_intake.roller_set_exit_condition(100, 10, 500, 50, 2000, 3000);
   cata_intake.cata_set_exit_condition(100, 50, 500, 100, 1000, 1000);
@@ -120,31 +120,56 @@ void roll_time(double max_dist, double back_distance, double speed, double roll_
   cata_intake.wait_roller();
 }
 
-
-
-//TEST OF VERY SENSITIVE EXIT CONDITIONS: Robot will exit almost immediately after the velocity of the wheel is 0
-void roll_test() {
+void drive_test() {
   default_constants();
   exit_condition_defaults();
-  chasing_heading_constants();
-  //chassis.set_point_drive_pid(Vector2(24, -10), DRIVE_SPEED);
-  //chassis.wait_drive();
-  chassis.set_turn_pid(90);
+  chassis.set_drive_pid(6, DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_point_turn_pid(Vector2(7, 0), TURN_SPEED);
+  chassis.set_drive_pid(42, DRIVE_SPEED);
   chassis.wait_drive();
-  //chassis.reset_position(Vector2(10.5, -29.5), Angle::from_deg(180));
-  //pros::delay(10);
-  //chassis.set_heading_relative_heading_pid(0);
-  // chassis.set_turn_pid(14, TURN_SPEED);
-  // chassis.wait_drive();
-  // //pros::delay(000);
-  // chassis.set_turn_pid(90, TURN_SPEED);
-  // chassis.wait_drive();
-  // chassis.set_turn_pid(0, TURN_SPEED);
-  // chassis.wait_drive();
+  chassis.set_drive_pid(-48, DRIVE_SPEED);
+  chassis.wait_drive();
+}
+
+void turn_test() {
+  default_constants();
+  exit_condition_defaults();
+  chassis.set_turn_pid(8, TURN_SPEED);
+  chassis.wait_drive();
+  chassis.plan_orientation_turn_pid(Angle::from_deg(-45), TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_heading_relative_turn_pid(-45, TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_target_relative_turn_pid(45, TURN_SPEED);
+  chassis.wait_drive();
+  chassis.plan_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED);
+  chassis.wait_drive();
+}
+
+void point_turn_test() {
+  chassis.plan_point_turn_pid(Vector2(0, -20), TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(40, DRIVE_SPEED);
+  chassis.wait_until_distance_travelled(24);
+  chassis.set_point_turn_pid(Vector2(24, -24), TURN_SPEED, Angle::from_deg(180));
+  chassis.wait_drive();
+}
+
+void point_drive_test() {
+  chassis.set_point_drive_pid(Vector2(36, -24), DRIVE_SPEED);
+  chassis.wait_drive();
+  chassis.plan_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED);
+  chassis.wait_drive();
+}
+
+void odom_test() {
+  default_constants();
+  exit_condition_defaults();
+  chassis.set_turn_pid(90, 80);
+  chassis.wait_drive();
+  chassis.set_point_turn_pid(Vector2(7, 0), 127);
+  chassis.wait_drive();
   
-  //chassis.drive_to_point(Vector2(20, -15), DRIVE_SPEED, true);
 }
 
 void path_test() {
@@ -205,28 +230,29 @@ void skills1() {
   cata_intake.cata_prime();
   chassis.reset_position(skills_start, Angle::from_deg(91.5));
   chassis.set_heading_relative_heading_pid(0);
-  
-  chassis.wait_drive();
+  pros::delay(200);
   roll(30, Angle::from_deg(91.5), -.65, 70, 200);
 
   chassis.set_path_pid(skills_second_roller_path, DRIVE_SPEED, 8, ez::BACKWARD, 0);
   chassis.wait_until_absolute_points_passed(1);
   cata_intake.intake_velocity(INTK_IN * .7);
   chassis.set_point_path_orientation(ez::FORWARD);
-  chassis.wait_until_distance_remaining(5);
+  chassis.wait_until_distance_remaining(12);
   cata_intake.intake_stop();
   roll(30, Angle::from_deg(181.5), -.65, 70, 200);
   // start driving towards first shot
   chassis.set_path_pid(skills_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);
   chassis.wait_until_absolute_points_passed(1);
-  chassis.set_path_lookahead(12);
+  chassis.set_path_lookahead(15);
   cata_intake.intake_velocity(INTK_IN);
+  chassis.wait_drive();
+  chassis.set_turn_pid(0, TURN_SPEED);
   chassis.wait_drive();
   aim_and_fire_far_goal();
 
   chassis.plan_orientation_turn_pid(Angle::from_deg(5), TURN_SPEED);
   chassis.wait_drive();
-  chassis.set_path_pid(skills_far_low_goal_horizontal_line_path, DRIVE_SPEED * .6, 14, ez::FORWARD);
+  chassis.set_path_pid(skills_far_low_goal_horizontal_line_path, SHORT_INTAKE_DRIVE_SPEED, 14, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.set_point_path_orientation(ez::BACKWARD);
@@ -319,33 +345,4 @@ void skills2() {
   chassis.wait_drive();
   
 }
-
-void turn_test() {
-  chassis.plan_point_turn_pid(Vector2(), 80);
-}
-
-void swing_test() {
-  chassis.set_drive_pid(3, 110);
-  chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, .4);
-  chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, 90, SWING_SPEED, .7);
-  chassis.wait_drive();
-  chassis.set_swing_pid(ez::RIGHT_SWING, 45, SWING_SPEED, -.5);
-  chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, -45, SWING_SPEED, -.3);
-  chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, -.3);
-  chassis.wait_drive();
-  chassis.set_swing_pid(ez::RIGHT_SWING, 90, SWING_SPEED, -.5);
-  chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED, .7);
-  chassis.wait_drive();
-  chassis.set_swing_pid(ez::LEFT_SWING, 0, SWING_SPEED, .4);
-  chassis.wait_drive();
-  chassis.set_drive_pid(-3, 110);
-  chassis.wait_drive();
-
-}
-
 

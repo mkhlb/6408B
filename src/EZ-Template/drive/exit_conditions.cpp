@@ -52,7 +52,7 @@ void Drive::wait_drive() {
   }
 
   // Turn Exit
-  else if (mode == ENCODER_TURN) {
+  else if (mode == ENCODER_TURN || mode == POINT_TURN) {
     exit_output turn_exit = RUNNING;
     while (turn_exit == RUNNING) {
       turn_exit =

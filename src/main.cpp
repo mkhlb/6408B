@@ -24,10 +24,10 @@
 // Chassis constructor
 Drive chassis(
     // Track width of chassis in inches
-    4.75,
-    4.75
+    4.625,
+    4.625
     , 
-    -1.475 // 1.45, overshoots : 1.4, undershoot
+    .3 // 0, overshoots : 1.4, undershoot
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
@@ -126,7 +126,7 @@ void initialize() {
   exit_condition_defaults();
 
   // Autonomous Selector using LLEMU
-  ez::as::auton_selector.add_autons({Auton("Full win point", roll_test)});
+  ez::as::auton_selector.add_autons({Auton("Full win point", odom_test)});
 
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -182,9 +182,11 @@ void autonomous() {
   //     selector.
 
   // auto selection
-  roll_test();
-  //path_test();
-  //skills();
+  //odom_test();
+  //point_turn_test();
+  path_test();
+  //point_drive_test();
+  //skills1();
 }
 
 /**
@@ -278,7 +280,7 @@ void opcontrol() {
 
   chassis.set_mode(ez::DISABLE);
 
-  //chassis.reset_position(skills_start, Angle::from_deg(91.5));
+  chassis.reset_position(skills_start, Angle::from_deg(91.5));
   //chassis.reset_position(Vector2(), Angle::from_deg(180));
   pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94
@@ -288,16 +290,7 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.plan_point_turn_pid(far_goal, 80, Angle::from_deg(180));
-      int start = chassis.position.y > far_goal_left_firing_path.begin()->y ? 1 : 0;
-
-      chassis.set_path_pid(far_goal_left_firing_path, 110, 16, ez::AGNOSTIC, start);
-      chassis.wait_until_absolute_points_passed(1);
-      chassis.set_point_path_orientation(ez::BACKWARD);
-      chassis.wait_until_absolute_points_passed(2);
-      chassis.set_max_speed(80);
-      chassis.wait_drive();
-      
-      chassis.plan_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.set_path_pid(skills_first_shot_path, 127, 14, ez::BACKWARD);
       chassis.wait_drive();
       reset_for_driver();
     }
@@ -318,7 +311,8 @@ void opcontrol() {
     }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      chassis.plan_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      //chassis.plan_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.plan_point_turn_pid(far_goal, 127, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }
