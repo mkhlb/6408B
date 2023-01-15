@@ -15,6 +15,7 @@ void point_drive_test();
 void point_turn_test();
 void odom_test();
 void path_test();
+void heading_test();
 void skills();
 void skills1();
 void skills2();

@@ -136,7 +136,7 @@ void Drive::path_drive_pid_task() {
   double max = point.speed <= 0 ? max_speed : point.speed;
   if(path_advance == path.size() - 1) { // reached the end, time to straight drive
     set_mode(ez::POINT_DRIVE);
-    set_max_speed(speed);
+    set_max_speed(max);
     headingPID.reset_variables();
   }
   else {

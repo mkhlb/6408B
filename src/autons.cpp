@@ -123,11 +123,13 @@ void roll_time(double max_dist, double back_distance, double speed, double roll_
 void drive_test() {
   default_constants();
   exit_condition_defaults();
-  chassis.set_drive_pid(6, DRIVE_SPEED);
+  chassis.set_drive_pid(-3, DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_drive_pid(42, DRIVE_SPEED);
+  chassis.set_drive_pid(-6, DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_drive_pid(-48, DRIVE_SPEED);
+  chassis.set_drive_pid(-39, DRIVE_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(48, DRIVE_SPEED);
   chassis.wait_drive();
 }
 
@@ -170,6 +172,12 @@ void odom_test() {
   chassis.set_point_turn_pid(Vector2(7, 0), 127);
   chassis.wait_drive();
   
+}
+
+void heading_test() {
+  chassis.plan_orientation_heading_pid(Angle::from_deg(-70));
+  chassis.set_drive_pid(60, DRIVE_SPEED);
+  chassis.wait_drive();
 }
 
 void path_test() {

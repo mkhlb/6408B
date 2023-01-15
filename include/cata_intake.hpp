@@ -214,5 +214,7 @@ private:
   double _intake_roller_active_brake_kp = 0;
 
   bool _intake_safety_bypass = false;
+
+  double _cata_extra_error = -19.5;
 };
 }; // namespace mkhlib

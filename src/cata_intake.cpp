@@ -100,11 +100,11 @@ void CatapultIntakeController::master_cata_task() {
   while (true) {  
     if( cata_state == e_cata_state::HOLD) // Lock motors during hold state.
     {
-      cata_pid.compute(cata_motors.front().get_position());
-      cata_move_voltage(cata_pid.output);
-      if(cata_pid.exit_condition() != ez::RUNNING) {
-        cata_move_velocity(0);
-      }
+      // cata_pid.compute(cata_motors.front().get_position());
+      // cata_move_voltage(cata_pid.output);
+      // if(cata_pid.exit_condition() != ez::RUNNING) {
+      //   cata_move_velocity(0);
+      // }
     }
     else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
     {
@@ -137,10 +137,10 @@ void CatapultIntakeController::cata_move_velocity(double velocity) {
 }
 
 void CatapultIntakeController::cata_move_relative(double position, double velocity) {
-  // for (auto i : cata_motors) { // Iterate all motors
-  //   i.move_relative(position, velocity); // Move at max speed into prime position
-  // }
-  cata_pid.set_target(cata_motors.front().get_position() + position);
+  for (auto i : cata_motors) { // Iterate all motors
+    i.move_relative(position, velocity); // Move at max speed into prime position
+  }
+  //cata_pid.set_target(cata_motors.front().get_position() + position);
 }
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
@@ -149,7 +149,8 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value() == 1) // Stop when limit switch is pressed
   {
-    cata_move_relative(-19.0 / 36.0 * 84.0, _cata_max_velocity);
+    cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity);
+    _cata_extra_error = -20.5;
     cata_primed = true;
     cata_state = e_cata_state::HOLD;
   }
