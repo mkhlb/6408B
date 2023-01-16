@@ -7,6 +7,7 @@
 #include "pros/motors.hpp"
 
 extern Drive chassis;
+extern pros::Motor expansion;
 extern mkhlib::CatapultIntakeController cata_intake;
 
 void drive_test();

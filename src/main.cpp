@@ -6,6 +6,7 @@
 #include "autons.hpp"
 #include "points.hpp"
 #include "paths.hpp"
+#include "cata_intake.hpp"
 #include "pros/adi.h"
 #include "pros/adi.hpp"
 #include "pros/misc.h"
@@ -96,6 +97,9 @@ mkhlib::CatapultIntakeController cata_intake(
     pros::E_MOTOR_GEARSET_36,
     // gearset of intake
     pros::E_MOTOR_GEARSET_18);
+
+pros::Motor expansion(16, pros::E_MOTOR_GEARSET_36, false);
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -103,6 +107,7 @@ mkhlib::CatapultIntakeController cata_intake(
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  expansion.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   cata_intake.cata_hold();
   // Print our branding over your terminal :D
   ez::print_ez_template();
@@ -184,9 +189,10 @@ void autonomous() {
   // auto selection
   //odom_test();
   //point_turn_test();
-  path_test();
+  //drive_test();
+  //path_test();
   //point_drive_test();
-  //skills1();
+  skills1();
 }
 
 /**
@@ -209,9 +215,17 @@ void print_odom() {
   double odom_error = 0;
   double last_degs = chassis.orientation.get_deg();
   printf("initializing printer \n");
+  bool limitpresed = false;
   while (true) {
     //master.print(0,0, "%f, %f", chassis.position.x, chassis.position.y);
-    master.print(0,0, "%f, %f", (float)chassis.left_sensor(), (float)chassis.right_sensor());
+    if(cata_intake.limit.get_value() == 1 && !limitpresed) {
+      limitpresed = true;
+      //cata_intake.cata_reset_sensors();
+    }
+    else if(cata_intake.limit.get_value() != 1) {
+      limitpresed = false;
+    }
+    master.print(0,0, "%f, %f", (float)cata_intake.cata_motors.front().get_position(), (float)cata_intake.cata_motors.back().get_position());
     pros::delay(500);
   }
 }
@@ -291,6 +305,8 @@ void opcontrol() {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.plan_point_turn_pid(far_goal, 80, Angle::from_deg(180));
       chassis.set_path_pid(skills_first_shot_path, 127, 14, ez::BACKWARD);
+      chassis.wait_until_absolute_points_passed(3);
+      chassis.plan_point_turn_pid(far_goal, 127, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }
@@ -311,10 +327,10 @@ void opcontrol() {
     }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      //chassis.plan_point_turn_pid(far_goal, 110, Angle::from_deg(180));
-      chassis.plan_point_turn_pid(far_goal, 127, Angle::from_deg(180));
-      chassis.wait_drive();
-      reset_for_driver();
+      expansion.move_velocity(100);
+    }
+    else {
+      expansion.move_velocity(0);
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
@@ -325,23 +341,23 @@ void opcontrol() {
       master.print(0, 0, "%f", interpolator_end);
     }
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      chassis.arcade_standard(ez::SPLIT);
-    } else {
-      double turn_coefficient = aim_assist_coefficient(
-          Vector2(0, 0), 8.0, .5, 30.0, 42.0, 36.0, 20.0, 12.0);
-      chassis.arcade_curvatherp_standard(ez::SPLIT, 2, interpolator_end,
+    
+    double turn_coefficient = aim_assist_coefficient(
+        Vector2(0, 0), 8.0, .5, 30.0, 42.0, 36.0, 20.0, 12.0);
+    chassis.arcade_curvatherp_standard(ez::SPLIT, 2, interpolator_end,
                                          1); // curvatherp special split arcade
-      //chassis.tank();
-      // chassis.arcade_curvatherp_standard(ez::SPLIT);
-    }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
 
+      // cata_intake.cata_move_voltage(-60);
+    
       cata_intake
           .cata_shoot(); // cata_intake shoot, moves cata_intake then shortly
                          // after waits until limit switch to stop it
     }
+    // else {
+    //   cata_intake.cata_move_velocity(0);
+    // }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       cata_intake.intake_velocity(0.9 * 200.0 * 84 / 36); // intake

@@ -5,13 +5,13 @@
 
 std::list<PathPoint> skills_second_roller_path = {
     {Vector2(40, -23), 8},
-    {Vector2(18.5, -26), 10} // in front of roller
+    {Vector2(18.5, -26), 12} // in front of roller
 };
 
 std::list<PathPoint> skills_first_shot_path = {
     {Vector2(16, -34), 6},
     {Vector2(10.5, -65), -1},
-    {Vector2(10.5, -88), -1}, // in position for shot
+    {Vector2(10.2, -86), 8, -1, -1, true}, // in position for shot
 };
 
 std::list<PathPoint> skills_far_low_goal_horizontal_line_path = {

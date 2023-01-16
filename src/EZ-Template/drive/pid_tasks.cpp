@@ -147,6 +147,25 @@ void Drive::path_drive_pid_task() {
     double power = 0;
     
     if(point.toggle_pid) {
+      switch (point_orientation) {
+        case FORWARD: { 
+          offset = Angle::from_deg(0);
+          break;
+        }
+        case BACKWARD: { 
+          offset = Angle::from_deg(180);
+          break;
+        }
+        case AGNOSTIC: {
+          if(abs(error_to_point(point_target)) > 180) {
+            offset = Angle::from_deg(180);
+          }
+          else {
+            offset = Angle::from_deg(0);
+          }
+          break;
+        }
+      }
       //set PIDs
       plan_straight_point_drive_pid(point_target, max, false, false, false);
 
@@ -161,6 +180,7 @@ void Drive::path_drive_pid_task() {
       position_to_target.set_magnitude(1); // normalize
       Vector2 orientation_unit = Vector2::from_polar(1, orientation);
       double power_scalar = position_to_target * orientation_unit;
+      
       switch (point_orientation) {
         case FORWARD: { 
           offset = Angle::from_deg(0);
@@ -172,18 +192,20 @@ void Drive::path_drive_pid_task() {
         case BACKWARD: { 
           offset = Angle::from_deg(180);
           if(util::sgn(power_scalar) < 0) {
-            power = power_scalar * max;
+            power = -pow(abs(power_scalar), 1.0) * max; // power raised to should be > 1
           }
           break;
         }
         case AGNOSTIC: {
           if(abs(error_to_point(point_target)) > 180) {
             offset = Angle::from_deg(180);
+            power = -pow(abs(power_scalar), 1.0) * max; // power raised to should be > 1
           }
           else {
             offset = Angle::from_deg(0);
+            power = power_scalar * max;
           }
-          power = power_scalar * max;
+          
           break;
         }
       }

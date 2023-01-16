@@ -8,6 +8,7 @@
 #include "paths.hpp"
 #include "pros/rtos.hpp"
 
+
 /////
 // For instalattion, upgrading, documentations and tutorials, check out website!
 // https://ez-robotics.github.io/EZ-Template/
@@ -19,6 +20,7 @@ const int DRIVE_SPEED =
          // it's only correcting by making one side slower.  When this is 87%,
          // it's correcting by making one side faster and one side slower,
          // giving better heading correction.
+const int ACCURATE_DRIVE_SPEED = 110;
 const int LONG_INTAKE_DRIVE_SPEED = 90;
 const int SHORT_INTAKE_DRIVE_SPEED = 70;
 const int TURN_SPEED = 127;
@@ -41,10 +43,10 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.245, 0.0018, 1.15, 300);
   chassis.set_pid_constants(&chassis.left_backward_drivePID, .277, 0, 1.38, 0);
   chassis.set_pid_constants(&chassis.right_backward_drivePID, .277, 0, 1.38, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 2.75, 0.0028, 27, 10);
+  chassis.set_pid_constants(&chassis.turnPID, 2.8, 0.0028, 27, 10);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
-  cata_intake.cata_set_pid_constants(7.8, 0.001, 22, 50);
+  cata_intake.cata_set_pid_constants(9, 0.001, 22, 50);
 }
 
 void chasing_heading_constants() {
@@ -158,7 +160,7 @@ void point_turn_test() {
 }
 
 void point_drive_test() {
-  chassis.set_point_drive_pid(Vector2(36, -24), DRIVE_SPEED);
+  chassis.set_point_drive_pid(Vector2(36, -24), DRIVE_SPEED, ez::BACKWARD);
   chassis.wait_drive();
   chassis.plan_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED);
   chassis.wait_drive();
@@ -191,21 +193,23 @@ void path_test() {
   //chassis.drive_to_points(DRIVE_SPEED);
   //chassis.drive_to_points(DRIVE_SPEED);
 
-  chassis.set_path_pid(DRIVE_SPEED, 18, ez::AGNOSTIC);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(180), TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_path_pid(DRIVE_SPEED, 18, ez::BACKWARD);
   chassis.wait_until_distance_travelled(10);
   chassis.set_max_speed(70);
   chassis.wait_until_absolute_points_passed(3);
   chassis.set_max_speed(110);
   chassis.wait_until_distance_remaining(24);
-  chassis.set_max_speed(50);
+  chassis.set_max_speed(127);
   chassis.wait_drive();
-  chassis.plan_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(180), TURN_SPEED);
   chassis.wait_drive();
   
 }
 
 void aim_and_fire_far_goal(Angle offset = Angle(), double runup = 0) {
-  chassis.plan_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180) + offset);
+  chassis.set_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180) + offset);
   chassis.wait_drive();
   if(runup != 0) {
     chassis.set_drive_pid(runup, DRIVE_SPEED);
@@ -243,22 +247,23 @@ void skills1() {
 
   chassis.set_path_pid(skills_second_roller_path, DRIVE_SPEED, 8, ez::BACKWARD, 0);
   chassis.wait_until_absolute_points_passed(1);
-  cata_intake.intake_velocity(INTK_IN * .7);
+  cata_intake.intake_velocity(INTK_IN * .9);
   chassis.set_point_path_orientation(ez::FORWARD);
-  chassis.wait_until_distance_remaining(12);
+  chassis.set_max_speed(ACCURATE_DRIVE_SPEED);
+  chassis.wait_until_absolute_points_passed(2);
   cata_intake.intake_stop();
-  roll(30, Angle::from_deg(181.5), -.65, 70, 200);
+  roll(30, Angle::from_deg(181.5), -.85, 70, 200);
   // start driving towards first shot
   chassis.set_path_pid(skills_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);
   chassis.wait_until_absolute_points_passed(1);
-  chassis.set_path_lookahead(15);
+  chassis.set_path_lookahead(18);
   cata_intake.intake_velocity(INTK_IN);
-  chassis.wait_drive();
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
+  chassis.wait_until_absolute_points_passed(2);
+  chassis.set_max_speed(ACCURATE_DRIVE_SPEED);
+  chassis.wait_until_absolute_points_passed(3);
   aim_and_fire_far_goal();
 
-  chassis.plan_orientation_turn_pid(Angle::from_deg(5), TURN_SPEED);
+  chassis.plan_orientation_turn_pid(Angle::from_deg(-3), TURN_SPEED);
   chassis.wait_drive();
   chassis.set_path_pid(skills_far_low_goal_horizontal_line_path, SHORT_INTAKE_DRIVE_SPEED, 14, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);

@@ -80,9 +80,14 @@ public:
    */
   void wait_cata_done_shot();
 
+  void cata_move_velocity(double velocity);
+  void cata_move_voltage(double voltage);
+
   void cata_set_pid_constants(double kp, double ki, double kd, double start_i);
 
   void cata_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout);
+
+  void cata_reset_sensors();
 
   e_cata_state cata_state;
 
@@ -190,8 +195,6 @@ private:
   void master_cata_task();
   void master_intake_task();
 
-  void cata_move_velocity(double velocity);
-  void cata_move_voltage(double voltage);
   void cata_move_relative(double position, double velocity);
 
   void cata_prime_task();
@@ -215,6 +218,6 @@ private:
 
   bool _intake_safety_bypass = false;
 
-  double _cata_extra_error = -19.5;
+  double _cata_extra_error = -16;
 };
 }; // namespace mkhlib
