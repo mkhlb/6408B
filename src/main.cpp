@@ -18,7 +18,7 @@
 
 /////
 /////
-// For instalattion, upgrading, documentations and tutorials, check out website!
+// For installation, upgrading, documentations and tutorials, check out website!
 // https://ez-robotics.github.io/EZ-Template/
 /////
 
@@ -28,7 +28,7 @@ Drive chassis(
     4.625,
     4.625
     , 
-    .3 // 0, overshoots : 1.4, undershoot
+    2.75 // 0, overshoots : 1.4, undershoot
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
@@ -312,16 +312,7 @@ void opcontrol() {
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      int start = chassis.position.y > far_goal_left_firing_path.begin()->y ? 1 : 0;
-
-      chassis.set_path_pid(far_goal_right_firing_path, 110, 16, ez::AGNOSTIC, start);
-      chassis.wait_until_absolute_points_passed(1);
-      chassis.set_point_path_orientation(ez::BACKWARD);
-      chassis.wait_until_absolute_points_passed(2);
-      chassis.set_max_speed(80);
-      chassis.wait_drive();
-
-      chassis.plan_point_turn_pid(far_goal, 110, Angle::from_deg(180));
+      chassis.set_point_turn_pid(far_goal, 127, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }

@@ -160,6 +160,7 @@ void Drive::wait_until_absolute_points_passed(int target) {
     }
     if(mode != PATH_DRIVE) {
       wait_drive();
+      return;
     }
   }
 }

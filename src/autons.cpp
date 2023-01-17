@@ -8,32 +8,13 @@
 #include "paths.hpp"
 #include "pros/rtos.hpp"
 
-
-/////
-// For instalattion, upgrading, documentations and tutorials, check out website!
-// https://ez-robotics.github.io/EZ-Template/
-/////
-
-const int DRIVE_SPEED =
-    127; // This is 110/127 (around 87% of max speed).  We don't suggest making
-         // this 127. If this is 127 and the robot tries to heading correct,
-         // it's only correcting by making one side slower.  When this is 87%,
-         // it's correcting by making one side faster and one side slower,
-         // giving better heading correction.
+const int DRIVE_SPEED = 127; 
 const int ACCURATE_DRIVE_SPEED = 110;
 const int LONG_INTAKE_DRIVE_SPEED = 90;
 const int SHORT_INTAKE_DRIVE_SPEED = 70;
 const int TURN_SPEED = 127;
 const int SWING_SPEED = 110;
-const int INTK_IN = 0.95*200*84/36;
-
-///
-// Constants
-///
-
-// It's best practice to tune constants when the robot is empty and with heavier
-// game objects, or with lifts up vs down. If the objects are light or the cog
-// doesn't change much, then there isn't a concern here.
+const int INTK_IN = 1.00*200*84/36;
 
 void default_constants() {
   chassis.set_slew_min_power(80, 80);
@@ -43,7 +24,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.245, 0.0018, 1.15, 300);
   chassis.set_pid_constants(&chassis.left_backward_drivePID, .277, 0, 1.38, 0);
   chassis.set_pid_constants(&chassis.right_backward_drivePID, .277, 0, 1.38, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 2.8, 0.0028, 27, 10);
+  chassis.set_pid_constants(&chassis.turnPID, 2.9, 0.0028, 27, 10);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
   cata_intake.cata_set_pid_constants(9, 0.001, 22, 50);
@@ -247,32 +228,34 @@ void skills1() {
 
   chassis.set_path_pid(skills_second_roller_path, DRIVE_SPEED, 8, ez::BACKWARD, 0);
   chassis.wait_until_absolute_points_passed(1);
-  cata_intake.intake_velocity(INTK_IN * .9);
+  cata_intake.intake_velocity(INTK_IN);
   chassis.set_point_path_orientation(ez::FORWARD);
   chassis.set_max_speed(ACCURATE_DRIVE_SPEED);
   chassis.wait_until_absolute_points_passed(2);
   cata_intake.intake_stop();
-  roll(30, Angle::from_deg(181.5), -.85, 70, 200);
+  roll(30, Angle::from_deg(181.5), -1.1, 70, 200);
   // start driving towards first shot
   chassis.set_path_pid(skills_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);
   chassis.wait_until_absolute_points_passed(1);
   chassis.set_path_lookahead(18);
   cata_intake.intake_velocity(INTK_IN);
   chassis.wait_until_absolute_points_passed(2);
-  chassis.set_max_speed(ACCURATE_DRIVE_SPEED);
-  chassis.wait_until_absolute_points_passed(3);
+  chassis.set_max_speed(DRIVE_SPEED);
+  chassis.wait_until_distance_remaining(8);
   aim_and_fire_far_goal();
 
-  chassis.plan_orientation_turn_pid(Angle::from_deg(-3), TURN_SPEED);
-  chassis.wait_drive();
+  // chassis.plan_orientation_turn_pid(Angle::from_deg(-3), TURN_SPEED);
+  // chassis.wait_drive();
   chassis.set_path_pid(skills_far_low_goal_horizontal_line_path, SHORT_INTAKE_DRIVE_SPEED, 14, ez::FORWARD);
+  chassis.wait_until_absolute_points_passed(1);
+  cata_intake.intake_velocity(INTK_IN*.8);
   chassis.wait_until_absolute_points_passed(2);
-  chassis.set_max_speed(DRIVE_SPEED);
+  chassis.set_max_speed(ACCURATE_DRIVE_SPEED);
   chassis.set_point_path_orientation(ez::BACKWARD);
   chassis.wait_drive();
   aim_and_fire_far_goal(Angle::from_deg(-3)); // place a little to the left
 
-  chassis.set_path_pid(skills_near_line_path, DRIVE_SPEED, 19, ez::FORWARD);
+  chassis.set_path_pid(skills_near_line_path, LONG_INTAKE_DRIVE_SPEED, 19, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
   cata_intake.intake_velocity(INTK_IN * .8);
   chassis.wait_drive();
