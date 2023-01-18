@@ -212,7 +212,7 @@ void Drive::path_drive_pid_task() {
     }
     plan_point_heading_pid(point_target, offset);
     headingPID.compute(get_gyro());
-    double imu_out = util::clip_num(headingPID.output, 130, -130);
+    double imu_out = util::clip_num(headingPID.output, 190, -190);
     double left_power = power + imu_out;
     double right_power = power - imu_out;
     double max_power = fmax(left_power, right_power);

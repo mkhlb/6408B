@@ -5,20 +5,26 @@
 
 std::list<PathPoint> skills_second_roller_path = {
     {Vector2(45, -22), 8},
-    {Vector2(15.0, -22), 12} // in front of roller
+    {Vector2(15.0, -19), 12} // in front of roller
 };
 
 std::list<PathPoint> skills_first_shot_path = {
     {Vector2(16, -34), 6},
     {Vector2(10.5, -65), -1},
-    {Vector2(14, -87), 8, -1, -1, true}, // in position for shot
+    {Vector2(12.5, -80.5), 8, -1, -1, true}, // in position for shot
 };
 
 std::list<PathPoint> skills_far_low_goal_horizontal_line_path = {
-    {Vector2(22, -82), 12},
-    {Vector2(37, -84), 8},
-    {Vector2(38, -75), 9},
-    {Vector2(30, -76), 14}, // in position for shot
+    {Vector2(22, -78), 12},
+    {Vector2(46, -78), -1},
+    {Vector2(34, -74), -1},
+    {Vector2(30, -71), 14}, // in position for shot
+};
+
+std::list<PathPoint> skills_near_line_path {
+    {Vector2(36, -50), 10}, // first disc is at 36, -60
+    {Vector2(57.5, -80), -1}, // third disc is at 60, -84
+    {Vector2(60, -75), 14}, // in position to fire w/ run up
 };
 
 std::list<PathPoint> skills_near_low_goal_horizontal_line_path = {
@@ -47,11 +53,7 @@ std::list<PathPoint> skills_near_low_goal_lateral_line_path {
     //{Vector2(124.5, -19.5), 60} // drive a bit towards the goal to aim while moving
 };
 
-std::list<PathPoint> skills_near_line_path {
-    {Vector2(25, -50), 10}, // first disc is at 36, -60
-    {Vector2(57.5, -80), -1}, // third disc is at 60, -84
-    {Vector2(60, -80), 14}, // in position to fire w/ run up
-};
+
 
 std::list<PathPoint> skills_far_line_path {
     {Vector2(80, -58), 10}, // first disc at 83, -59

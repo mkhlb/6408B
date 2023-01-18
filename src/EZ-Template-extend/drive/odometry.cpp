@@ -15,6 +15,8 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
 
   printf("starting odom task");
 
+  std::uint32_t now = pros::millis();
+
   while (true) {
 
     if(imu.is_calibrating()) {
@@ -66,7 +68,7 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
       //printf("Global move x: %f, y: %f", global_move.x, global_move.y);
     }
 
-    pros::delay(ez::util::DELAY_TIME);
+    pros::Task::delay_until(&now, ez::util::DELAY_TIME);
     
   }
 }

@@ -192,7 +192,7 @@ void Drive::wait_until_distance_remaining(double target) {
       if(mode == PATH_DRIVE && (path.end()->position - position).get_magnitude() < target) {
         return;
       }
-      if(mode == ENCODER_DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
+      if(mode == ENCODER_DRIVE && leftPID.exit_condition() != RUNNING || rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
         return;
       }
       pros::delay(util::DELAY_TIME);

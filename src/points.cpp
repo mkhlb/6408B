@@ -1,7 +1,7 @@
 #include "points.hpp"
 #include "EZ-Template/datatypes.hpp"
 
-Vector2 far_goal = Vector2(16.5, -119);
+Vector2 far_goal = Vector2(19.5, -121.5);
 Vector2 near_goal = Vector2(124.5, -19.5);
 Vector2 far_goal_left_firing_spot = Vector2(18, -80); // field is about 141
 Vector2 far_goal_right_firing_spot = Vector2(64, -124);
@@ -12,7 +12,7 @@ Vector2 far_horizontal_roller = Vector2(112.5, -130);
 
 Vector2 far_corner_triple_stack = Vector2(108, -108);
 
-Vector2 skills_start = Vector2(32.45, -15.5); // middle encoder at abt 13.5 y
+Vector2 skills_start = Vector2(32.45, -11.75); // middle encoder at abt 15.75 y
 Vector2 skills_second_roller = Vector2(14.5, -30);
 
 

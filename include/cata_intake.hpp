@@ -208,7 +208,7 @@ private:
 
   int _roller_timer;
 
-  double _intake_velocity;
+  double _intake_velocity = 0;
 
   int _cata_max_velocity;
 

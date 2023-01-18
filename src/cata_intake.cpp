@@ -82,6 +82,8 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, 
   // Default internal timer for e_roller_state::TIME_MOVE
   _roller_timer = 0;
 
+  intake.tare_position();
+
   // Default PID for e_roller_state::PID_MOVE
   roller_pid = PID(.5, 0, 5, 0);
   cata_pid = PID(.5, 0, 5, 0);

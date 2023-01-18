@@ -98,7 +98,7 @@ mkhlib::CatapultIntakeController cata_intake(
     // gearset of intake
     pros::E_MOTOR_GEARSET_18);
 
-pros::Motor expansion(16, pros::E_MOTOR_GEARSET_36, false);
+pros::Motor expansion(10, pros::E_MOTOR_GEARSET_36, true);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -225,7 +225,7 @@ void print_odom() {
     else if(cata_intake.limit.get_value() != 1) {
       limitpresed = false;
     }
-    master.print(0,0, "%f, %f", (float)cata_intake.cata_motors.front().get_position(), (float)cata_intake.cata_motors.back().get_position());
+    master.print(0,0, "%f, %f", (float)chassis.position.x, (float)chassis.position.y);
     pros::delay(500);
   }
 }
@@ -292,7 +292,7 @@ void opcontrol() {
 
   pros::Task odom_printer = pros::Task(print_odom);
 
-  chassis.set_mode(ez::DISABLE);
+  reset_for_driver();
 
   chassis.reset_position(skills_start, Angle::from_deg(91.5));
   //chassis.reset_position(Vector2(), Angle::from_deg(180));
@@ -317,7 +317,7 @@ void opcontrol() {
       reset_for_driver();
     }
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       expansion.move_velocity(100);
     }
     else {
