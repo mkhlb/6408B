@@ -247,14 +247,16 @@ void skills1() {
   // start driving towards first shot
   chassis.set_path_pid(skills_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);
   chassis.wait_until_absolute_points_passed(1);
-  chassis.set_path_lookahead(18);
+  chassis.set_path_lookahead(20);
   cata_intake.intake_velocity(INTK_IN);
   chassis.wait_until_absolute_points_passed(2);
   chassis.set_max_speed(DRIVE_SPEED);
-  chassis.wait_until_distance_remaining(8);
+  //chassis.wait_until_distance_remaining(8);
+  chassis.wait_drive();
+  print_pos();
   aim_and_fire_far_goal();
 
-  chassis.set_heading_relative_turn_pid(-90, TURN_SPEED);
+  chassis.set_heading_relative_swing_pid(ez::LEFT_SWING, -90, TURN_SPEED, -.2);
   chassis.wait_until_heading_relative(-30);
 
   chassis.set_path_pid(skills_far_low_goal_horizontal_line_path, SHORT_INTAKE_DRIVE_SPEED, 14, ez::FORWARD);
@@ -263,7 +265,7 @@ void skills1() {
   chassis.wait_until_absolute_points_passed(2);
   chassis.set_max_speed(ACCURATE_DRIVE_SPEED);
   chassis.set_point_path_orientation(ez::BACKWARD);
-  chassis.wait_until_distance_remaining(4);
+  chassis.wait_drive();
   aim_and_fire_far_goal(Angle::from_deg(0), -8, -1);
 
   chassis.set_path_pid(skills_near_line_path, LONG_INTAKE_DRIVE_SPEED, 19, ez::FORWARD);
@@ -271,7 +273,7 @@ void skills1() {
   cata_intake.intake_velocity(INTK_IN * .8);
   chassis.set_max_speed(SHORT_INTAKE_DRIVE_SPEED);
   chassis.wait_drive();
-  aim_and_fire_far_goal(Angle::from_deg(-.75), -9.8);
+  aim_and_fire_far_goal(Angle::from_deg(-.75), -6.8, -4);
 
   chassis.set_path_pid(skills_far_low_goal_lateral_line_path, DRIVE_SPEED * .6, 19, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(5);

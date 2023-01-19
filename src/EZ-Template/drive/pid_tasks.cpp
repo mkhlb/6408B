@@ -136,7 +136,7 @@ void Drive::path_drive_pid_task() {
   double max = point.speed <= 0 ? max_speed : point.speed;
   if(path_advance == path.size() - 1) { // reached the end, time to straight drive
     set_mode(ez::POINT_DRIVE);
-    set_max_speed(max);
+    //set_max_speed(max);
     headingPID.reset_variables();
   }
   else {
@@ -213,14 +213,14 @@ void Drive::path_drive_pid_task() {
     plan_point_heading_pid(point_target, offset);
     headingPID.compute(get_gyro());
     double imu_out = util::clip_num(headingPID.output, 190, -190);
-    double left_power = power + imu_out;
-    double right_power = power - imu_out;
-    double max_power = fmax(left_power, right_power);
+    double left_power = util::clip_num(power + imu_out, 127, -127);
+    double right_power = util::clip_num(power - imu_out, 127, -127);
+    // double max_power = fmax(left_power, right_power);
 
-    if(max_power > 127) {
-      left_power = left_power / max_power * 127;
-      right_power = right_power / max_power * 127;
-    }
+    // if(max_power > 127) {
+    //   left_power = left_power / max_power * 127;
+    //   right_power = right_power / max_power * 127;
+    // }
 
     set_tank(left_power, right_power);
   }

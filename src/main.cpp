@@ -28,7 +28,7 @@ Drive chassis(
     4.625,
     4.625
     , 
-    2.75 // 0, overshoots : 1.4, undershoot
+    -4.0 // 0, overshoots : 1.4, undershoot
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
@@ -121,7 +121,7 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(0.13); // Sets the active brake kP. We recommend 0.1.
+  //chassis.set_active_brake(0.13); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
   chassis.set_deceleration(600, 1900);
   cata_intake.intake_roller_set_active_brake(.9);
@@ -294,7 +294,7 @@ void opcontrol() {
 
   reset_for_driver();
 
-  chassis.reset_position(skills_start, Angle::from_deg(91.5));
+  //chassis.reset_position(skills_start, Angle::from_deg(91.5));
   //chassis.reset_position(Vector2(), Angle::from_deg(180));
   pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94
