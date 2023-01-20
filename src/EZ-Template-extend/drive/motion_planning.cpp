@@ -184,12 +184,9 @@ void Drive::wait_until_distance_remaining(double target) {
     double travelled_target = target * TICK_PER_INCH;
     wait_until_distance_travelled((leftPID.get_target() - l_start) - travelled_target);
   }
-  else if(mode == POINT_DRIVE || mode == PATH_DRIVE) {
+  else if(mode == POINT_DRIVE) {
     while(true) {
       if(mode == POINT_DRIVE && (point_target - position).get_magnitude() < target) {
-        return;
-      }
-      if(mode == PATH_DRIVE && (path.end()->position - position).get_magnitude() < target) {
         return;
       }
       if(mode == ENCODER_DRIVE && leftPID.exit_condition() != RUNNING || rightPID.exit_condition() != RUNNING) { // if transitioned to straight drive and exited leave!
@@ -197,6 +194,9 @@ void Drive::wait_until_distance_remaining(double target) {
       }
       pros::delay(util::DELAY_TIME);
     }
+  }
+  else if (mode == ez::PATH_DRIVE) {
+    wait_until_distance_from_point(path.back().position, target);
   }
 }
 

@@ -227,7 +227,7 @@ void skills1() {
   default_constants();
   exit_condition_defaults();
   cata_intake.cata_prime();
-  chassis.reset_position(Vector2(skills_start.x, skills_start.y), Angle::from_deg(91.5));
+  chassis.reset_position(Vector2(skills_start.x, skills_start.y), Angle::from_deg(90.5));
   chassis.set_heading_relative_heading_pid(0);
   //pros::Task::delay_until(&now, 5000);
   //pros::Task::delay(0000);
@@ -252,9 +252,8 @@ void skills1() {
   chassis.wait_until_absolute_points_passed(2);
   chassis.set_max_speed(DRIVE_SPEED);
   //chassis.wait_until_distance_remaining(8);
-  chassis.wait_drive();
-  print_pos();
-  aim_and_fire_far_goal(Angle::from_deg(0));
+  chassis.wait_until_distance_remaining(4);
+  aim_and_fire_far_goal(Angle::from_deg(4));
 
   chassis.set_heading_relative_swing_pid(ez::LEFT_SWING, -90, TURN_SPEED, -.1);
   chassis.wait_until_heading_relative(-27);
@@ -266,6 +265,7 @@ void skills1() {
   chassis.set_max_speed(ACCURATE_DRIVE_SPEED);
   chassis.set_point_path_orientation(ez::BACKWARD);
   chassis.wait_drive();
+  chassis.wait_until_distance_remaining(2);
   aim_and_fire_far_goal(Angle::from_deg(0), -6, -1);
 
   chassis.set_path_pid(skills_near_line_path, LONG_INTAKE_DRIVE_SPEED, 19, ez::FORWARD);
