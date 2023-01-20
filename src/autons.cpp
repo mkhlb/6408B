@@ -55,7 +55,7 @@ void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.swing_exit, 100, 1.5, 500, 7, 1000, 500);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
   chassis.headingPID.set_exit_condition(120, 3, 700, 7, 1000, 500);
-  cata_intake.roller_set_exit_condition(100, 10, 500, 50, 2000, 3000);
+  cata_intake.roller_set_exit_condition(50, 8, 90, 40, 800, 3000);
   cata_intake.cata_set_exit_condition(100, 50, 500, 100, 1000, 1000);
 }
 
