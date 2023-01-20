@@ -117,9 +117,12 @@ void Drive::point_drive_pid_task() {
     
   }
   else if((point_target - position).get_magnitude() > 9) {
+    set_heading_relative_heading_pid(0);
     plan_straight_point_drive_pid(point_target, max_speed, false, true, false);
-  }
+    encoder_drive_pid_task();
+}
   else {
+    set_heading_relative_heading_pid(0);
     plan_straight_point_drive_pid(point_target, max_speed);
   }
 }
