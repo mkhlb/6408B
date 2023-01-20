@@ -29,8 +29,8 @@ std::list<PathPoint> skills_near_line_path {
 
 std::list<PathPoint> skills_far_low_goal_lateral_line_path {
     {Vector2(67, -78), -1},
-    {Vector2(58, -100), -1},
-    {Vector2(56, -110), -1},
+    {Vector2(56, -100), -1},
+    {Vector2(53, -110), -1},
     {Vector2(57, -123), -1},
     {Vector2(57.5, -128.5), -1}, // in position for shot
 };

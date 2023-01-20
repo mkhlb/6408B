@@ -294,7 +294,7 @@ void opcontrol() {
 
   reset_for_driver();
 
-  //chassis.reset_position(skills_start, Angle::from_deg(91.5));
+  chassis.reset_position(skills_start, Angle::from_deg(91.5));
   //chassis.reset_position(Vector2(), Angle::from_deg(180));
   pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94

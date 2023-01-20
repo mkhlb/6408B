@@ -24,7 +24,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.right_forward_drivePID, 0.245, 0.0018, 1.15, 300);
   chassis.set_pid_constants(&chassis.left_backward_drivePID, .277, 0, 1.38, 0);
   chassis.set_pid_constants(&chassis.right_backward_drivePID, .277, 0, 1.38, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 3.0, 0.0028, 27, 10);
+  chassis.set_pid_constants(&chassis.turnPID, 3.4, 0.0028, 30, 18);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
   cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
   cata_intake.cata_set_pid_constants(9, 0.001, 22, 50);
@@ -273,11 +273,11 @@ void skills1() {
   cata_intake.intake_velocity(INTK_IN * .8);
   chassis.set_max_speed(SHORT_INTAKE_DRIVE_SPEED);
   chassis.wait_drive();
-  aim_and_fire_far_goal(Angle::from_deg(-.75), -8.5, -4);
+  aim_and_fire_far_goal(Angle::from_deg(0), -8.5, -4);
 
   chassis.set_path_pid(skills_far_low_goal_lateral_line_path, DRIVE_SPEED * .6, 19, ez::FORWARD);
   chassis.wait_drive();
-  aim_and_fire_far_goal(Angle::from_deg(1)); // place a tad bit to the right
+  aim_and_fire_far_goal(Angle::from_deg(0)); // place a tad bit to the right
 
   cata_intake.intake_stop();
 
