@@ -657,6 +657,20 @@ public:
   void wait_until_absolute_points_passed(int target);
 
   /**
+   * Wait until robot ends up on certain side of given x line and given y line
+   *
+   * \param target
+   *        a vector2 target defining two lines to act as bounds
+   * \param x_sign
+   *        target side of the x coordinate as a sign (where zero is ignored)
+   * \param y_sign
+   *        target side of the y coordinate as a sign (where zero is ignored)
+   */
+  void wait_until_axes_crossed(Vector2 target, int x_side = 0, int y_side = 0);
+
+  void wait_until_axial_offset(Vector2 target, int x_side =0, int y_side = 0);
+
+  /**
    * Autonomous interference detection.  Returns true when interfered, and false
    * when nothing happened.
    */

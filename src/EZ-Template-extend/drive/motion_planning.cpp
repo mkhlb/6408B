@@ -217,6 +217,47 @@ void Drive::wait_until_orientation(Angle target) {
   wait_until_heading_relative(Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG);
 }
 
+void Drive::wait_until_axial_offset(Vector2 target, int x_side, int y_side) {
+  if(mode == POINT_DRIVE) {
+    wait_until_axes_crossed(point_target + target, x_side, y_side);
+  }
+  else if(mode == PATH_DRIVE) {
+    wait_until_axes_crossed(path.back().position + target, x_side, y_side);
+  }
+}
+
+void Drive::wait_until_axes_crossed(Vector2 target, int x_side, int y_side) {
+  
+  if(mode == ENCODER_DRIVE || mode == PATH_DRIVE || mode == POINT_DRIVE) {
+    int x_sign = util::sgn(x_side);
+    int y_sign = util::sgn(y_side);
+    while(!(mode == ENCODER_DRIVE && leftPID.exit_condition() != RUNNING && rightPID.exit_condition() != RUNNING)) {
+      bool exit = true;
+
+      switch (x_sign) {
+        case -1:
+          if(position.x > target.x) exit = false; // on the right side, no good!
+          break;
+        case 1:
+          if(position.x < target.x) exit = false; // on the left side, no good!
+          break;
+      }
+
+      switch (y_sign) {
+        case -1:
+          if(position.y > target.y) exit = false; // on the higher, no good!
+          break;
+        case 1:
+          if(position.y < target.y) exit = false; // on the lower, no good!
+          break;
+      }
+
+      if (exit) return;
+    }
+  }
+  // only run if in a drive mode!
+}
+
 void Drive::plan_orientation_heading_pid(Angle target) {
   set_heading_relative_heading_pid(Angle::shortest_error(orientation, target) * Angle::RAD_TO_DEG);
 }
