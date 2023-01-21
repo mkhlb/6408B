@@ -192,7 +192,7 @@ void autonomous() {
   //drive_test();
   //path_test();
   //point_drive_test();
-  skills1();
+  skills();
 }
 
 /**

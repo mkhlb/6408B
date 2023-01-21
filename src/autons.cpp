@@ -77,11 +77,11 @@ void exit_condition_hit_wall() { // made to exit as soon as velocity is 0, for d
 // 6408B code
 // __________________________________________________________________________________________________________________________________________________________________________________________________________
 
-void roll(double max_dist, Angle target_orientation, double back_distance, double speed, double roll_amount) // roll_amount is degrees
+void roll(double max_dist, Angle target_orientation, double back_distance, double speed, double roll_amount, int wait_amount=200) // roll_amount is degrees
 {
   chassis.plan_orientation_heading_pid(target_orientation);
   chassis.set_drive_pid(max_dist, speed); // drive forward 7 inches, or until meeting resistance
-  pros::delay(200);
+  pros::delay(wait_amount);
   exit_condition_hit_wall(); // set exit conditions to conditions very sensitive to interference
   chassis.wait_drive(); // wait until drive exits
   exit_condition_defaults(); //reset exit conditions
@@ -277,17 +277,17 @@ void skills1() {
 
   chassis.set_path_pid(skills_far_low_goal_lateral_line_path, DRIVE_SPEED * .6, 19, ez::FORWARD);
   chassis.wait_drive();
-  aim_and_fire_far_goal(Angle::from_deg(0)); // place a tad bit to the right
+  aim_and_fire_far_goal(Angle::from_deg(1.5)); // place a tad bit to the right
 
   cata_intake.intake_stop();
 
   chassis.set_point_drive_pid(far_horizontal_roller + Vector2(-3, 4), DRIVE_SPEED, ez::FORWARD);
-  chassis.wait_drive();
+  chassis.wait_until_distance_remaining(6);
 }
 
 void skills2() {
 
-  roll(30, Angle::from_deg(-88.5), -.65, 70, 180);
+  roll(30, Angle::from_deg(-88.5), -.65, 70, 180, 600);
   
   chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y), chassis.orientation);
   chassis.set_heading_relative_heading_pid(0);
