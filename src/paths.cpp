@@ -35,11 +35,32 @@ std::list<PathPoint> skills_far_low_goal_lateral_line_path {
     {Vector2(51.5, -128.5), -1}, // in position for shot
 };
 
+std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitting at about 108, -108
+    {Vector2(108, -108), 10},
+    {Vector2(104, -94), 10},
+    {Vector2(117, -105), 10},
+    {Vector2(120, -103), 14},
+    {Vector2(127, -103), 14},
+};
+
+std::list<PathPoint> skills_near_goal_first_shot_path {
+    {Vector2(126, -112), 4},
+    {Vector2(128, -67), 12},
+    {Vector2(129, -52), 16}, // in position for shot
+};
+
 std::list<PathPoint> skills_near_low_goal_horizontal_line_path = {
     {Vector2(120, -54), 12},
     {Vector2(92, -55), 8},
     {Vector2(99, -61), 13},
     {Vector2(107, -58), 14}, // in position for shot
+};
+
+std::list<PathPoint> skills_far_line_path {
+    {Vector2(80, -58), 10}, // first disc at 83, -59
+    {Vector2(97, -69), 15}, // second disc at 95, -71
+    {Vector2(107, -83), 14}, // final disc is at 107, -83
+    {Vector2(107, -58), 15},
 };
 
 std::list<PathPoint> skills_near_low_goal_lateral_line_path {
@@ -54,26 +75,8 @@ std::list<PathPoint> skills_near_low_goal_lateral_line_path {
 
 
 
-std::list<PathPoint> skills_far_line_path {
-    {Vector2(80, -58), 10}, // first disc at 83, -59
-    {Vector2(97, -69), 15}, // second disc at 95, -71
-    {Vector2(107, -83), 14}, // final disc is at 107, -83
-    {Vector2(107, -58), 15},
-};
 
-std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitting at about 108, -108
-    {Vector2(108, -108), 10},
-    {Vector2(104, -94), 10},
-    {Vector2(117, -105), 10},
-    {Vector2(120, -103), 14},
-    {Vector2(127, -103), 14},
-};
 
-std::list<PathPoint> skills_near_goal_first_shot_path {
-    {Vector2(126, -112), 4},
-    {Vector2(128, -67), 12},
-    {Vector2(129, -52), 16}, // in position for shot
-};
 
 std::list<Vector2> far_goal_left_firing_path = {
     Vector2(58, -80),

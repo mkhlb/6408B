@@ -277,8 +277,8 @@ void skills1() {
 
   cata_intake.intake_stop();
 
-  chassis.set_point_drive_pid(far_horizontal_roller + Vector2(-3, 4), DRIVE_SPEED, ez::FORWARD);
-  chassis.wait_until_distance_remaining(6);
+  chassis.set_point_drive_pid(far_horizontal_roller + Vector2(7.5, 9), DRIVE_SPEED, ez::FORWARD);
+  chassis.wait_until_distance_remaining(9);
 }
 
 void skills2() {
@@ -286,7 +286,7 @@ void skills2() {
   chassis.plan_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED);
   chassis.wait_until_orientation(Angle::from_deg(-45));
 
-  roll(30, Angle::from_deg(-88.5), -.65, 70, 180, 600);
+  roll(30, Angle::from_deg(-90), -.65, 70, 180, 600);
   
   chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y - 1), chassis.orientation);
   chassis.set_heading_relative_heading_pid(0);
