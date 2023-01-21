@@ -229,12 +229,8 @@ void skills1() {
   cata_intake.cata_prime();
   chassis.reset_position(Vector2(skills_start.x, skills_start.y), Angle::from_deg(90.5));
   chassis.set_heading_relative_heading_pid(0);
-  //pros::Task::delay_until(&now, 5000);
-  //pros::Task::delay(0000);
-  // chassis.set_drive_pid(-35.25, DRIVE_SPEED, false, true);
-  // chassis.wait_drive();
 
-  roll(30, Angle::from_deg(91.5), -.65, 70, 200);
+  roll(30, Angle::from_deg(91.5), -.65, 70, 180);
 
   chassis.set_path_pid(skills_second_roller_path, DRIVE_SPEED, 8, ez::BACKWARD, 0);
   chassis.wait_until_absolute_points_passed(1);
@@ -243,7 +239,7 @@ void skills1() {
   chassis.set_max_speed(ACCURATE_DRIVE_SPEED);
   chassis.wait_until_absolute_points_passed(2);
   cata_intake.intake_stop();
-  roll(30, Angle::from_deg(181.5), -1.1, 70, 200);
+  roll(30, Angle::from_deg(181.5), -1.1, 70, 180);
   // start driving towards first shot
   chassis.set_path_pid(skills_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);
   chassis.wait_until_absolute_points_passed(1);
@@ -253,7 +249,7 @@ void skills1() {
   chassis.set_max_speed(DRIVE_SPEED);
   //chassis.wait_until_distance_remaining(8);
   chassis.wait_until_distance_remaining(4);
-  aim_and_fire_far_goal(Angle::from_deg(4));
+  aim_and_fire_far_goal(Angle::from_deg(3.5));
 
   chassis.set_heading_relative_swing_pid(ez::LEFT_SWING, -90, TURN_SPEED, -.1);
   chassis.wait_until_heading_relative(-27);
@@ -266,7 +262,7 @@ void skills1() {
   chassis.set_point_path_orientation(ez::BACKWARD);
   chassis.wait_drive();
   chassis.wait_until_distance_remaining(2);
-  aim_and_fire_far_goal(Angle::from_deg(0), -6, -1);
+  aim_and_fire_far_goal(Angle::from_deg(0), -5.7, -.8);
 
   chassis.set_path_pid(skills_near_line_path, LONG_INTAKE_DRIVE_SPEED, 19, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
@@ -287,9 +283,12 @@ void skills1() {
 
 void skills2() {
 
+  chassis.plan_orientation_turn_pid(Angle::from_deg(-90), TURN_SPEED);
+  chassis.wait_until_orientation(Angle::from_deg(-45));
+
   roll(30, Angle::from_deg(-88.5), -.65, 70, 180, 600);
   
-  chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y), chassis.orientation);
+  chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y - 1), chassis.orientation);
   chassis.set_heading_relative_heading_pid(0);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
   chassis.wait_until_distance_travelled(-2.5);
@@ -308,7 +307,7 @@ void skills2() {
   chassis.wait_drive();
   cata_intake.intake_stop();
   
-  roll(30, Angle::from_deg(1.5), -.65, 70, 190);
+  roll(30, Angle::from_deg(1.5), -.65, 70, 180);
 
   chassis.reset_position(Vector2(far_lateral_roller.x + 1.0, chassis.position.y), chassis.orientation);
   chassis.set_heading_relative_heading_pid(0);

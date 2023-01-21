@@ -22,8 +22,8 @@ std::list<PathPoint> skills_far_low_goal_horizontal_line_path = {
 };
 
 std::list<PathPoint> skills_near_line_path {
-    {Vector2(36, -50), 10}, // first disc is at 36, -60
-    {Vector2(57.5, -80), -1}, // third disc is at 60, -84
+    {Vector2(36, -52), 10}, // first disc is at 36, -60
+    {Vector2(56, -78), -1}, // third disc is at 60, -84
     // {Vector2(57.5, -80), 14}, // in position to fire w/ run up
 };
 
