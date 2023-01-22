@@ -1,7 +1,7 @@
 #include "points.hpp"
 #include "EZ-Template/datatypes.hpp"
 
-Vector2 far_goal = Vector2(17.0, -122.5);
+Vector2 far_goal = Vector2(17.8, -122.7);
 Vector2 near_goal = Vector2(124.5, -19.5);
 Vector2 far_goal_left_firing_spot = Vector2(18, -80); // field is about 141
 Vector2 far_goal_right_firing_spot = Vector2(64, -124);

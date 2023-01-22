@@ -38,7 +38,7 @@ std::list<PathPoint> skills_far_low_goal_lateral_line_path {
 std::list<PathPoint> skills_far_middle_triple_stack_path {
     PathPoint(Vector2(61.5, -128.5)),
     PathPoint(Vector2(73, -113)),
-    PathPoint(Vector2(83, -107)), // triple stack
+    PathPoint(Vector2(81.99, -105.35)), // triple stack
 };
 
 std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitting at about 108, -108

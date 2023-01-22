@@ -212,6 +212,14 @@ void aim_and_fire_near_goal(Angle offset = Angle(), double runup = 0) {
   cata_intake.wait_cata_done_shot();
 }
 
+void intake_triple_stack() {
+  cata_intake.intake_velocity(INTK_IN);
+  chassis.set_drive_pid(40, 25);
+  chassis.wait_until_distance_travelled(6);
+  chassis.set_max_speed(LONG_INTAKE_DRIVE_SPEED);
+  chassis.wait_until_distance_travelled(12);
+}
+
 void skills() {
   skills1();
   skills2();
@@ -276,6 +284,15 @@ void skills1() {
   aim_and_fire_far_goal(Angle::from_deg(1.5)); // place a tad bit to the right
 
   cata_intake.intake_stop();
+  chassis.set_path_pid(skills_far_middle_triple_stack_path, DRIVE_SPEED, 19, ez::FORWARD);
+  chassis.wait_until_distance_remaining(9.0);
+  intake_triple_stack();
+  chassis.set_point_drive_pid(far_goal, DRIVE_SPEED);
+  chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(10,-10)); // low goal corner + some offset
+  cata_intake.cata_shoot();
+  chassis.set_max_speed(DRIVE_SPEED * .9);
+  cata_intake.intake_stop();
+  cata_intake.wait_cata_done_shot();
 
   chassis.set_point_drive_pid(far_horizontal_roller + Vector2(7.5, 9), DRIVE_SPEED, ez::FORWARD);
   chassis.wait_until_distance_remaining(9);
