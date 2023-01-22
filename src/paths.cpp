@@ -35,6 +35,12 @@ std::list<PathPoint> skills_far_low_goal_lateral_line_path {
     {Vector2(51.5, -128.5), -1}, // in position for shot
 };
 
+std::list<PathPoint> skills_far_middle_triple_stack_path {
+    PathPoint(Vector2(61.5, -128.5)),
+    PathPoint(Vector2(73, -113)),
+    PathPoint(Vector2(83, -107)), // triple stack
+};
+
 std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitting at about 108, -108
     {Vector2(108, -108), 10},
     {Vector2(104, -94), 10},
@@ -72,9 +78,6 @@ std::list<PathPoint> skills_near_low_goal_lateral_line_path {
     {Vector2(90, -12.5), 12}, // in position for shot
     //{Vector2(124.5, -19.5), 60} // drive a bit towards the goal to aim while moving
 };
-
-
-
 
 
 
