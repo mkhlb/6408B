@@ -305,7 +305,7 @@ void skills2() {
 
   roll(30, Angle::from_deg(-90), -.65, 70, 180, 600);
   
-  chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y - 1), chassis.orientation);
+  chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y - 1.0), chassis.orientation);
   chassis.set_heading_relative_heading_pid(0);
   chassis.set_drive_pid(-10, DRIVE_SPEED);
   chassis.wait_until_distance_travelled(-2.5);
