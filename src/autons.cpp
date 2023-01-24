@@ -288,7 +288,7 @@ void skills1() {
   chassis.wait_until_distance_remaining(9.0);
   intake_triple_stack();
   chassis.set_point_drive_pid(far_goal, DRIVE_SPEED);
-  chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(10,-10)); // low goal corner + some offset
+  chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(10,-10), -1, -1); // low goal corner + some offset
   cata_intake.cata_shoot();
   chassis.set_max_speed(DRIVE_SPEED * .9);
   cata_intake.intake_stop();
