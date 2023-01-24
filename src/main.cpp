@@ -90,7 +90,7 @@ mkhlib::CatapultIntakeController cata_intake(
     1,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
-    84.0 / 36.0 * 6 / 12 * 36 / 60,
+    84.0 / 36.0 * 6 / 12 * 12 / 60,
     // Ratio of roller revolution / motor revolutions
     84.0 / 36.0,
     // gearset of catapult
@@ -121,7 +121,7 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  //chassis.set_active_brake(0.13); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(0.13); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
   chassis.set_deceleration(600, 1900);
   cata_intake.intake_roller_set_active_brake(.9);
@@ -294,7 +294,7 @@ void opcontrol() {
 
   reset_for_driver();
 
-  chassis.reset_position(skills_start, Angle::from_deg(91.5));
+  chassis.reset_position(skills_start, Angle::from_deg(90.0));
   //chassis.reset_position(Vector2(), Angle::from_deg(180));
   pros::delay(10);
   //ROBOT TO GOAL: 6.5, 94
@@ -304,10 +304,13 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.plan_point_turn_pid(far_goal, 80, Angle::from_deg(180));
-      chassis.set_path_pid(skills_first_shot_path, 127, 14, ez::BACKWARD);
-      chassis.wait_until_absolute_points_passed(3);
-      chassis.plan_point_turn_pid(far_goal, 127, Angle::from_deg(180));
-      chassis.wait_drive();
+      chassis.set_point_drive_pid(far_goal, 127);
+      chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(18,18) + Vector2(12, 12), -1, -1); // low goal corner + some offset
+      chassis.set_drive_pid(-12, 70);
+      chassis.wait_until_distance_travelled(-9);
+      cata_intake.cata_shoot();
+      cata_intake.intake_stop();
+      cata_intake.wait_cata_done_shot();
       reset_for_driver();
     }
 

@@ -214,10 +214,8 @@ void aim_and_fire_near_goal(Angle offset = Angle(), double runup = 0) {
 
 void intake_triple_stack() {
   cata_intake.intake_velocity(INTK_IN);
-  chassis.set_drive_pid(40, 25);
-  chassis.wait_until_distance_travelled(6);
-  chassis.set_max_speed(LONG_INTAKE_DRIVE_SPEED);
-  chassis.wait_until_distance_travelled(12);
+  chassis.set_drive_pid(22, 50);
+  chassis.wait_drive();
 }
 
 void skills() {
@@ -235,7 +233,7 @@ void skills1() {
   default_constants();
   exit_condition_defaults();
   cata_intake.cata_prime();
-  chassis.reset_position(Vector2(skills_start.x, skills_start.y), Angle::from_deg(90.5));
+  chassis.reset_position(Vector2(skills_start.x, skills_start.y), Angle::from_deg(90.0));
   chassis.set_heading_relative_heading_pid(0);
 
   roll(30, Angle::from_deg(91.5), -.65, 70, 180);
@@ -257,10 +255,10 @@ void skills1() {
   chassis.set_max_speed(DRIVE_SPEED);
   //chassis.wait_until_distance_remaining(8);
   chassis.wait_until_distance_remaining(4);
-  aim_and_fire_far_goal(Angle::from_deg(3.5));
+  aim_and_fire_far_goal(Angle::from_deg(2));
 
   chassis.set_heading_relative_swing_pid(ez::LEFT_SWING, -90, TURN_SPEED, -.1);
-  chassis.wait_until_heading_relative(-27);
+  chassis.wait_until_heading_relative(-24);
 
   chassis.set_path_pid(skills_far_low_goal_horizontal_line_path, SHORT_INTAKE_DRIVE_SPEED, 14, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(1);
@@ -285,16 +283,17 @@ void skills1() {
 
   cata_intake.intake_stop();
   chassis.set_path_pid(skills_far_middle_triple_stack_path, DRIVE_SPEED, 19, ez::FORWARD);
-  chassis.wait_until_distance_remaining(9.0);
+  chassis.wait_until_distance_remaining(18.0);
   intake_triple_stack();
-  chassis.set_point_drive_pid(far_goal, DRIVE_SPEED);
-  chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(10,-10), -1, -1); // low goal corner + some offset
+  chassis.set_point_drive_pid(far_goal + Vector2(0, 5), 127);
+  chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(14,14) + Vector2(14, 14), -1, -1); // low goal corner + some offset
+  chassis.set_drive_pid(-14, 70);
+  chassis.wait_until_distance_travelled(-10.5);
   cata_intake.cata_shoot();
-  chassis.set_max_speed(DRIVE_SPEED * .9);
   cata_intake.intake_stop();
   cata_intake.wait_cata_done_shot();
 
-  chassis.set_point_drive_pid(far_horizontal_roller + Vector2(7.5, 9), DRIVE_SPEED, ez::FORWARD);
+  chassis.set_point_drive_pid(far_horizontal_roller + Vector2(1, 8), DRIVE_SPEED, ez::FORWARD);
   chassis.wait_until_distance_remaining(9);
 }
 
