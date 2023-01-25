@@ -321,7 +321,7 @@ void opcontrol() {
     }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-      expansion.move_velocity(100);
+      expansion.move_velocity(200);
     }
     else {
       expansion.move_velocity(0);

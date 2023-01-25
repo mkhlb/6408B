@@ -198,6 +198,13 @@ void Drive::wait_until_distance_remaining(double target) {
   else if (mode == ez::PATH_DRIVE) {
     wait_until_distance_from_point(path.back().position, target);
   }
+  else if (mode == ez::POINT_TURN) {
+    while(leftPID.exit_condition() == RUNNING || rightPID.exit_condition() == RUNNING) {
+      if(fabs(error_to_point(point_target, point_turn_offset)) < target) {
+        return;
+      }
+    }
+  }
 }
 
 void Drive::wait_until_heading_relative(double target) {
