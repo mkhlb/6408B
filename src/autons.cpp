@@ -330,7 +330,7 @@ void skills2() {
   chassis.wait_drive();
   chassis.set_point_turn_pid(far_corner_triple_stack, TURN_SPEED);
   chassis.wait_drive();
-  intake_triple_stack(29, 50);
+  intake_triple_stack(30, 40);
   chassis.set_path_pid(skills_far_corner_triple_stack_path, DRIVE_SPEED, 14, ez::FORWARD, 3);
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
