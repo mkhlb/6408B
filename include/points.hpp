@@ -4,6 +4,7 @@
 
 extern Vector2 far_goal;
 extern Vector2 near_goal;
+extern Vector2 transposed_near_goal;
 extern Vector2 far_goal_left_firing_spot;
 extern Vector2 far_goal_right_firing_spot;
 extern Vector2 near_lateral_roller; //middle wheel is at 13.5
@@ -30,3 +31,7 @@ extern Vector2 skills_near_line_end;
 
 extern Vector2 skills_far_expansion;
 extern Vector2 skills_near_expansion;
+
+
+extern Vector2 far_low_goal;
+extern Vector2 near_low_goal;

@@ -140,3 +140,23 @@ struct PathPoint {
 
   }
 };
+
+// PathPoint operator+(PathPoint point, Vector2 vec) {return PathPoint(point.position + vec, point.advance_distance, point.lookahead, point.speed, point.toggle_pid);}
+
+// PathPoint operator-(PathPoint point, Vector2 vec) {return PathPoint(point.position - vec, point.advance_distance, point.lookahead, point.speed, point.toggle_pid);}
+
+// std::list<PathPoint> operator+(std::list<PathPoint> const &path_list, Vector2 const &offset) {
+//   std::list<PathPoint> ret;
+//   for(auto it = path_list.begin(); it != path_list.end(); ++it) {
+//     ret.push_back(*it + offset);
+//   }
+//   return ret;
+// }
+
+// std::list<PathPoint> operator-(std::list<PathPoint> const &path_list, Vector2 const &offset) {
+//   std::list<PathPoint> ret;
+//   for(auto it = path_list.begin(); it != path_list.end(); ++it) {
+//     ret.push_back(*it - offset);
+//   }
+//   return ret;
+// }
