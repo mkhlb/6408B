@@ -25,24 +25,24 @@
 // Chassis constructor
 Drive chassis(
     // Track width of chassis in inches
-    4.625,
-    4.625
+    0,
+    0
     , 
-    -4.0 // 0, overshoots : 1.4, undershoot
+    0 // 0, overshoots : 1.4, undershoot
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {-13, -3} // -13 front, -3 back
+    {-19, -10, 8} // -13 front, -3 back
     
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {18, 16} // 18 front, 16 back
+    {1, 17, -2} // 18 front, 16 back
 
 
     // IMU Port
     ,
-    14
+    11
 
     // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
     //    (or tracking wheel diameter)
@@ -52,7 +52,7 @@ Drive chassis(
     // Cartridge RPM
     //   (or tick per rotation if using tracking wheels)
     ,
-    360
+    600
 
     // External Gear Ratio (MUST BE DECIMAL)
     //    (or gear ratio of tracking wheel)
@@ -60,16 +60,16 @@ Drive chassis(
     // be 2.333. eg. if your drive is 36:60 where the 60t is powered, your RATIO
     // would be 0.6.
     ,
-    1
+    1.666
 
     // Uncomment if using tracking wheels
     
     // Left Tracking Wheel Ports (negative port will reverse it!)
-    ,{-5, -6} // 3 wire encoder
+    ,{2, 3} // 3 wire encoder
     // ,8 // Rotation sensor
 
     // Right Tracking Wheel Ports (negative port will reverse it!)
-    ,{-7, -8} // 3 wire encoder
+    ,{2, 3} // 3 wire encoder
     // ,-9 // Rotation sensor
 
     ,{-3,-4}
@@ -83,20 +83,18 @@ Drive chassis(
 
 mkhlib::CatapultIntakeController cata_intake(
     // Port of the catapult motor
-    {19, -12},
+    {16, -1},
     // Port of the intake motor
-    -20,
+    -12,
     // Port of the limit switch
     1,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
-    84.0 / 36.0 * 6 / 12 * 12 / 60,
+    1.0/2.0,
     // Ratio of roller revolution / motor revolutions
     84.0 / 36.0,
     // gearset of catapult
-    pros::E_MOTOR_GEARSET_36,
-    // gearset of intake
-    pros::E_MOTOR_GEARSET_18);
+    pros::E_MOTOR_GEARSET_18
 
 pros::Motor expansion(10, pros::E_MOTOR_GEARSET_36, true);
 
