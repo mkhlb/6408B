@@ -304,18 +304,15 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       //chassis.plan_point_turn_pid(far_goal, 80, Angle::from_deg(180));
-      chassis.set_point_drive_pid(far_goal, 127);
-      chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(18,18) + Vector2(12, 12), -1, -1); // low goal corner + some offset
-      chassis.set_drive_pid(-12, 70);
-      chassis.wait_until_distance_travelled(-9);
-      cata_intake.cata_shoot();
-      cata_intake.intake_stop();
-      cata_intake.wait_cata_done_shot();
+      chassis.set_point_drive_pid(far_goal + Vector2(0, 5), 127);
+      chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(10,10) + Vector2(14, 14), -1, -1); // low goal corner + some offset
+      chassis.set_drive_pid(-14, 70);
+      chassis.wait_until_distance_travelled(-7);
       reset_for_driver();
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      chassis.set_point_turn_pid(far_goal, 127, Angle::from_deg(180));
+      chassis.set_point_turn_pid(far_goal + Vector2(0, 5), 127, Angle::from_deg(180));
       chassis.wait_drive();
       reset_for_driver();
     }
