@@ -51,7 +51,7 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
 
       double left_radius = left_distance / orientation_delta;
       double right_radius = right_distance / orientation_delta;
-      double lateral_radius = ((left_radius + l_width) + (right_radius - r_width)) / 2; // take average of both side's reading of radius 
+      double lateral_radius = ((left_radius - l_width) + (right_radius + r_width)) / 2; // take average of both side's reading of radius 
       double horizontal_radius = (middle_distance / orientation_delta) + length;
       local_move = // local move = chord length = 2 * radius * sin(theta/2)
           Vector2(2 * lateral_radius * sin(orientation_delta / 2) , 2 * horizontal_radius * sin(orientation_delta / 2));
