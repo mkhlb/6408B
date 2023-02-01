@@ -262,8 +262,7 @@ void rotate_180(Vector2 field_size = Vector2(140.4, -140.4)) {
                          chassis.orientation + Angle::from_deg(180));
 }
 
-void skills_shooting(
-    Vector2 goal, std::list<PathPoint> long_line_path = skills_near_line_path) {
+void skills_shooting(Vector2 goal, std::list<PathPoint> long_line_path = skills_near_line_path) {
   chassis.set_path_pid(skills_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);
   chassis.wait_until_absolute_points_passed(1);
   chassis.set_path_lookahead(20);
@@ -442,23 +441,26 @@ void prematch_near() {
   chassis.set_path_pid(prematch_near_second_shot_path, DRIVE_SPEED, 18, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
   chassis.set_point_path_orientation(ez::BACKWARD);
-  chassis.wait_drive();
+  chassis.wait_until_distance_remaining(4);
 
-  aim_and_fire(far_goal, Angle(), -24, -5);
+  aim_and_fire(far_goal, Angle(), -24, -9);
   
   chassis.set_path_pid(prematch_near_third_shot_path, DRIVE_SPEED, 18, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
   chassis.set_point_path_orientation(ez::BACKWARD);
-  chassis.wait_drive();
+  chassis.wait_until_distance_remaining(4);
 
-  aim_and_fire(far_goal, Angle(), -24, -5);
+  aim_and_fire(far_goal, Angle(), -24, -9);
 
   chassis.set_path_pid(prematch_near_fourth_shot_path, DRIVE_SPEED, 18, ez::FORWARD);
   chassis.wait_until_absolute_points_passed(2);
   chassis.set_point_path_orientation(ez::BACKWARD);
-  chassis.wait_drive();
+  chassis.wait_until_distance_remaining(4);
 
-  aim_and_fire(far_goal, Angle(), -24, -5);
+  aim_and_fire(far_goal, Angle(), -24, -9);
+
+  chassis.set_point_turn_pid(Vector2(59, -35), TURN_SPEED);
+  chassis.wait_drive();
 }
 
 void prematch_far() {

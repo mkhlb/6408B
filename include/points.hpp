@@ -16,6 +16,8 @@ extern Vector2 far_corner_triple_stack;
 
 extern Vector2 skills_start;
 
+extern Vector2 far_start;
+
 extern Vector2 skills_second_roller;
 extern Vector2 skills_third_roller;
 extern Vector2 skills_fourth_roller;

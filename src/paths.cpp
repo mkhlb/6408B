@@ -134,3 +134,21 @@ std::list<PathPoint> prematch_far_roller_path = {
     {Vector2(127, -105)},
     {Vector2(131, -110)},
 };
+
+std::list<PathPoint> prematch_near_second_shot_path = {
+    {Vector2(74, -46)},
+    {Vector2(81, -46), 8},
+    {Vector2(75, -46)}
+};
+
+std::list<PathPoint> prematch_near_third_shot_path = {
+    {Vector2(74, -40)},
+    {Vector2(81, -35), 8},
+    {Vector2(75, -46)}
+};
+
+std::list<PathPoint> prematch_near_fourth_shot_path = {
+    {Vector2(75, -30)},
+    {Vector2(81, -24), 8},
+    {Vector2(75, -46)}
+};
