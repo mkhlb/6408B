@@ -415,6 +415,8 @@ void prematch_win_point() {
 
   roll(30, Angle::from_deg(90), -.65, 70, 80);
 
+  cata_intake.intake_velocity(INTK_IN);
+
   prematch_near_first_shot();
   
   chassis.set_path_pid(win_point_second_shot_path, DRIVE_SPEED, 12, ez::FORWARD);
@@ -435,6 +437,8 @@ void prematch_near() {
   chassis.set_heading_relative_heading_pid(0);
 
   roll(30, Angle::from_deg(90), -.65, 70, 80);
+
+  cata_intake.intake_velocity(INTK_IN);
 
   prematch_near_first_shot();
 
