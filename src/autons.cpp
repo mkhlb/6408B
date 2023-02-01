@@ -360,6 +360,9 @@ void skills2() {
   chassis.wait_drive();
   chassis.plan_orientation_turn_pid(Angle::from_deg(135), TURN_SPEED);
   chassis.wait_drive();
+
+  //expand!
+  expansion.move_velocity(200);
   
 }
 

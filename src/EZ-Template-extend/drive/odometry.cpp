@@ -67,7 +67,6 @@ void Drive::ez_odometry_task() { //COORDINATE SYSTEM: at orientation 0 robot mov
 
       position.x += global_move.x;
       position.y += global_move.y; 
-      //printf("Global move x: %f, y: %f", global_move.x, global_move.y);
     }
 
     pros::Task::delay_until(&now, ez::util::DELAY_TIME);
