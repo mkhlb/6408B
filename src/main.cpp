@@ -131,7 +131,11 @@ void initialize() {
   exit_condition_defaults();
 
   // Autonomous Selector using LLEMU
-  ez::as::auton_selector.add_autons({Auton("Full win point", odom_test)});
+  ez::as::auton_selector.add_autons(
+    {Auton("Skills", skills),
+    Auton("Win point", prematch_win_point),
+    Auton("Near side shooting", prematch_near),
+    Auton("Far side shooting", prematch_far),});
 
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -182,8 +186,8 @@ void autonomous() {
 
   // drive_example();
 
-  // ez::as::auton_selector
-  //     .call_selected_auton(); // Calls selected auton from autonomous
+  ez::as::auton_selector
+      .call_selected_auton(); // Calls selected auton from autonomous
   //     selector.
 
   // auto selection
@@ -192,7 +196,7 @@ void autonomous() {
   //drive_test();
   //path_test();
   //point_drive_test();
-  skills();
+  // skills();
 }
 
 /**

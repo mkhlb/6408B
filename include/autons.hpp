@@ -21,6 +21,13 @@ void skills();
 void skills1();
 void skills2();
 
+void prematch_win_point();
+void prematch_near();
+void prematch_far();
+void prematch_near_roller();
+void prematch_far_roller();
+void null();
+
 void default_constants();
 void one_mogo_constants();
 void two_mogo_constants();
