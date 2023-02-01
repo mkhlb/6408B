@@ -283,7 +283,7 @@ void skills_shooting(Vector2 goal) {
   chassis.wait_until_distance_remaining(28.0);
   intake_triple_stack(28.5, 40);
   pros::delay(250);
-  chassis.set_point_drive_pid(far_goal + Vector2(0, 5), 127);
+  chassis.set_point_drive_pid(far_goal + Vector2(0, 2.5), 127);
   chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(10,10) + Vector2(14, 14), -1, -1); // low goal corner + some offset
   chassis.set_drive_pid(-14, 70);
   chassis.wait_until_distance_travelled(-7);
@@ -293,6 +293,8 @@ void skills_shooting(Vector2 goal) {
   chassis.set_heading_relative_turn_pid(0, TURN_SPEED);
   cata_intake.wait_cata_done_shot();
 }
+
+
 
 void skills1() {
   std::uint32_t now = pros::millis();
