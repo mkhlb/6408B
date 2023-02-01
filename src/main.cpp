@@ -132,8 +132,9 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons(
-    {Auton("Skills", skills),
+    {
     Auton("Win point", prematch_win_point),
+    Auton("Skills", skills),
     Auton("Near side shooting", prematch_near),
     Auton("Far side shooting", prematch_far),});
 

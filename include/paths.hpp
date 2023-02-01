@@ -15,6 +15,8 @@ extern std::list<PathPoint> skills_near_low_goal_horizontal_line_path;
 extern std::list<PathPoint> skills_near_low_goal_lateral_line_path;
 extern std::list<PathPoint> skills_far_line_path;
 
+extern std::list<PathPoint> transposed_skills_far_line_path;
+
 extern std::list<PathPoint> skills_far_middle_triple_stack_path;
 
 extern std::list<Vector2> far_goal_left_firing_path;

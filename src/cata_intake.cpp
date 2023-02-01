@@ -157,7 +157,7 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value() == 1) // Stop when limit switch is pressed
   {
-    _cata_extra_error = -20;
+    _cata_extra_error = -19.5;
     cata_reset_sensors();
     cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .6);
     
