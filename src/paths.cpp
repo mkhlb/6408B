@@ -107,10 +107,10 @@ std::list<Vector2> far_goal_right_firing_path = {
 // PREMATCH PATHS
 
 std::list<PathPoint> win_point_first_shot_path = {
-    {Vector2(35, -26)},
-    {Vector2(60, -23)},
-    {Vector2(73, -28)},
-    {Vector2(75, -41), 10}
+    {Vector2(35, -25)},
+    {Vector2(58.5, -23)},
+    {Vector2(71, -28)},
+    {Vector2(74, -43), 10}
 };
 
 std::list<PathPoint> win_point_second_shot_path = {
@@ -124,9 +124,8 @@ std::list<PathPoint> win_point_third_shot_path = {
 };
 
 std::list<PathPoint> win_point_roller_path = {
-    {Vector2(107, -83)},
-    {Vector2(115, -102)},
-    {Vector2(122, -112)},
+    {Vector2(116, -106)},
+    {Vector2(123, -115)},
 };
 
 std::list<PathPoint> prematch_far_roller_path = {
