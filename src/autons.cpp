@@ -446,6 +446,17 @@ void prematch_near_roller() {
   roll(30, Angle::from_deg(90), -.65, 70, 80);
 }
 
-void prematch_far_roller() {}
+void prematch_far_roller() {
+  default_constants();
+  exit_condition_defaults();
+  cata_intake.cata_prime();
+  chassis.reset_position(Vector2(132, -85), Angle::from_deg(0));
+  chassis.set_heading_relative_heading_pid(0);
+
+  chassis.set_path_pid(prematch_far_roller_path, ACCURATE_DRIVE_SPEED, 18, ez::FORWARD);
+  chassis.wait_drive();
+
+  roll(30, Angle::from_deg(0), -.65, 70, 80);
+}
 
 void null() { return; }

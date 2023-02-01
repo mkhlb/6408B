@@ -126,5 +126,11 @@ std::list<PathPoint> win_point_third_shot_path = {
 std::list<PathPoint> win_point_roller_path = {
     {Vector2(107, -83)},
     {Vector2(115, -102)},
-    {Vector2(122, -112)}
+    {Vector2(122, -112)},
+};
+
+std::list<PathPoint> prematch_far_roller_path = {
+    {Vector2(127, -95)},
+    {Vector2(127, -105)},
+    {Vector2(131, -110)},
 };
