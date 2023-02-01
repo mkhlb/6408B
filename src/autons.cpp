@@ -317,7 +317,7 @@ void skills1() {
   
   skills_shooting(far_goal);
 
-  chassis.set_point_drive_pid(far_horizontal_roller + Vector2(2, 4.0), DRIVE_SPEED, ez::FORWARD);
+  chassis.set_point_drive_pid(far_horizontal_roller + Vector2(0, 4.0), DRIVE_SPEED, ez::FORWARD);
   chassis.wait_drive();
 }
 
@@ -330,7 +330,7 @@ void skills2() {
   
   chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y - 3.9), chassis.orientation);
   chassis.set_heading_relative_heading_pid(0);
-  chassis.set_drive_pid(-9, DRIVE_SPEED);
+  chassis.set_drive_pid(-11, DRIVE_SPEED);
   chassis.wait_drive();
   chassis.set_point_turn_pid(far_corner_triple_stack, TURN_SPEED);
   chassis.wait_drive();
@@ -357,7 +357,7 @@ void skills2() {
   rotate_180(Vector2(142, -142));
 
   chassis.set_point_drive_pid(skills_near_expansion, DRIVE_SPEED);
-  chassis.wait_until_distance_from_point(skills_near_expansion, 4);
+  chassis.wait_drive();
   chassis.plan_orientation_turn_pid(Angle::from_deg(135), TURN_SPEED);
   chassis.wait_drive();
   

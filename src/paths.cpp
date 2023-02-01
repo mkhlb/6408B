@@ -27,6 +27,11 @@ std::list<PathPoint> skills_near_line_path {
     // {Vector2(57.5, -80), 14}, // in position to fire w/ run up
 };
 
+std::list<PathPoint> transposed_skills_far_line_path {
+    {Vector2(35,-53.5), 10, -1, -1, true},
+    {Vector2(57, -81.0), -1},
+};
+
 std::list<PathPoint> skills_far_low_goal_lateral_line_path {
     {Vector2(72, -84), -1},
     {Vector2(57, -99), -1},
