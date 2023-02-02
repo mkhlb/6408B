@@ -110,7 +110,7 @@ void CatapultIntakeController::master_cata_task() {
     }
     else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
     {
-      cata_move_velocity(.9 * _cata_max_velocity);
+      cata_move_velocity(.4 * _cata_max_velocity);
     }
     else if( cata_state == e_cata_state::PRIME) // Run the prime function each tick while in the prime state
     {
@@ -157,9 +157,9 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value() == 1) // Stop when limit switch is pressed
   {
-    _cata_extra_error = -19.5;
+    _cata_extra_error = -21;
     cata_reset_sensors();
-    cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .6);
+    cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .4);
     
     cata_primed = true;
     cata_state = e_cata_state::HOLD;

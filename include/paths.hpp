@@ -30,6 +30,8 @@ extern std::list<PathPoint> win_point_roller_path;
 
 extern std::list<PathPoint> prematch_far_roller_path;
 
+extern std::list<PathPoint> prematch_far_third_shot_path;
+
 extern std::list<PathPoint> prematch_near_second_shot_path;
 extern std::list<PathPoint> prematch_near_third_shot_path;
 extern std::list<PathPoint> prematch_near_fourth_shot_path;

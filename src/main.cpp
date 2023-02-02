@@ -133,10 +133,13 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons(
     {
-    Auton("Win point", prematch_win_point),
-    Auton("Skills", skills),
-    Auton("Near side shooting", prematch_near),
-    Auton("Far side shooting", prematch_far),});
+      Auton("Skills", skills), 
+      Auton("Win point", prematch_win_point),
+      
+      Auton("Far side shooting", prematch_far),
+      Auton("Far roller", prematch_far_roller),
+      Auton("Near side shooting", prematch_near),
+    });
 
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -350,6 +353,13 @@ void opcontrol() {
       cata_intake
           .cata_shoot(); // cata_intake shoot, moves cata_intake then shortly
                          // after waits until limit switch to stop it
+    }
+
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      cata_intake.cata_clear();
+    }
+    else if(!master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && cata_intake.cata_state == mkhlib::CatapultIntakeController::CLEAR) {
+      cata_intake.cata_hold();
     }
     // else {
     //   cata_intake.cata_move_velocity(0);
