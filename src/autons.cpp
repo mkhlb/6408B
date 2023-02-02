@@ -262,7 +262,7 @@ void rotate_180(Vector2 field_size = Vector2(140.4, -140.4)) {
                          chassis.orientation + Angle::from_deg(180));
 }
 
-void skills_shooting(Vector2 goal, std::list<PathPoint> long_line_path = skills_near_line_path, float tripledist=27.5) {
+void skills_shooting(Vector2 goal, std::list<PathPoint> long_line_path = skills_near_line_path, float tripledist=27.5, Vector2 last_shot_offset = Vector2(0, 3)) {
   chassis.set_path_pid(skills_first_shot_path, DRIVE_SPEED, 14, ez::BACKWARD);
   chassis.wait_until_absolute_points_passed(1);
   chassis.set_path_lookahead(20);
@@ -293,7 +293,7 @@ void skills_shooting(Vector2 goal, std::list<PathPoint> long_line_path = skills_
   cata_intake.intake_velocity(INTK_IN * .8);
   chassis.set_max_speed(SHORT_INTAKE_DRIVE_SPEED);
   chassis.wait_drive();
-  aim_and_fire_far_goal(Angle::from_deg(0), -8.0, -3.2);
+  aim_and_fire_far_goal(Angle::from_deg(0), -8.0, -1.5);
 
   chassis.set_path_pid(skills_far_low_goal_lateral_line_path, DRIVE_SPEED * .6,
                        19, ez::FORWARD);
@@ -306,7 +306,7 @@ void skills_shooting(Vector2 goal, std::list<PathPoint> long_line_path = skills_
   chassis.wait_until_distance_remaining(28.0);
   intake_triple_stack(tripledist, 40);
   pros::delay(250);
-  chassis.set_point_drive_pid(far_goal + Vector2(0, 2.5), 127);
+  chassis.set_point_drive_pid(far_goal + last_shot_offset, 127);
   chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(10, 10) +
                                       Vector2(12, 12),
                                   -1, -1); // low goal corner + some offset
@@ -363,8 +363,7 @@ void skills2() {
   intake_triple_stack(23.5, 40);
   chassis.set_heading_relative_swing_pid(ez::LEFT_SWING, -90, SWING_SPEED, -.3);
   chassis.wait_until_heading_relative(-45);
-  chassis.set_path_pid(skills_far_corner_triple_stack_path, DRIVE_SPEED, 14,
-                       ez::FORWARD, 3);
+  chassis.set_path_pid(skills_far_corner_triple_stack_path, DRIVE_SPEED, 14, ez::FORWARD, 3);
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
   cata_intake.intake_stop();
@@ -381,7 +380,7 @@ void skills2() {
   // start driving towards first shot
 
   rotate_180(Vector2(142, -142));
-  skills_shooting(transposed_near_goal,transposed_skills_far_line_path, 25.5);
+  skills_shooting(transposed_near_goal,transposed_skills_far_line_path, 25.5, Vector2(0,2));
   rotate_180(Vector2(142, -142));
 
   chassis.set_point_drive_pid(skills_near_expansion, DRIVE_SPEED);
