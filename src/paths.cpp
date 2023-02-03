@@ -123,6 +123,11 @@ std::list<PathPoint> win_point_third_shot_path = {
     {Vector2(100.5, -71)}
 };
 
+std::list<PathPoint> win_point_fourth_shot_path = {
+    {Vector2(110, -86)},
+    {Vector2(115, -84)}
+};
+
 std::list<PathPoint> win_point_roller_path = {
     {Vector2(118, -105)},
     {Vector2(126, -113)},
