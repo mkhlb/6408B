@@ -133,10 +133,12 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons(
     {
+      Auton("Skills", skills),
+      Auton("Win point", prematch_win_point),
+      
       
       Auton("Far side shooting", prematch_far),
-      Auton("Win point", prematch_win_point),
-      Auton("Skills", skills),
+      
       Auton("Far roller", prematch_far_roller),
       Auton("Near side shooting", prematch_near),
     });
@@ -233,7 +235,7 @@ void print_odom() {
     else if(cata_intake.limit.get_value() != 1) {
       limitpresed = false;
     }
-    master.print(0,0, "%f, %f", (float)chassis.position.x, (float)chassis.position.y);
+    master.print(0,0, "%f, %f", (float)chassis.left_sensor(), (float)chassis.right_sensor());
     pros::delay(500);
   }
 }

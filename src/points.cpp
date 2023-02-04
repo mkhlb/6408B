@@ -3,7 +3,7 @@
 
 Vector2 far_goal = Vector2(17.5, -126);
 Vector2 near_goal = Vector2(122.7, -17.8);
-Vector2 transposed_near_goal = Vector2(15.0, -117.0);
+Vector2 transposed_near_goal = Vector2(14.5, -113.0);
 Vector2 far_goal_left_firing_spot = Vector2(18, -80); // field is about 141
 Vector2 far_goal_right_firing_spot = Vector2(64, -124);
 Vector2 near_lateral_roller = Vector2(12, -29.5); //middle wheel is at 13.5
@@ -27,5 +27,5 @@ Vector2 skills_fifth_shot = Vector2(57, -128); // similar to first shot
 Vector2 skills_near_line_start = Vector2(36, -60);
 Vector2 skills_near_line_end = Vector2(58, -80);
 
-Vector2 skills_near_expansion = Vector2(26, -21);
+Vector2 skills_near_expansion = Vector2(17, -22);
 Vector2 skills_far_expansion = Vector2(119, -119);
