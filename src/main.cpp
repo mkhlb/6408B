@@ -133,14 +133,13 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons(
     {
-      Auton("Skills", skills),
+      
       Auton("Win point", prematch_win_point),
-      
-      
       Auton("Far side shooting", prematch_far),
-      
       Auton("Far roller", prematch_far_roller),
       Auton("Near side shooting", prematch_near),
+      Auton("Skills", skills),
+      
     });
 
   // Initialize chassis and auton selector
@@ -294,6 +293,11 @@ void reset_for_driver() {
 
 void opcontrol() {
   // This is preference to what you like to drive on.
+
+  //autonomous();
+  //pros::delay(6000);
+  //return;
+
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
   cata_intake.cata_hold();

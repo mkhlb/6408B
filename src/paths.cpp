@@ -50,8 +50,8 @@ std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitti
     {Vector2(108, -108), 10},
     {Vector2(104, -94), 10},
     {Vector2(117, -105), 10},
-    {Vector2(113, -110), 14},
-    {Vector2(122, -112), 14},
+    {Vector2(115, -108), 14},
+    {Vector2(126, -110), 14},
 };
 
 std::list<PathPoint> skills_near_goal_first_shot_path {
