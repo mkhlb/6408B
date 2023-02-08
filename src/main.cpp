@@ -85,18 +85,18 @@ mkhlib::CatapultIntakeController cata_intake(
     // Port of the catapult motor
     {19, -12},
     // Port of the intake motor
-    -20,
+    {-20},
     // Port of the limit switch
     1,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
-    84.0 / 36.0 * 6 / 12 * 12 / 60,
+    6.0 / 24.0,
     // Ratio of roller revolution / motor revolutions
-    84.0 / 36.0,
+    1.0 / 1.0,
     // gearset of catapult
     pros::E_MOTOR_GEARSET_36,
     // gearset of intake
-    pros::E_MOTOR_GEARSET_18);
+    pros::E_MOTOR_GEARSET_06);
 
 pros::Motor expansion(10, pros::E_MOTOR_GEARSET_36, true);
 
