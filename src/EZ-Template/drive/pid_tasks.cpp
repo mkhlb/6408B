@@ -91,7 +91,16 @@ void Drive::encoder_turn_pid_task() {
 }
 
 void Drive::point_drive_pid_task() {
-  if((point_target - position).get_magnitude() > 12) {
+  double target_distance = (point_target - position).get_magnitude();
+  if(target_distance > 11) {
+
+    Vector2 turn_point_target = point_target;
+
+    if(target_distance > 15.5) {
+      Vector2 orientation_target_offset = Vector2::from_polar(target_distance * orientation_lead_percentage, orientation_target);
+      turn_point_target = point_target - orientation_target_offset;
+    }
+
     //figure out offset
     Angle offset = Angle();
     switch (point_orientation) {
@@ -108,7 +117,7 @@ void Drive::point_drive_pid_task() {
       }
     }
     //set PIDs
-    plan_point_heading_pid(point_target, offset);
+    plan_point_heading_pid(turn_point_target, offset);
     plan_straight_point_drive_pid(point_target, max_speed, false, true, false);
 
     heading_on = true;
@@ -116,11 +125,11 @@ void Drive::point_drive_pid_task() {
     encoder_drive_pid_task();
     
   }
-  else if((point_target - position).get_magnitude() > 9) {
+  else if(target_distance > 7) {
     set_heading_relative_heading_pid(0);
     plan_straight_point_drive_pid(point_target, max_speed, false, true, false);
     encoder_drive_pid_task();
-}
+  }
   else {
     set_heading_relative_heading_pid(0);
     plan_straight_point_drive_pid(point_target, max_speed);

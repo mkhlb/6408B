@@ -851,7 +851,7 @@ public:
 
   double error_to_point(Vector2 target, Angle offset = Angle());
 
-  void set_point_drive_pid(Vector2 target, int speed, e_point_orientation orientation = AGNOSTIC);
+  void set_point_drive_pid(Vector2 target, int speed, e_point_orientation orientation = AGNOSTIC, double boomerang_lead = 0, Angle boomerang_orientation = Angle());
 
   void plan_orientation_heading_pid(Angle target);
 
@@ -902,6 +902,8 @@ private: // !Auton
   std::vector<PathPoint> path;
   int path_advance;
   Vector2 point_target;
+  Angle orientation_target;
+  double orientation_lead_percentage = .6f;
   e_point_orientation point_orientation = AGNOSTIC;
 
   Angle point_turn_offset;
