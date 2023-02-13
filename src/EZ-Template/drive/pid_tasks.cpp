@@ -150,6 +150,8 @@ void Drive::path_drive_pid_task() {
     set_mode(ez::POINT_DRIVE);
     //set_max_speed(max);
     headingPID.reset_variables();
+    orientation_lead_percentage = point.orientation_lead;
+    orientation_target = point.orientation;
   }
   else {
 

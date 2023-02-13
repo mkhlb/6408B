@@ -393,7 +393,7 @@ void skills2() {
   chassis.wait_drive();
 
   // expand!
-  expansion.move_velocity(200);
+  //expansion.move_velocity(200);
 }
 
 void prematch_near_first_shot() {

@@ -85,20 +85,18 @@ mkhlib::CatapultIntakeController cata_intake(
     // Port of the catapult motor
     {19, -12},
     // Port of the intake motor
-    {-20},
+    {-20, 10},
     // Port of the limit switch
     1,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
     6.0 / 24.0,
-    // Ratio of roller revolution / motor revolutions
-    1.0 / 1.0,
+    // Ratio of intake revolution / motor revolutions
+    60.0 / 36.0,
     // gearset of catapult
     pros::E_MOTOR_GEARSET_36,
     // gearset of intake
     pros::E_MOTOR_GEARSET_06);
-
-pros::Motor expansion(10, pros::E_MOTOR_GEARSET_36, true);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -107,7 +105,7 @@ pros::Motor expansion(10, pros::E_MOTOR_GEARSET_36, true);
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  expansion.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  //expansion.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   cata_intake.cata_hold();
   // Print our branding over your terminal :D
   ez::print_ez_template();
@@ -332,10 +330,10 @@ void opcontrol() {
     }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-      expansion.move_velocity(200);
+      //expansion.move_velocity(200);
     }
     else {
-      expansion.move_velocity(0);
+      //expansion.move_velocity(0);
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
@@ -372,9 +370,9 @@ void opcontrol() {
     // }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(0.9 * 200.0 * 84 / 36); // intake
+      cata_intake.intake_velocity(0.8 * 1000); // intake
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      cata_intake.intake_velocity(-150.0 * 84/36); // outake
+      cata_intake.intake_velocity(-0.8 * 1000); // outake
     } else {
       cata_intake.intake_stop(); // else to keep intake at 0
     }
