@@ -169,7 +169,7 @@ First start with $I = |Y|$
 
 $I_s$ is an $x$-intercept. It gives the value that $I = 0$. To make $I = |Y|$'s $x$-intercept (which is normally 0) equal $I_s$, simply transform it to the right by $I_s$. to do that you subtract it from $|Y|$, giving the equation $I = |Y| - I_s$.
 
-Now we must make the equation rise to $1.0$ by $I_e$. This is done by applying a slope, multiplying $|Y| - I_s$ by some number $m$. A slope $m$ is defined as $m = {rise \over run}$. We know the rise is $1.0$, and the run can be given as the distance from the start of the iterpolation to the end: $I_e - I_s$. Apply slope $1 \over {I_e - I_s}$ to get $I = {{|Y| - I_s} \over {I_e - I_s}}$, which intercepts $x$ at $I_s$ thanks to a tranformation of $I_s$ and intercepts $I_e$ thanks to a slope if run $I_e - I_s$.
+Now we must make the equation rise to $1.0$ by $I_e$. This is done by applying a slope, multiplying $|Y| - I_s$ by some number $m$. A slope $m$ is defined as $m = {rise \over run}$. We know the rise is $1.0$, and the run can be given as the distance from the start of the iterpolation to the end: $I_e - I_s$. Apply slope $1 \over {I_e - I_s}$ to get $I = {{|Y| - I_s} \over {I_e - I_s}}$, which intercepts $x$ at $I_s$ thanks to a tranformation of $I_s$ and intercepts $I_e$ thanks to a slope of run $I_e - I_s$.
 
 #### The Implementation
 
@@ -187,7 +187,7 @@ Again the curvatherp is built on top of Ez Template. Unlike normalized arcade, `
 
 Odometry is implemented directly into the Ez Template `chassis`. Simply pass a width into the constructor and odometry is handled using the same IMU and encoders for PID.
 
-### Motion Planning
+### Planned Motion
 
 #### Turning To A Point
 
@@ -216,10 +216,30 @@ The cosin between two angles is the projection, it gives the adjacent component 
 
 #### Driving To A Point
 
-MKHLib doesn't mess with complicated driving algorithms. To drive to a point MKHLib does two things: turns to the point, then drive as close to it as it can in a straight line. So how does MKHLib figure out what distance it needs to drive to get as close as possible?
+<s>MKHLib doesn't mess with complicated driving algorithms.</s> To simply drive to a point using motion planning MKHLib does two things: turns to the point, then drive as close to it as it can in a straight line. So how does MKHLib figure out what distance it needs to drive to get as close as possible?
 
 Consider two vectors: the unit vector representing the direction the robot is facing $\hat{\omega}$, and the vector from the robot to the target point $\vec{T}$. $\hat{\omega}$ and $\vec{T}$ are seperated by an angle $\theta$. Recall that a dot product is a projection and then a multiplication, and that multiplication of $x \cdot 1 = x$, and $|\hat{v}| = 1$, so a dot product of a vector is just a projection, because the multiplication by $1$ does nothing. So $\hat{\omega} \cdot \vec{T}$ is just a projection of $\vec{T}$ onto $\hat{\omega}$. 
 
 $\hat{\omega} \cdot \vec{T}$ gives the distance to drive in direction $\hat{\omega}$ to get as close as possible to $\vec{T}$. If you don't intuitively understand this, allow a mathematical illustration:
 
 The distance to drive $D$ times the orientation vector $\hat{\omega}$ ( $\vec{D}$ ) forms a right angle triangle with $\vec{T}$ (by definition of being as close as possible).
+
+### Iterative Motion - Points
+
+#### Point Turning
+
+There is iterative point turning, to facilitate more accurate auto aim.
+
+#### Point Driving
+
+#### Achieving A Target Orientation
+
+### Iterative Motion - Paths
+
+#### Classical Pure Pursuit
+
+#### Simplified Pure Pursuit
+
+## On Implementation And Usage of Motion
+
+### Don't Run Away From the Abstract
