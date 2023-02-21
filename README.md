@@ -236,12 +236,12 @@ There is iterative point turning, to facilitate more accurate auto aim.
 
 Point driving is simple to do, but hard to make stable. In theory its just combining two of the previous functions talked about and running them iteratively. By driving straight to a point, and constantly turning to face it as accurately as possible, you can achieve motion to that point.
 
-However, iteratively turning to a point becomes increasingly unstable as the distance error decreases. With a small overshoot the angular error can completely reverse, and the robot can get stuck doing loops around a target point.
+However, iteratively turning to a point becomes increasingly unstable as the translational error $e$ decreases. With a small overshoot the angular error ${\omega}_e$ can completely reverse, and the robot can get stuck doing loops around a target point.
 
 So the trick is to split the motion up into phases, and simply turn off the angular component of movement at a certain distance. It works as follows:
 
-PHASE 0, error > 12: iteratively update straight drive target and point turn target using math described above.
-PHASE 1, error > 9: iteratively update straight drive target.
+PHASE 0, error > 12: iteratively update straight drive target and point turn target using math described above. <br>
+PHASE 1, error > 9: iteratively update straight drive target. <br>
 PHASE 2: stop updating all targets, let PIDs run their course.
 
 Note: all drive PIDs run on encoders, and the distance target is converted into an encoder target. Because of this the user just has to tune one PID for all driving, odom based or encoder based.
@@ -250,7 +250,17 @@ Note: all drive PIDs run on encoders, and the distance target is converted into 
 
 The classical drive functions give a good fast path to reach a target position, but they don't control for orientation. The stupid way to do that is simply to turn after the drive is done. The issue is that this doesn't look smooth, and in some cases isn't fast. The alternative is driving in a curve, and in some cases this curve is faster, because when driving in curves you spend less time accelerating. One way to generate these curves on the fly with nothing more than creative iteration of the point driving that has already been tuned is the boomerang controller.
 
+Given a target point $\vec{T}$ and a target orientation ${\omega}_T$, the boomerang controller actually never drives to $\vec{T}$. Instead it drives to a virtual point (known as the "carrot point" $\vec{T}_c$) colinear with the target orientation vector $\hat{\omega}_T$ when relative to $\vec{T}$.
+
+The distance of the carrot point from $\vec{T}$ is a simple function of the distance of the robot from $\vec{T}$, $T_e$. This function is controlled by a tuned variable $kQ$, essentially an aggression constant, with values of $kQ$ closer to 1 meaning more aggressive curves and values of 0 having no curve.
+
+The final formula for the carrot point is: $\vec{T}_c = \vec{T} + \hat{\omega}_T * T_e * kQ$
+
+With this you can get semi-accurate control of orientation in drive motions. The boomerang controller isn't perfectly accurate, and should not be used for applications where orientation needs to be precise, such as aiming a shot. For that a point turn should be done after the motion.
+
 ### Iterative Motion - Paths
+
+Much in the vain of the boomerang controller, path following is done through virtual points.
 
 #### Classical Pure Pursuit
 
