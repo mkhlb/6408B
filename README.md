@@ -226,13 +226,29 @@ The distance to drive $D$ times the orientation vector $\hat{\omega}$ ( $\vec{D}
 
 ### Iterative Motion - Points
 
+While originally there was no intention to do so, iterative motion has been added to MKHLib. The addition of this reduced the time of the skills autonomous by 10 seconds.
+
 #### Point Turning
 
 There is iterative point turning, to facilitate more accurate auto aim.
 
 #### Point Driving
 
+Point driving is simple to do, but hard to make stable. In theory its just combining two of the previous functions talked about and running them iteratively. By driving straight to a point, and constantly turning to face it as accurately as possible, you can achieve motion to that point.
+
+However, iteratively turning to a point becomes increasingly unstable as the distance error decreases. With a small overshoot the angular error can completely reverse, and the robot can get stuck doing loops around a target point.
+
+So the trick is to split the motion up into phases, and simply turn off the angular component of movement at a certain distance. It works as follows:
+
+PHASE 0, error > 12: iteratively update straight drive target and point turn target using math described above.
+PHASE 1, error > 9: iteratively update straight drive target.
+PHASE 2: stop updating all targets, let PIDs run their course.
+
+Note: all drive PIDs run on encoders, and the distance target is converted into an encoder target. Because of this the user just has to tune one PID for all driving, odom based or encoder based.
+
 #### Achieving A Target Orientation
+
+The classical drive functions give a good fast path to reach a target position, but they don't control for orientation. The stupid way to do that is simply to turn after the drive is done. The issue is that this doesn't look smooth, and in some cases isn't fast. The alternative is driving in a curve, and in some cases this curve is faster, because when driving in curves you spend less time accelerating. One way to generate these curves on the fly with nothing more than creative iteration of the point driving that has already been tuned is the boomerang controller.
 
 ### Iterative Motion - Paths
 
@@ -241,5 +257,7 @@ There is iterative point turning, to facilitate more accurate auto aim.
 #### Simplified Pure Pursuit
 
 ## On Implementation And Usage of Motion
+
+### One Motion Profile To Rule Them All
 
 ### Don't Run Away From the Abstract
