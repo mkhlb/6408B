@@ -26,6 +26,7 @@ extern std::list<Vector2> far_goal_right_firing_path;
 extern std::list<PathPoint> win_point_first_shot_path;
 extern std::list<PathPoint> win_point_second_shot_path;
 extern std::list<PathPoint> win_point_third_shot_path;
+extern std::list<PathPoint> win_point_fourth_shot_path;
 extern std::list<PathPoint> win_point_roller_path;
 
 extern std::list<PathPoint> prematch_far_roller_path;

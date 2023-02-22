@@ -281,10 +281,12 @@ void Drive::set_heading_relative_heading_pid(double target) {
   headingPID.set_target(get_gyro() + target);
 }
 
-void Drive::set_point_drive_pid(Vector2 target, int speed, e_point_orientation orientation) {
+void Drive::set_point_drive_pid(Vector2 target, int speed, e_point_orientation orientation, double boomerang_lead, Angle boomerang_orientation) {
   point_target = target;
   point_start = position;
   set_max_speed(speed);
+  orientation_lead_percentage = boomerang_lead;
+  orientation_target = boomerang_orientation;
   point_orientation = orientation;
   headingPID.reset_variables();
   set_mode(POINT_DRIVE);

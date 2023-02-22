@@ -4,14 +4,14 @@
 #include <list>
 
 std::list<PathPoint> skills_second_roller_path = {
-    {Vector2(40, -22), 8},
+    {Vector2(44, -19), 8},
     {Vector2(13.5, -30), 12} // in front of roller
 };
 
 std::list<PathPoint> skills_first_shot_path = {
     {Vector2(16, -34), 6},
-    {Vector2(13.5, -65), -1},
-    {Vector2(15.0, -81), -1, -1, -1, false}, // in position for shot
+    {Vector2(14.0, -65), -1},
+    {Vector2(15.8, -81), -1, -1, -1, false}, // in position for shot
 };
 
 std::list<PathPoint> skills_far_low_goal_horizontal_line_path = {
@@ -50,8 +50,8 @@ std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitti
     {Vector2(108, -108), 10},
     {Vector2(104, -94), 10},
     {Vector2(117, -105), 10},
-    {Vector2(113, -105), 14},
-    {Vector2(122, -110), 14},
+    {Vector2(115, -108), 14},
+    {Vector2(126, -110), 14},
 };
 
 std::list<PathPoint> skills_near_goal_first_shot_path {
@@ -123,6 +123,11 @@ std::list<PathPoint> win_point_third_shot_path = {
     {Vector2(100.5, -71)}
 };
 
+std::list<PathPoint> win_point_fourth_shot_path = {
+    {Vector2(110, -86)},
+    {Vector2(115, -84)}
+};
+
 std::list<PathPoint> win_point_roller_path = {
     {Vector2(118, -105)},
     {Vector2(126, -113)},
@@ -135,8 +140,8 @@ std::list<PathPoint> prematch_far_roller_path = {
 };
 
 std::list<PathPoint> prematch_far_third_shot_path = {
-    {Vector2(94, -68)},
-    {Vector2(105.5, -63)}
+    {Vector2(94, -65)},
+    {Vector2(105.5, -57)}
 };
 
 std::list<PathPoint> prematch_near_second_shot_path = {
@@ -154,5 +159,5 @@ std::list<PathPoint> prematch_near_third_shot_path = {
 std::list<PathPoint> prematch_near_fourth_shot_path = {
     {Vector2(75, -30)},
     {Vector2(81, -24), 8},
-    {Vector2(75, -46)}
+    {Vector2(77, -42)}
 };

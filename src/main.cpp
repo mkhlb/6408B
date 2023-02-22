@@ -69,10 +69,10 @@ Drive chassis(
     // ,8 // Rotation sensor
 
     // Right Tracking Wheel Ports (negative port will reverse it!)
-    ,{-7, -8} // 3 wire encoder
+    ,{7, 8} // 3 wire encoder
     // ,-9 // Rotation sensor
 
-    ,{-3,-4}
+    ,{3,4}
 
     ,2.75
 
@@ -85,20 +85,18 @@ mkhlib::CatapultIntakeController cata_intake(
     // Port of the catapult motor
     {19, -12},
     // Port of the intake motor
-    -20,
+    {20, -10},
     // Port of the limit switch
     1,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
-    84.0 / 36.0 * 6 / 12 * 12 / 60,
-    // Ratio of roller revolution / motor revolutions
-    84.0 / 36.0,
+    6.0 / 24.0,
+    // Ratio of intake revolution / motor revolutions
+    60.0 / 36.0,
     // gearset of catapult
     pros::E_MOTOR_GEARSET_36,
     // gearset of intake
-    pros::E_MOTOR_GEARSET_18);
-
-pros::Motor expansion(10, pros::E_MOTOR_GEARSET_36, true);
+    pros::E_MOTOR_GEARSET_06);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -107,7 +105,7 @@ pros::Motor expansion(10, pros::E_MOTOR_GEARSET_36, true);
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  expansion.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  //expansion.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   cata_intake.cata_hold();
   // Print our branding over your terminal :D
   ez::print_ez_template();
@@ -121,7 +119,7 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(0.13); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
   chassis.set_deceleration(600, 1900);
   cata_intake.intake_roller_set_active_brake(.9);
@@ -133,12 +131,14 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons(
     {
-      Auton("Skills", skills), 
-      Auton("Win point", prematch_win_point),
       
+      Auton("Point drive", point_drive_test),
+      Auton("Win point", prematch_win_point),
       Auton("Far side shooting", prematch_far),
       Auton("Far roller", prematch_far_roller),
       Auton("Near side shooting", prematch_near),
+      Auton("Skills", skills),
+      
     });
 
   // Initialize chassis and auton selector
@@ -189,17 +189,11 @@ void autonomous() {
 
 
   // drive_example();
-
-  ez::as::auton_selector
-      .call_selected_auton(); // Calls selected auton from autonomous
+  skills();
+  // ez::as::auton_selector
+  //     .call_selected_auton(); // Calls selected auton from autonomous
   //     selector.
 
-  // auto selection
-  //odom_test();
-  //point_turn_test();
-  //drive_test();
-  //path_test();
-  //point_drive_test();
   // skills();
 }
 
@@ -233,7 +227,7 @@ void print_odom() {
     else if(cata_intake.limit.get_value() != 1) {
       limitpresed = false;
     }
-    master.print(0,0, "%f, %f", (float)chassis.position.x, (float)chassis.position.y);
+    master.print(0,0, "%f, %f", (float)chassis.left_sensor(), (float)chassis.right_sensor());
     pros::delay(500);
   }
 }
@@ -292,6 +286,11 @@ void reset_for_driver() {
 
 void opcontrol() {
   // This is preference to what you like to drive on.
+
+  //autonomous();
+  //pros::delay(6000);
+  //return;
+
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
   cata_intake.cata_hold();
@@ -326,10 +325,10 @@ void opcontrol() {
     }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-      expansion.move_velocity(200);
+      //expansion.move_velocity(200);
     }
     else {
-      expansion.move_velocity(0);
+      //expansion.move_velocity(0);
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
@@ -366,9 +365,9 @@ void opcontrol() {
     // }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(0.9 * 200.0 * 84 / 36); // intake
+      cata_intake.intake_velocity(0.8 * 1000); // intake
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      cata_intake.intake_velocity(-150.0 * 84/36); // outake
+      cata_intake.intake_velocity(-0.8 * 1000); // outake
     } else {
       cata_intake.intake_stop(); // else to keep intake at 0
     }

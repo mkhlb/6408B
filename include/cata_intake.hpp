@@ -5,6 +5,7 @@
 #include "pros/motors.h"
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
+#include <vector>
 
 namespace mkhlib {
 class CatapultIntakeController {
@@ -14,7 +15,7 @@ public:
   
   std::vector<pros::Motor> cata_motors;
 
-  pros::Motor intake;
+  std::vector<pros::Motor> intake_motors;
 
   pros::ADIDigitalIn limit;
 
@@ -33,9 +34,7 @@ public:
    *        Wether or not to reverse the catapult motor. Position should be up,
    * true by default.
    */
-  CatapultIntakeController(int cata_port, int intake_port, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e cata_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_36, pros::motor_gearset_e intake_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_06);
-  
-  CatapultIntakeController(std::vector<int> cata_ports, int intake_port, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e cata_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_36, pros::motor_gearset_e intake_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_06);
+  CatapultIntakeController(std::vector<int> cata_ports, std::vector<int> intake_ports, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e cata_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_36, pros::motor_gearset_e intake_gearset=pros::motor_gearset_e::E_MOTOR_GEARSET_06);
 
   /**
    * @brief Sets the catapult state to HOLD.
@@ -44,6 +43,8 @@ public:
    * transitions to another state.
    */
   void cata_hold();
+
+  void cata_relative(double position);
   /**
    * @brief Sets the catapult state to PRIME.
    *
@@ -202,6 +203,10 @@ private:
 
   void roller_pid_task();
   void roller_intake_spin_time_task();
+
+  void intake_reset_sensors();
+  void intake_move_velocity(double velocity);
+  void intake_move_voltage(double voltage);
 
   //INTAKE ROLLER STUFF
   double _roller_start;

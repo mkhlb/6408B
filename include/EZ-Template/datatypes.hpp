@@ -119,23 +119,29 @@ struct PathPoint {
   double lookahead = -1;
   double speed = -1;
   bool toggle_pid = false;
+  double orientation_lead=0;
+  Angle orientation=Angle();
 
-  PathPoint(Vector2 pos, double advance=-1, double lookahead=-1, double speed=-1, bool pid=false)
+  PathPoint(Vector2 pos, double advance=-1, double lookahead=-1, double speed=-1, bool pid=false, double lead=0, Angle orientation_angle= Angle())
   :position(pos),
   advance_distance(advance),
   lookahead(lookahead),
   speed(speed),
-  toggle_pid(pid)
+  toggle_pid(pid),
+  orientation_lead(lead),
+  orientation(orientation_angle)
   {
 
   }
 
-  PathPoint(Vector2* pos, double advance=-1, double lookahead=-1, double speed=-1, bool pid=false)
+  PathPoint(Vector2* pos, double advance=-1, double lookahead=-1, double speed=-1, bool pid=false, double lead=0, Angle orientation_angle= Angle())
   :position(*pos),
   advance_distance(advance),
   lookahead(lookahead),
   speed(speed),
-  toggle_pid(pid)
+  toggle_pid(pid),
+  orientation_lead(lead),
+  orientation(orientation_angle)
   {
 
   }
