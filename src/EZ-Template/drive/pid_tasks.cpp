@@ -92,7 +92,7 @@ void Drive::encoder_turn_pid_task() {
 
 void Drive::point_drive_pid_task() {
   double target_distance = (point_target - position).get_magnitude();
-  if(target_distance > 11) {
+  if(target_distance > 12) {
 
     Vector2 turn_point_target = point_target;
 
@@ -125,7 +125,7 @@ void Drive::point_drive_pid_task() {
     encoder_drive_pid_task();
     
   }
-  else if(target_distance > 7) {
+  else if(target_distance > 9) {
     set_heading_relative_heading_pid(0);
     plan_straight_point_drive_pid(point_target, max_speed, false, true, false);
     encoder_drive_pid_task();

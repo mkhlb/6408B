@@ -4,7 +4,7 @@
 #include <list>
 
 std::list<PathPoint> skills_second_roller_path = {
-    {Vector2(40, -22), 8},
+    {Vector2(44, -19), 8},
     {Vector2(13.5, -30), 12} // in front of roller
 };
 

@@ -13,9 +13,9 @@ Vector2 far_horizontal_roller = Vector2(107.75, -130.5);
 
 Vector2 far_corner_triple_stack = Vector2(103.0, -105.35);
 
-Vector2 skills_start = Vector2(34.25, -9.8); // middle encoder at abt 15.75 y
+Vector2 skills_start = Vector2(40.5, -9.8); // middle encoder at abt 15.75 y
 Vector2 far_start = Vector2(130.5, -88); // middle encoder at abt 11.5
-Vector2 skills_second_roller = Vector2(14.5, -30);
+Vector2 skills_second_roller = Vector2(14.5, -36);
 
 Vector2 skills_first_shot = Vector2(11.5, -88);
 

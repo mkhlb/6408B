@@ -43,6 +43,8 @@ public:
    * transitions to another state.
    */
   void cata_hold();
+
+  void cata_relative(double position);
   /**
    * @brief Sets the catapult state to PRIME.
    *

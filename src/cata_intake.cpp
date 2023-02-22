@@ -86,7 +86,7 @@ void CatapultIntakeController::master_cata_task() {
       cata_shoot_task();
     }
 
-    pros::delay(ez::util::DELAY_TIME);
+    pros::delay(7);
   }
 }
 
@@ -118,14 +118,13 @@ void CatapultIntakeController::cata_reset_sensors() {
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  cata_move_velocity(-_cata_max_velocity * .9);
+  cata_move_velocity(-_cata_max_velocity * .8);
     
   if(limit.get_value() == 1) // Stop when limit switch is pressed
   {
-    _cata_extra_error = -22;
+    _cata_extra_error = -6.5;
     cata_reset_sensors();
-    cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .3);
-    pros::delay(400);
+    cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .8);
     cata_primed = true;
     cata_state = e_cata_state::HOLD;
     
@@ -163,6 +162,12 @@ void CatapultIntakeController::wait_cata_done_shot() { // Waits untill cata is d
 void CatapultIntakeController::cata_hold() { 
   cata_state = e_cata_state::HOLD; 
   cata_move_velocity(0);
+
+}
+
+void CatapultIntakeController::cata_relative(double position) { 
+  cata_state = e_cata_state::HOLD; 
+  cata_move_relative(position / 36.0 * 84.0, _cata_max_velocity * .9);
 
 }
 

@@ -69,10 +69,10 @@ Drive chassis(
     // ,8 // Rotation sensor
 
     // Right Tracking Wheel Ports (negative port will reverse it!)
-    ,{-7, -8} // 3 wire encoder
+    ,{7, 8} // 3 wire encoder
     // ,-9 // Rotation sensor
 
-    ,{-3,-4}
+    ,{3,4}
 
     ,2.75
 
@@ -85,7 +85,7 @@ mkhlib::CatapultIntakeController cata_intake(
     // Port of the catapult motor
     {19, -12},
     // Port of the intake motor
-    {-20, 10},
+    {20, -10},
     // Port of the limit switch
     1,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
@@ -119,7 +119,7 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(0.13); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
   chassis.set_deceleration(600, 1900);
   cata_intake.intake_roller_set_active_brake(.9);
@@ -132,6 +132,7 @@ void initialize() {
   ez::as::auton_selector.add_autons(
     {
       
+      Auton("Point drive", point_drive_test),
       Auton("Win point", prematch_win_point),
       Auton("Far side shooting", prematch_far),
       Auton("Far roller", prematch_far_roller),
@@ -188,17 +189,11 @@ void autonomous() {
 
 
   // drive_example();
-
-  ez::as::auton_selector
-      .call_selected_auton(); // Calls selected auton from autonomous
+  skills();
+  // ez::as::auton_selector
+  //     .call_selected_auton(); // Calls selected auton from autonomous
   //     selector.
 
-  // auto selection
-  //odom_test();
-  //point_turn_test();
-  //drive_test();
-  //path_test();
-  //point_drive_test();
   // skills();
 }
 
