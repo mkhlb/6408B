@@ -122,7 +122,7 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value() == 1) // Stop when limit switch is pressed
   {
-    _cata_extra_error = -6.5;
+    _cata_extra_error = -7.7;
     cata_reset_sensors();
     cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .8);
     cata_primed = true;
@@ -136,13 +136,8 @@ void CatapultIntakeController::cata_shoot_task() {
 
   cata_primed = false;
   cata_move_velocity(-_cata_max_velocity * .8);
-
-  if(!limit.get_value())
-  {
-    pros::delay(400); // Wait short while before priming in case limit switch is pressed again on the way up
-
-    cata_state = e_cata_state::PRIME;
-  }
+  pros::delay(500);
+  cata_state = e_cata_state::PRIME;
 }
 
 void CatapultIntakeController::wait_cata_idle() { // Waits until cata state is HOLD
