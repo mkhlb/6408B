@@ -33,7 +33,7 @@ std::list<PathPoint> transposed_skills_far_line_path {
 };
 
 std::list<PathPoint> skills_far_low_goal_lateral_line_path {
-    {Vector2(70.5, -84), -1},
+    {Vector2(71.5, -84), -1},
     {Vector2(57, -99), -1},
     {Vector2(51, -115), -1},
     {Vector2(50, -123), -1},
@@ -50,7 +50,7 @@ std::list<PathPoint> skills_far_corner_triple_stack_path { // tripls stack sitti
     {Vector2(96, -99), -1},
     {Vector2(108.5, -106), -1}, //triple stack
     {Vector2(118, -113), -1},
-    {Vector2(129, -113), 12},
+    {Vector2(129, -113), 13},
 };
 
 std::list<PathPoint> skills_near_goal_first_shot_path {

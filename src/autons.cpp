@@ -362,35 +362,32 @@ void skills1() {
   chassis.wait_until_absolute_points_passed(2);
   chassis.set_max_speed(80);
   cata_intake.intake_velocity(INTK_IN);
-  chassis.wait_until_absolute_points_passed(4);
+  chassis.wait_until_absolute_points_passed(3);
+  chassis.set_max_speed(65);
   
 }
 
 void skills2() {
 
   chassis.plan_orientation_heading_pid(Angle::from_deg(-20));
- 
   cata_intake.intake_stop();
+  cata_intake.intake_time(700, INTK_IN);
   roll(30, Angle::from_deg(-20), -.65, 70, 180, 600);
 
   // chassis.reset_position(Vector2(chassis.position.x, far_horizontal_roller.y - 4.9),chassis.orientation);
   
-  chassis.set_heading_relative_swing_pid(ez::LEFT_SWING, -90, SWING_SPEED, -.8);
-  chassis.wait_until_heading_relative(-45);
-  chassis.set_path_pid(skills_far_corner_triple_stack_path, DRIVE_SPEED, 14, ez::FORWARD, 3);
-  chassis.set_max_speed(DRIVE_SPEED);
-  chassis.wait_drive();
-  cata_intake.intake_stop();
+  chassis.set_heading_relative_swing_pid(ez::RIGHT_SWING, 120, SWING_SPEED, .4);
+  chassis.wait_until_heading_relative(40);
+  
+  chassis.set_heading_relative_turn_pid(-170, TURN_SPEED);
+  chassis.wait_until_heading_relative(-80);
 
-  chassis.plan_orientation_turn_pid(Angle::from_deg(0), TURN_SPEED);
-  chassis.wait_until_heading_relative(20);
+  roll(30, Angle::from_deg(-85), -.45, 70, 180);
 
-  roll(30, Angle::from_deg(0), -.45, 70, 180);
-
-  chassis.reset_position(
-      Vector2(far_lateral_roller.x + 4.9, chassis.position.y),
-      chassis.orientation);
-  chassis.set_heading_relative_heading_pid(0);
+  // chassis.reset_position(
+  //     Vector2(far_lateral_roller.x + 4.9, chassis.position.y),
+  //     chassis.orientation);
+  // chassis.set_heading_relative_heading_pid(0);
   // start driving towards first shot
 
   rotate_180(Vector2(142, -142));
