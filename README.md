@@ -262,6 +262,8 @@ With this you can get semi-accurate control of orientation in drive motions. The
 
 Much in the vain of the boomerang controller, path following is done through virtual points.
 
+Pure pursuit is simply done by picking the farthest point on a path up to a certain distance and following it.
+
 #### Classical Pure Pursuit
 
 
