@@ -44,7 +44,7 @@ public:
    */
   void cata_hold();
 
-  void cata_relative(double position);
+  void cata_relative(double position, double velocity = .9);
   /**
    * @brief Sets the catapult state to PRIME.
    *

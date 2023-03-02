@@ -118,13 +118,13 @@ void CatapultIntakeController::cata_reset_sensors() {
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  cata_move_velocity(-_cata_max_velocity * .8);
+  cata_move_velocity(-_cata_max_velocity * .75);
     
   if(limit.get_value() == 1) // Stop when limit switch is pressed
   {
-    _cata_extra_error = -7.7;
+    _cata_extra_error = -18.45;
     cata_reset_sensors();
-    cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .8);
+    cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .6);
     cata_primed = true;
     cata_state = e_cata_state::HOLD;
     
@@ -160,9 +160,9 @@ void CatapultIntakeController::cata_hold() {
 
 }
 
-void CatapultIntakeController::cata_relative(double position) { 
+void CatapultIntakeController::cata_relative(double position, double velocity) { 
   cata_state = e_cata_state::HOLD; 
-  cata_move_relative(position / 36.0 * 84.0, _cata_max_velocity * .9);
+  cata_move_relative(position / 36.0 * 84.0, _cata_max_velocity * velocity);
 
 }
 
