@@ -264,10 +264,18 @@ Much in the vain of the boomerang controller, path following is done through vir
 
 #### Classical Pure Pursuit
 
-#### Simplified Pure Pursuit
+
+
+#### Point Drive Pure Pursuit
+
+
 
 ## On Implementation And Usage of Motion
 
 ### One Motion Profile To Rule Them All
 
+I love PIDs. They are simple and they work. The idea with MKHLib originally was actually just to be a wrapper for Ez Template that calls the Ez Template functions iteratively based on odometry. Eventually it became more feasable to integrate it into Ez Template but the idea of iterative calls of straight line PIDs to drive in 2D space has been kept around since then. The reason for this is that tuning in 1D space is way easier than tuning in 2D space, and having your 2D functions just be 1D functions with some sauce means you never need to do that tricky 2D tuning. To tune all of my driving all I had to do was tune two straight drive PIDs, a turn PID, and a heading PID.
+
 ### Don't Run Away From the Abstract
+
+In reality all points that you drive to, all paths that you follow, are abstract. The values you input are not real field inches. They're close to positions on the field, but they have variance. This is acceptable. You don't need a perfectly accurate coordinate system that works just like reality. You just need it to be consistent. It's importatn to recall that everything is virtual when writing libraries. Some programmers use a tool to <a href="https://lemlib.github.io/Path-Gen/">draw paths on an image of a field</a>. I don't. A path drawer is too idealized, it exists in a utopian reality where your robot's real driving path is accurate to some value you can enter on your browser. Rather than banging your head against this with endless tuning it's better to let the chaos into your life and accept it and the numerical tuning that comes with it.
