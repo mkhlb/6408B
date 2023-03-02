@@ -139,6 +139,7 @@ bool Drive::right_over_current() {
 }
 
 int Drive::left_sensor() {
+  return right_sensor();
   if (is_tracker == DRIVE_ADI_ENCODER)
     return left_tracker.get_value();
   else if (is_tracker == DRIVE_ROTATION)
