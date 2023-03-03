@@ -61,7 +61,7 @@ Drive::Drive(double left_width, double right_width, double length, std::vector<i
              std::vector<int> middle_tracker_ports,
              double middle_tracker_diameter)
     : imu(imu_port),
-      left_tracker(abs(left_tracker_ports[0]), abs(left_tracker_ports[1]),
+      left_tracker(-1, -1,
                    util::is_reversed(left_tracker_ports[0])),
       right_tracker(abs(right_tracker_ports[0]), abs(right_tracker_ports[1]),
                     util::is_reversed(right_tracker_ports[0])),

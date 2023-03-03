@@ -22,6 +22,8 @@
 // https://ez-robotics.github.io/EZ-Template/
 /////
 
+pros::ADIDigitalOut boost(5, LOW);
+
 // Chassis constructor
 Drive chassis(
     // Track width of chassis in inches
@@ -290,7 +292,7 @@ void opcontrol() {
   //autonomous();
   //pros::delay(6000);
   //return;
-
+  boost.set_value(1);
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
   cata_intake.cata_hold();

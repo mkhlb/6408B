@@ -8,6 +8,7 @@
 
 extern Drive chassis;
 extern pros::Motor expansion;
+extern pros::ADIDigitalOut boost;
 extern mkhlib::CatapultIntakeController cata_intake;
 
 void drive_test();
