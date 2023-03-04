@@ -23,6 +23,7 @@
 /////
 
 pros::ADIDigitalOut boost(5, LOW);
+pros::ADIDigitalOut expansion(2, LOW);
 
 // Chassis constructor
 Drive chassis(
@@ -190,7 +191,7 @@ void autonomous() {
                                              // autonomous consistency.
 
 
-  // drive_example();
+  //drive_test();
   skills();
   // ez::as::auton_selector
   //     .call_selected_auton(); // Calls selected auton from autonomous

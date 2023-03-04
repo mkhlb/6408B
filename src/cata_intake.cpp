@@ -118,7 +118,7 @@ void CatapultIntakeController::cata_reset_sensors() {
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  cata_move_velocity(-_cata_max_velocity * .75);
+  cata_move_velocity(-_cata_max_velocity * cata_velocity);
     
   if(limit.get_value() == 1) // Stop when limit switch is pressed
   {
