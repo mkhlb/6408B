@@ -107,7 +107,7 @@ void Drive::point_drive_pid_task() {
       case FORWARD: offset = Angle::from_deg(0); break;
       case BACKWARD: offset = Angle::from_deg(180); break;
       case AGNOSTIC: {
-        if(abs(error_to_point(point_target)) > 90) {
+        if(abs(error_to_point(point_target)) > 90) { //compare forward and backward error to see which is shorter
           offset = Angle::from_deg(180);
         }
         else {
@@ -122,22 +122,25 @@ void Drive::point_drive_pid_task() {
 
     heading_on = true;
 
+    //run logic for drive PIDs
     encoder_drive_pid_task();
     
   }
   else if(target_distance > 9) {
+    //disable angular component
     set_heading_relative_heading_pid(0);
     plan_straight_point_drive_pid(point_target, max_speed, false, true, false);
     encoder_drive_pid_task();
   }
   else {
+    //transition -> encoder PID drive
     set_heading_relative_heading_pid(0);
     plan_straight_point_drive_pid(point_target, max_speed);
   }
 }
 
 void Drive::point_turn_pid_task() {
-
+  // iteratively update turn PID
   plan_point_turn_pid(point_target, max_speed, point_turn_offset, false);
 
   encoder_turn_pid_task();
@@ -148,7 +151,6 @@ void Drive::path_drive_pid_task() {
   double max = point.speed <= 0 ? max_speed : point.speed;
   if(path_advance == path.size() - 1) { // reached the end, time to straight drive
     set_mode(ez::POINT_DRIVE);
-    //set_max_speed(max);
     headingPID.reset_variables();
     orientation_lead_percentage = point.orientation_lead;
     orientation_target = point.orientation;
@@ -229,12 +231,6 @@ void Drive::path_drive_pid_task() {
     double imu_out = util::clip_num(headingPID.output, 190, -190);
     double left_power = util::clip_num(power + imu_out, 127, -127);
     double right_power = util::clip_num(power - imu_out, 127, -127);
-    // double max_power = fmax(left_power, right_power);
-
-    // if(max_power > 127) {
-    //   left_power = left_power / max_power * 127;
-    //   right_power = right_power / max_power * 127;
-    // }
 
     set_tank(left_power, right_power);
   }

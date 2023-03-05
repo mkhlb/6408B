@@ -67,11 +67,7 @@ void CatapultIntakeController::master_cata_task() {
   while (true) {  
     if( cata_state == e_cata_state::HOLD) // Lock motors during hold state.
     {
-      // cata_pid.compute(cata_motors.front().get_position());
-      // cata_move_voltage(util::clip_num(cata_pid.output, 60, -60));
-      // if(cata_pid.exit_condition() != ez::RUNNING) {
-      //   cata_move_velocity(0);
-      // }
+      
     }
     else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
     {
@@ -120,7 +116,7 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
   
   cata_move_velocity(-_cata_max_velocity * .75);
     
-  if(limit.get_value() == 1) // Stop when limit switch is pressed
+  if(limit.get_value() == 1) // Tunable extra movement for the caterpult
   {
     _cata_extra_error = -4.15;
     cata_reset_sensors();
@@ -132,7 +128,7 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
   
 }
 
-void CatapultIntakeController::cata_shoot_task() {
+void CatapultIntakeController::cata_shoot_task() { // move catapult for constant time to fire
 
   cata_primed = false;
   cata_move_velocity(-_cata_max_velocity * .8);
