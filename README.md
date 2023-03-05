@@ -266,11 +266,13 @@ Pure pursuit is simply done by picking the farthest point on a path up to a cert
 
 #### Classical Pure Pursuit
 
-
+In the classical pure pursuit, the robot is set to drive along a curve tangent to the current heading and intersecting the target point. Sparing the mathematical specifics: there is one main problem with implementing this. To Accurately drive along a curve, you have 3 options: built in motor PIDs, complicated motion profiles, and custom motor velocity PIDs. Motor PIDs for a velocity are much harder to write and tune than those for position, motion profiles are an unabstracted and untunable mess, and built in motor PIDs are even more unoptimal than the other two.
 
 #### Point Drive Pure Pursuit
 
+THe MKHLib solution to this is simple: use something tunable and intuitive and add onto it with the good parts of pure pursuit. The idea of a lookahead to find a point on a path (thereby dynamically generating curves on the fly) is really cool, and tends to work very well for somewhat smooth motion on a path. The idea of driving throgh a curvature however is not, because of reasons mentioned earlier. So the MKHLib Pure Pursuit is simply just an extension of the previously mentioned Point Driving, just iteratively updating with a new target point a-la pure pursuit.
 
+This means that the same PIDs tuned for point driving and point heading can be used for following paths, with almost perfect stability!
 
 ## On Implementation And Usage of Motion
 
