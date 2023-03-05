@@ -114,7 +114,7 @@ void CatapultIntakeController::cata_reset_sensors() {
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  cata_move_velocity(-_cata_max_velocity * .75);
+  cata_move_velocity(-_cata_max_velocity * cata_velocity);
     
   if(limit.get_value() == 1) // Tunable extra movement for the caterpult
   {
@@ -132,7 +132,7 @@ void CatapultIntakeController::cata_shoot_task() { // move catapult for constant
 
   cata_primed = false;
   cata_move_velocity(-_cata_max_velocity * .8);
-  pros::delay(500);
+  pros::delay(400);
   cata_state = e_cata_state::PRIME;
 }
 

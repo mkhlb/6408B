@@ -23,6 +23,7 @@
 /////
 
 pros::ADIDigitalOut boost(5, LOW);
+pros::ADIDigitalOut expansion(2, LOW);
 
 // Chassis constructor
 Drive chassis(
@@ -190,8 +191,9 @@ void autonomous() {
                                              // autonomous consistency.
 
 
-  // drive_example();
+  //drive_test();
   skills();
+  //prematch_win_point();
   // ez::as::auton_selector
   //     .call_selected_auton(); // Calls selected auton from autonomous
   //     selector.
@@ -293,6 +295,7 @@ void opcontrol() {
   //pros::delay(6000);
   //return;
   boost.set_value(1);
+  bool booststate = true;
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
   cata_intake.cata_hold();
@@ -321,9 +324,8 @@ void opcontrol() {
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      chassis.set_point_turn_pid(far_goal + Vector2(0, 5), 127, Angle::from_deg(180));
-      chassis.wait_drive();
-      reset_for_driver();
+      booststate = !booststate;
+      boost.set_value(booststate);
     }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {

@@ -188,6 +188,8 @@ public:
 
   e_roller_state roller_state;
 
+  double cata_velocity = .8;
+
 private:
   pros::Task cata_loop;
 

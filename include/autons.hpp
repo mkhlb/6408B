@@ -7,7 +7,7 @@
 #include "pros/motors.hpp"
 
 extern Drive chassis;
-extern pros::Motor expansion;
+extern pros::ADIDigitalOut expansion;
 extern pros::ADIDigitalOut boost;
 extern mkhlib::CatapultIntakeController cata_intake;
 
