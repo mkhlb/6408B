@@ -136,7 +136,7 @@ void CatapultIntakeController::cata_shoot_task() {
 
   cata_primed = false;
   cata_move_velocity(-_cata_max_velocity * .8);
-  pros::delay(500);
+  pros::delay(400);
   cata_state = e_cata_state::PRIME;
 }
 
