@@ -118,7 +118,7 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
     
   if(limit.get_value() == 1) // Tunable extra movement for the caterpult
   {
-    _cata_extra_error = -4.15;
+    _cata_extra_error = -4.0;
     cata_reset_sensors();
     cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .6);
     cata_primed = true;

@@ -134,10 +134,10 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons(
     {
-      Auton("Turn", turn_test),
+      Auton("Far side shooting", prematch_far),
       Auton("Point drive", point_drive_test),
       Auton("Win point", prematch_win_point),
-      Auton("Far side shooting", prematch_far),
+      
       Auton("Far roller", prematch_far_roller),
       Auton("Near side shooting", prematch_near),
       Auton("Skills", skills),
@@ -192,10 +192,10 @@ void autonomous() {
 
 
   //drive_test();
-  skills();
+  //skills();
   //prematch_win_point();
-  // ez::as::auton_selector
-  //     .call_selected_auton(); // Calls selected auton from autonomous
+  ez::as::auton_selector
+      .call_selected_auton(); // Calls selected auton from autonomous
   //     selector.
 
   // skills();
@@ -329,7 +329,7 @@ void opcontrol() {
     }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-      //expansion.move_velocity(200);
+      expansion.set_value(1);
     }
     else {
       //expansion.move_velocity(0);
