@@ -13,116 +13,93 @@ using namespace mkhlib;
 
 
 
-CatapultIntakeController::CatapultIntakeController(std::vector<int> cata_ports, std::vector<int> intake_ports, int limit_switch_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e cata_gearset, pros::motor_gearset_e intake_gearset)
+CatapultIntakeController::CatapultIntakeController(std::vector<int> ports, int limit_switch_port, int boost_port, double motor_to_roller_ratio, double motor_to_intake_ratio, pros::motor_gearset_e motors_gearset)
     : limit(limit_switch_port),
+      boost(boost_port, LOW),
       MOTOR_TO_ROLLER(motor_to_roller_ratio),
       MOTOR_TO_INTAKE(motor_to_intake_ratio),
-      cata_loop([this] { this->master_cata_task(); }),
-      intake_loop([this] { this->master_intake_task(); }) {
+      logic_loop([this] { this->master_task(); }) {
   
   // Populate list of cata motors
-  for (auto i : cata_ports) {
-    pros::Motor temp(abs(i), cata_gearset, ez::util::is_reversed(i), pros::E_MOTOR_ENCODER_DEGREES);
+  for (auto i : ports) {
+    pros::Motor temp(abs(i), motors_gearset, ez::util::is_reversed(i), pros::E_MOTOR_ENCODER_DEGREES);
     temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 
-    cata_motors.push_back(temp);
-  }
-
-  for (auto i : intake_ports) {
-    pros::Motor temp(abs(i), intake_gearset, ez::util::is_reversed(i), pros::E_MOTOR_ENCODER_DEGREES);
-    
-    intake_motors.push_back(temp);
+    motors.push_back(temp);
   }
 
   // Default states
-  cata_state = e_cata_state::HOLD; 
-  roller_state = e_roller_state::IDLE;
-
-  intake_max_speed = 600; // Max speed internally is in terms of the intake motor, but when set you pass it in terms of the roller
-
-  roller_interfered = false;
+  state = e_state::HOLD;
 
   cata_primed = false;
 
   // Default internal timer for e_roller_state::TIME_MOVE
   _roller_timer = 0;
 
-  intake_reset_sensors();
+  reset_sensors();
 
-  // Default PID for e_roller_state::PID_MOVE
-  roller_pid = PID(.5, 0, 5, 0);
-  cata_pid = PID(.5, 0, 5, 0);
-
-  switch (cata_gearset) {
-    case pros::E_MOTOR_GEARSET_06: _cata_max_velocity = 600; break;
-    case pros::E_MOTOR_GEARSET_18: _cata_max_velocity = 200; break;
-    case pros::E_MOTOR_GEARSET_36: _cata_max_velocity = 100; break;
-    case pros::E_MOTOR_GEARSET_INVALID: _cata_max_velocity = 0; break;
+  switch (motors_gearset) {
+    case pros::E_MOTOR_GEARSET_06: motors_max_speed = 600; break;
+    case pros::E_MOTOR_GEARSET_18: motors_max_speed = 200; break;
+    case pros::E_MOTOR_GEARSET_36: motors_max_speed = 100; break;
+    case pros::E_MOTOR_GEARSET_INVALID: motors_max_speed = 0; break;
   }
 }
 
-void CatapultIntakeController::master_cata_task() {
+void CatapultIntakeController::master_task() {
 
   // Master control loop: state machine
   while (true) {  
-    if( cata_state == e_cata_state::HOLD) // Lock motors during hold state.
+    if( state == e_state::HOLD) // Lock motors during hold state.
     {
-      
+      intake_move_velocity(_intake_velocity);
     }
-    else if( cata_state == e_cata_state::CLEAR) // Slowly move cata up
-    {
-      cata_move_velocity(.4 * _cata_max_velocity);
-    }
-    else if( cata_state == e_cata_state::PRIME) // Run the prime function each tick while in the prime state
+    else if( state == e_state::PRIME) // Run the prime function each tick while in the prime state
     {
       cata_prime_task();
     }
-    else if( cata_state == e_cata_state::SHOOT) // Run the shoot function each tick while in the shoot state
+    else if( state == e_state::SHOOT) // Run the shoot function each tick while in the shoot state
     {
       cata_shoot_task();
     }
+    else if(state == e_state::INTAKE_DEGREES) {
+      roller_intake_spin_degrees_task(); // Run the roller PID function
+    }
+    else if(state == e_state::INTAKE_TIME) {
+      roller_intake_spin_time_task(); // Run the spin time function
+    }
 
-    pros::delay(7);
+    pros::delay(10);
   }
 }
 
 void CatapultIntakeController::cata_move_voltage(double voltage) {
-  for (auto i : cata_motors) { // Iterate all motors
-    i.move_voltage(voltage / 127 * 12000); // Move at max speed into prime position
+  for (auto i : motors) { // Iterate all motors
+    i.move_voltage(abs(voltage) / 127 * -12000); // Move at max speed into prime position
   }
 }
 
 void CatapultIntakeController::cata_move_velocity(double velocity) {
-  for (auto i : cata_motors) { // Iterate all motors
-    i.move_velocity(velocity); // Move at max speed into prime position
+  for (auto i : motors) { // Iterate all motors
+    i.move_velocity(-abs(velocity)); // Move at max speed into prime position
   }
 
 }
 
-void CatapultIntakeController::cata_move_relative(double position, double velocity) {
-  for (auto i : cata_motors) { // Iterate all motors
-    i.move_relative(position, velocity); // Move at max speed into prime position
-  }
-  //cata_pid.set_target(cata_motors.front().get_position() + position);
-}
-
-void CatapultIntakeController::cata_reset_sensors() {
-  for (auto i : cata_motors) { // Iterate all motors
+void CatapultIntakeController::reset_sensors() {
+  for (auto i : motors) { // Iterate all motors
     i.tare_position(); // Move at max speed into prime position
   }
 }
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  cata_move_velocity(-_cata_max_velocity * cata_velocity);
+  cata_move_velocity(motors_max_speed * .9);
     
   if(limit.get_value() == 1) // Tunable extra movement for the caterpult
   {
-    _cata_extra_error = -4.0;
-    cata_reset_sensors();
-    cata_move_relative(_cata_extra_error / 36.0 * 84.0, _cata_max_velocity * .6);
     cata_primed = true;
-    cata_state = e_cata_state::HOLD;
+    state = e_state::HOLD;
     
   }
   
@@ -131,19 +108,19 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
 void CatapultIntakeController::cata_shoot_task() { // move catapult for constant time to fire
 
   cata_primed = false;
-  cata_move_velocity(-_cata_max_velocity * .8);
+  cata_move_velocity(-motors_max_speed * .8);
   pros::delay(400);
-  cata_state = e_cata_state::PRIME;
+  state = e_state::PRIME;
 }
 
 void CatapultIntakeController::wait_cata_idle() { // Waits until cata state is HOLD
-  while (cata_state != e_cata_state::HOLD) {
+  while (state == e_state::HOLD || state == e_state::SHOOT) {
     pros::delay(util::DELAY_TIME);
   }
 }
 
 void CatapultIntakeController::wait_cata_done_shot() { // Waits untill cata is done SHOOT
-  while (cata_state == e_cata_state::SHOOT) {
+  while (state == e_state::SHOOT) {
     pros::delay(util::DELAY_TIME);
   }
 }
@@ -151,67 +128,15 @@ void CatapultIntakeController::wait_cata_done_shot() { // Waits untill cata is d
 // Set cata state:
 
 void CatapultIntakeController::cata_hold() { 
-  cata_state = e_cata_state::HOLD; 
-  cata_move_velocity(0);
-
+  state = e_state::HOLD; 
 }
 
-void CatapultIntakeController::cata_relative(double position, double velocity) { 
-  cata_state = e_cata_state::HOLD; 
-  cata_move_relative(position / 36.0 * 84.0, _cata_max_velocity * velocity);
+void CatapultIntakeController::cata_prime() { if(!cata_primed) { state = e_state::PRIME; } }
 
-}
+void CatapultIntakeController::cata_shoot() { state = e_state::SHOOT; }
 
-void CatapultIntakeController::cata_prime() { if(!cata_primed) { cata_state = e_cata_state::PRIME; } }
-
-void CatapultIntakeController::cata_shoot() { cata_state = e_cata_state::SHOOT; }
-
-void CatapultIntakeController::cata_clear() { cata_state = e_cata_state::CLEAR; }
-
-void CatapultIntakeController::master_intake_task() {
-  // Intake/roller state controller
-  while(true)
-  {
-    if(!_intake_safety_bypass && !cata_primed) {
-      intake_move_velocity(0); // Catapult safety, pause all other actions while catapult is up
-    }
-    else if(roller_state == e_roller_state::PID_MOVE) {
-      roller_pid_task(); // Run the roller PID function
-    }
-    else if(roller_state == e_roller_state::TIME_MOVE) {
-      roller_intake_spin_time_task(); // Run the spin time function
-    }
-    else if (roller_state == e_roller_state::IDLE) {
-      if(_intake_roller_active_brake_kp != 0 && _intake_velocity != 0){
-        intake_move_velocity(_intake_velocity); // Move roller at set speed (or stop it) if it's safe to do so
-      }
-      else { // intake_stop and roller_stop properly set the desired position to 0, important to use them!
-        intake_move_voltage(/*0 */- intake_motors.front().get_position() * _intake_roller_active_brake_kp * (12000.0 / 127.0));
-      }
-    }
-
-    pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!
-                                       // Keep this ez::util::DELAY_TIME
-  }
-}
-
-void CatapultIntakeController::intake_roller_set_active_brake(double kp) { _intake_roller_active_brake_kp = kp; }
-
-void CatapultIntakeController::roller_pid_task() {
-  roller_pid.compute(intake_motors.front().get_position());
-
-  //clip output
-  double out = ez::util::clip_num(roller_pid.output, intake_max_speed, -intake_max_speed);
-
-  intake_move_voltage(out * 12000.0 / 127.0);
-
-  // check for exit
-
-  exit_output exit = roller_pid.exit_condition();
-  if(exit != ez::RUNNING) { //PID HAS EXITED!
-    roller_interfered = exit == ez::mA_EXIT || exit == ez::VELOCITY_EXIT;
-
-    
+void CatapultIntakeController::roller_intake_spin_degrees_task() {
+  if(motors.front().get_position() > _roller_target) {
     intake_stop();
   }
 }
@@ -228,94 +153,63 @@ void CatapultIntakeController::roller_intake_spin_time_task() {
 }
 
 void CatapultIntakeController::intake_velocity(double velocity) {
-  roller_state = e_roller_state::IDLE;
   _intake_velocity = velocity / MOTOR_TO_INTAKE; // Convert between given intake RPM and the motor RPM
   _intake_safety_bypass = false;
 }
 
 void CatapultIntakeController::intake_stop() {
-  if(_intake_velocity != 0 || roller_state != IDLE) {intake_reset_sensors(); }
-  roller_state = e_roller_state::IDLE;
   _intake_velocity = 0;
 }
 
-void CatapultIntakeController::intake_reset_sensors() {
-  for (auto i : intake_motors) {
-    i.tare_position();
-  }
-}
+
 
 void CatapultIntakeController::intake_move_velocity(double velocity) {
-  for (auto i: intake_motors) {
-    i.move_velocity(velocity);
+  for (auto i: motors) {
+    i.move_velocity(abs(velocity));
   }
 }
 
 void CatapultIntakeController::intake_move_voltage(double velocity) {
-  for (auto i: intake_motors) {
-    i.move_voltage(velocity);
+  for (auto i: motors) {
+    i.move_voltage(abs(velocity));
   }
 }
 
 void CatapultIntakeController::roller_velocity(double velocity) {
-  roller_state = e_roller_state::IDLE;
   _intake_velocity = velocity / MOTOR_TO_ROLLER; // Convert between given roller RPM and the motor RPM
   _intake_safety_bypass = true;
 }
 
 void CatapultIntakeController::roller_stop() {
-  roller_state = e_roller_state::IDLE;
-  if(_intake_velocity != 0) {intake_reset_sensors(); }
   _intake_velocity = 0;
 }
 
 void CatapultIntakeController::roller_time(int time, double velocity) {
   _intake_velocity = velocity / MOTOR_TO_ROLLER; // Convert between given roller RPM and the motor RPM
   _roller_timer = time;
-  roller_state = e_roller_state::TIME_MOVE;
+  state = e_state::INTAKE_TIME;
   _intake_safety_bypass = true;
 }
 
-void CatapultIntakeController::intake_time( int time, double velocity) {
+void CatapultIntakeController::intake_time(int time, double velocity) {
   _intake_velocity = velocity / MOTOR_TO_INTAKE; // Convert between given intake RPM and the motor RPM
   _roller_timer = time;
-  roller_state = e_roller_state::TIME_MOVE;
+  state = e_state::INTAKE_TIME;
   _intake_safety_bypass = false;
 }
 
-void CatapultIntakeController::roller_pid_move(double target, int speed) { //Target should be in degrees of the roller, speed should again be in speed of the roller
-  
-  intake_max_speed = speed; // Convert between given roller RPM and the motor RPM
-
-  _roller_start = intake_motors.front().get_position();
-
-  double target_encoder = _roller_start + (target / MOTOR_TO_ROLLER); // Convert between given roller target and the motor target
-
-  roller_pid.set_target(target_encoder);
-
-  roller_state = e_roller_state::PID_MOVE; // Set state to start PID logic
-
+void CatapultIntakeController::roller_bang_bang_move(double target, int speed) {
+  reset_sensors();
+  _intake_velocity = speed;
+  _roller_target = target;
+  state = e_state::INTAKE_DEGREES;
   _intake_safety_bypass = true;
 }
 
-void CatapultIntakeController::roller_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout){
-  roller_pid.set_exit_condition(p_small_exit_time, p_small_error / MOTOR_TO_ROLLER, p_big_exit_time, p_big_error / MOTOR_TO_ROLLER, p_velocity_exit_time, p_mA_timeout);
-}
 
-void CatapultIntakeController::roller_set_pid_constants(double kp, double ki, double kd, double start_i) {
-  roller_pid.set_constants(kp, ki, kd, start_i / MOTOR_TO_ROLLER);
-}
-
-void CatapultIntakeController::cata_set_pid_constants(double kp, double ki, double kd, double start_i) {
-  cata_pid.set_constants(kp, ki, kd, start_i);
-}
-
-void CatapultIntakeController::cata_set_exit_condition(int p_small_exit_time, double p_small_error, int p_big_exit_time, double p_big_error, int p_velocity_exit_time, int p_mA_timeout) {
-  cata_pid.set_exit_condition(p_small_exit_time, p_small_error, p_big_exit_time, p_big_error, p_velocity_exit_time, p_mA_timeout);
-}
 
 void CatapultIntakeController::wait_roller() {
-  while(roller_state != e_roller_state::IDLE) {
+  while(state == e_state::INTAKE_TIME || state == e_state::INTAKE_DEGREES) {
     pros::delay(util::DELAY_TIME);
   }
 }

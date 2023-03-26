@@ -85,20 +85,18 @@ Drive chassis(
 );
 
 mkhlib::CatapultIntakeController cata_intake(
-    // Port of the catapult motor
+    // Port of the motors
     {19, -12},
-    // Port of the intake motor
-    {20, -10},
     // Port of the limit switch
     1,
+    
+    5,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
     6.0 / 24.0,
     // Ratio of intake revolution / motor revolutions
     60.0 / 36.0,
     // gearset of catapult
-    pros::E_MOTOR_GEARSET_36,
-    // gearset of intake
     pros::E_MOTOR_GEARSET_06);
 
 /**
@@ -125,7 +123,6 @@ void initialize() {
   chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
   chassis.set_deceleration(600, 1900);
-  cata_intake.intake_roller_set_active_brake(.9);
   chassis.set_curve_default(3, 3.2); // Defaults for curve. If using tank, only
                                    // the first parameter is used.
   default_constants(); // Set the drive to your own constants from autons.cpp!
@@ -359,9 +356,6 @@ void opcontrol() {
     }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      cata_intake.cata_clear();
-    }
-    else if(!master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && cata_intake.cata_state == mkhlib::CatapultIntakeController::CLEAR) {
       cata_intake.cata_hold();
     }
     // else {
