@@ -110,7 +110,7 @@ void CatapultIntakeController::cata_shoot_task() { // move catapult for constant
   cata_primed = false;
   cata_move_velocity(-motors_max_speed * .8);
   pros::delay(400);
-  state = e_state::PRIME;
+  cata_prime();
 }
 
 void CatapultIntakeController::wait_cata_idle() { // Waits until cata state is HOLD
@@ -131,9 +131,15 @@ void CatapultIntakeController::cata_hold() {
   state = e_state::HOLD; 
 }
 
-void CatapultIntakeController::cata_prime() { if(!cata_primed) { state = e_state::PRIME; } }
+void CatapultIntakeController::cata_prime() { 
+  if(!cata_primed) { state = e_state::PRIME; }
+  set_boost(false); 
+}
 
-void CatapultIntakeController::cata_shoot() { state = e_state::SHOOT; }
+void CatapultIntakeController::cata_shoot(bool boost_on) { 
+  set_boost(boost_on);
+  state = e_state::SHOOT;
+}
 
 void CatapultIntakeController::roller_intake_spin_degrees_task() {
   if(motors.front().get_position() > _roller_target) {
@@ -216,4 +222,8 @@ void CatapultIntakeController::wait_roller() {
 
 void CatapultIntakeController::wait_intake() {
   wait_roller();
+}
+
+void CatapultIntakeController::set_boost(bool value) {
+  boost.set_value(int(!value));
 }

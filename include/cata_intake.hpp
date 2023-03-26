@@ -57,7 +57,7 @@ public:
    * longer contacted, meaning that the catapult has fired, upon which it
    * transitions to the PRIME state.
    */
-  void cata_shoot();
+  void cata_shoot(bool boost=false);
   /**
    * Waits until the control loop enters the HOLD state.
    *
@@ -152,6 +152,8 @@ private:
 
   void cata_prime_task();
   void cata_shoot_task();
+
+  void set_boost(bool value);
 
   void roller_intake_spin_degrees_task();
   void roller_intake_spin_time_task();
