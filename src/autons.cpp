@@ -101,7 +101,7 @@ void roll(double max_dist, Angle target_orientation, double back_distance,
   exit_condition_defaults(); // reset exit conditions
   chassis.set_drive_pid(back_distance, speed);
 
-  cata_intake.roller_bang_bang_move(roll_amount, 127);
+  cata_intake.roller_degrees(roll_amount, 127);
   cata_intake.wait_roller();
   cata_intake.roller_velocity(0);
 }
@@ -270,7 +270,7 @@ void matchload(double position=-72) {
   cata_intake.cata_shoot();
   cata_intake.intake_stop();
   cata_intake.wait_cata_done_shot();
-  cata_intake.cata_relative(-70);
+  cata_intake.cata_degrees(70, 100);
   chassis.plan_orientation_turn_pid(Angle::from_deg(-174), TURN_SPEED);
   
 }
@@ -281,14 +281,12 @@ void skills() {
   short_turn_constants();
   
   matchload();
-  cata_intake.cata_velocity = .35;
   chassis.wait_drive();
   pros::delay(900);
   matchload(-0);
   chassis.wait_drive();
   pros::delay(900);
   matchload(-0);
-  cata_intake.cata_velocity = .8;
   cata_intake.cata_prime();
   boost.set_value(1);
   chassis.set_point_drive_pid(skills_start + Vector2(-2, -4), DRIVE_SPEED, ez::FORWARD, .4, Angle::from_deg(160));
