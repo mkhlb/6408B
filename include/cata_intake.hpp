@@ -10,7 +10,7 @@
 namespace mkhlib {
 class CatapultIntakeController {
 public:
-  enum e_state { HOLD = 0, PRIME = 1, SHOOT = 2, INTAKE_TIME = 3, INTAKE_DEGREES};
+  enum e_state { HOLD = 0, PRIME = 1, SHOOT = 2, INTAKE_TIME = 3, INTAKE_DEGREES = 4, CATA_DEGREES = 5};
 
   
   std::vector<pros::Motor> motors;
@@ -130,7 +130,9 @@ public:
    *
    * \param speed the maximum RPM speed (in roller revolutions) that the roller should get
    */
-  void roller_bang_bang_move(double target, int speed);
+  void roller_degrees(double target, int speed);
+  
+  void cata_degrees(double target, int speed);
 
   /**
    * Waits until the roller is not moving
@@ -153,6 +155,8 @@ private:
   void cata_prime_task();
   void cata_shoot_task();
 
+  void cata_spin_degrees_task();
+
   void set_boost(bool value);
 
   void roller_intake_spin_degrees_task();
@@ -167,6 +171,8 @@ private:
   int _roller_timer;
 
   double _intake_velocity = 0;
+
+  double _cata_velocity = 0;
 
   bool _intake_safety_bypass = false;
 

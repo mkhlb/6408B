@@ -62,6 +62,9 @@ void CatapultIntakeController::master_task() {
     {
       cata_shoot_task();
     }
+    else if(state == e_state::CATA_DEGREES) {
+      cata_spin_degrees_task();
+    }
     else if(state == e_state::INTAKE_DEGREES) {
       roller_intake_spin_degrees_task(); // Run the roller PID function
     }
@@ -113,6 +116,15 @@ void CatapultIntakeController::cata_shoot_task() { // move catapult for constant
   cata_prime();
 }
 
+void CatapultIntakeController::cata_spin_degrees_task() {
+  if(motors.front().get_position() < _roller_target) {
+    cata_hold();
+  }
+  else {
+    cata_move_velocity(_cata_velocity);
+  }
+}
+
 void CatapultIntakeController::wait_cata_idle() { // Waits until cata state is HOLD
   while (state == e_state::HOLD || state == e_state::SHOOT) {
     pros::delay(util::DELAY_TIME);
@@ -144,6 +156,9 @@ void CatapultIntakeController::cata_shoot(bool boost_on) {
 void CatapultIntakeController::roller_intake_spin_degrees_task() {
   if(motors.front().get_position() > _roller_target) {
     intake_stop();
+  }
+  else {
+    intake_move_velocity(_intake_velocity);
   }
 }
 
@@ -204,7 +219,7 @@ void CatapultIntakeController::intake_time(int time, double velocity) {
   _intake_safety_bypass = false;
 }
 
-void CatapultIntakeController::roller_bang_bang_move(double target, int speed) {
+void CatapultIntakeController::roller_degrees(double target, int speed) {
   reset_sensors();
   _intake_velocity = speed;
   _roller_target = target;
@@ -212,7 +227,13 @@ void CatapultIntakeController::roller_bang_bang_move(double target, int speed) {
   _intake_safety_bypass = true;
 }
 
+void CatapultIntakeController::cata_degrees(double target, int speed) {
+  reset_sensors();
+  _cata_velocity = speed;
+  _roller_target = target;
+  state = e_state::CATA_DEGREES;
 
+}
 
 void CatapultIntakeController::wait_roller() {
   while(state == e_state::INTAKE_TIME || state == e_state::INTAKE_DEGREES) {

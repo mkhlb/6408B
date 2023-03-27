@@ -30,8 +30,6 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.right_backward_drivePID, .277, 0, 1.38, 0);
   chassis.set_pid_constants(&chassis.turnPID, 4.45, 0.0068, 39, 18);
   chassis.set_pid_constants(&chassis.swingPID, 6.8, 0, 50, 0);
-  cata_intake.roller_set_pid_constants(5, 0.000, 14, 0);
-  cata_intake.cata_set_pid_constants(9, 0.001, 22, 50);
 }
 
 void short_turn_constants() {
@@ -63,8 +61,6 @@ void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.swing_exit, 100, 1.5, 500, 7, 1000, 500);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
   chassis.headingPID.set_exit_condition(120, 3, 700, 7, 1000, 500);
-  cata_intake.roller_set_exit_condition(50, 8, 90, 40, 800, 3000);
-  cata_intake.cata_set_exit_condition(100, 50, 500, 100, 1000, 1000);
 }
 
 void exit_condition_early_drive() { // made to exit the drive way earlier, more
@@ -105,7 +101,7 @@ void roll(double max_dist, Angle target_orientation, double back_distance,
   exit_condition_defaults(); // reset exit conditions
   chassis.set_drive_pid(back_distance, speed);
 
-  cata_intake.roller_pid_move(roll_amount, 127);
+  cata_intake.roller_bang_bang_move(roll_amount, 127);
   cata_intake.wait_roller();
   cata_intake.roller_velocity(0);
 }
