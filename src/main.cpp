@@ -35,17 +35,17 @@ Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {-13, -3} // -13 front, -3 back
+    {-10, 5, -20} // -13 front, -3 back
     
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {18, 16} // 18 front, 16 back
+    {14, -19, 3} // 18 front, 16 back
 
 
     // IMU Port
     ,
-    14
+    12
 
     // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
     //    (or tracking wheel diameter)
@@ -68,14 +68,14 @@ Drive chassis(
     // Uncomment if using tracking wheels
     
     // Left Tracking Wheel Ports (negative port will reverse it!)
-    ,{-5, -6} // 3 wire encoder
+    ,{-0, -0} // 3 wire encoder
     // ,8 // Rotation sensor
 
     // Right Tracking Wheel Ports (negative port will reverse it!)
-    ,{7, 8} // 3 wire encoder
+    ,{0, 0} // 3 wire encoder
     // ,-9 // Rotation sensor
 
-    ,{3,4}
+    ,{0,0}
 
     ,2.75
 
@@ -86,7 +86,7 @@ Drive chassis(
 
 mkhlib::CatapultIntakeController cata_intake(
     // Port of the motors
-    {19, -12},
+    {-4, 7},
     // Port of the limit switch
     1,
     
@@ -363,9 +363,9 @@ void opcontrol() {
     // }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(0.8 * 1000); // intake
+      cata_intake.intake_velocity(.9*1000); // intake
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      cata_intake.intake_velocity(-0.8 * 1000); // outake
+      cata_intake.intake_velocity(.5 * 1000); // outake
     } else {
       cata_intake.intake_stop(); // else to keep intake at 0
     }

@@ -8,6 +8,7 @@
 #include "pros/motors.hpp"
 #include "pros/rtos.hpp"
 #include <algorithm>
+#include <iostream>
 
 using namespace mkhlib;
 
@@ -26,6 +27,8 @@ CatapultIntakeController::CatapultIntakeController(std::vector<int> ports, int l
     temp.set_brake_mode(pros::motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 
     motors.push_back(temp);
+
+    std::cout << i;
   }
 
   // Default states
@@ -97,11 +100,23 @@ void CatapultIntakeController::reset_sensors() {
 
 void CatapultIntakeController::cata_prime_task() { // Gets called every tick cata is in PRIME state
   
-  cata_move_velocity(motors_max_speed * .9);
+  cata_move_velocity(motors_max_speed * .85);
     
   if(limit.get_value() == 1) // Tunable extra movement for the caterpult
   {
+    //pros::delay(150);
     cata_primed = true;
+    if(_intake_velocity == 0) {
+      for (auto i : motors) {
+        i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        i.move_velocity(0);
+      }
+      pros::delay(100);
+      for (auto i : motors) {
+        i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+      }
+
+    }
     state = e_state::HOLD;
     
   }
@@ -110,10 +125,24 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
 
 void CatapultIntakeController::cata_shoot_task() { // move catapult for constant time to fire
 
+
   cata_primed = false;
-  cata_move_velocity(-motors_max_speed * .8);
-  pros::delay(400);
-  cata_prime();
+  cata_move_voltage(-127 * .75);
+  if(limit.get_value() == 0) {
+    pros::delay(250);
+    for (auto i : motors) {
+      i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    }
+    cata_move_velocity(0);
+    pros::delay(90);
+    for (auto i : motors) {
+      i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    }
+    cata_prime();
+  }
+
+  
+  
 }
 
 void CatapultIntakeController::cata_spin_degrees_task() {
