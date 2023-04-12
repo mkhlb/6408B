@@ -57,7 +57,7 @@ public:
    * longer contacted, meaning that the catapult has fired, upon which it
    * transitions to the PRIME state.
    */
-  void cata_shoot(bool boost=false);
+  void cata_shoot(int boost_time=0);
   /**
    * Waits until the control loop enters the HOLD state.
    *
@@ -173,6 +173,8 @@ private:
   double _intake_velocity = 0;
 
   double _cata_velocity = 0;
+
+  int _boost_time;
 
   bool _intake_safety_bypass = false;
 

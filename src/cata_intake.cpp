@@ -129,10 +129,14 @@ void CatapultIntakeController::cata_shoot_task() { // move catapult for constant
   cata_primed = false;
   cata_move_voltage(-127 * .75);
   if(limit.get_value() == 0) {
-    pros::delay(250);
+    int total_delay = 250;
+    pros::delay(total_delay - _boost_time);
+    set_boost(_boost_time != 0);
+    pros::delay(_boost_time);
     for (auto i : motors) {
       i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     }
+    set_boost(false);
     cata_move_velocity(0);
     pros::delay(90);
     for (auto i : motors) {
@@ -174,11 +178,10 @@ void CatapultIntakeController::cata_hold() {
 
 void CatapultIntakeController::cata_prime() { 
   if(!cata_primed) { state = e_state::PRIME; }
-  set_boost(false); 
 }
 
-void CatapultIntakeController::cata_shoot(bool boost_on) { 
-  set_boost(boost_on);
+void CatapultIntakeController::cata_shoot(int boost_time) { 
+  _boost_time = boost_time;
   state = e_state::SHOOT;
 }
 
