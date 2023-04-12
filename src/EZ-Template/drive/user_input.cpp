@@ -7,6 +7,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #include "EZ-Template/util.hpp"
 #include "main.h"
 #include "pros/misc.h"
+#include <cmath>
 
 // Set curve defaults
 void Drive::set_curve_default(double left, double right) {
@@ -171,10 +172,10 @@ double Drive::left_curve_function(double x) {
   double target = x;
 
   if(abs(target) > JOYSTICK_THRESHOLD ) {
-    if(active_brake_kp != 0) reset_starts();
+    if(lateral_active_brake_kp != 0) reset_starts();
   }
   else {
-    if(active_brake_kp != 0 && abs(l_stick) > 20) reset_starts();
+    if(lateral_active_brake_kp != 0 && abs(l_stick) > 20) reset_starts();
   }
 
   if (left_curve_scale != 0) {
@@ -219,10 +220,10 @@ double Drive::right_curve_function(double x) {
   if(abs(target) > JOYSTICK_THRESHOLD) {
     target -= 4;
     target = util::sgn(target) * util::clip_num(((abs(target) - 127) * (24 - 127) / -127 + 127), 127, 24);
-    if(active_brake_kp != 0) reset_starts();
+    if(angular_active_brake_kp != 0) orientation_start = orientation;
   }
   else {
-    if(active_brake_kp != 0 && abs(r_stick) > 20) reset_starts();
+    if(angular_active_brake_kp != 0 && abs(r_stick) > 20) orientation_start = orientation;
   }
   
   if (right_curve_scale != 0) {
@@ -262,7 +263,10 @@ double Drive::right_curve_function(double x) {
 }
 
 // Set active brake constant
-void Drive::set_active_brake(double kp) { active_brake_kp = kp; }
+void Drive::set_active_brake(double lateral, double angular) { 
+  lateral_active_brake_kp = lateral; 
+  angular_active_brake_kp = angular;
+}
 
 // Set joystick threshold
 void Drive::set_joystick_threshold(int threshold) { JOYSTICK_THRESHOLD = abs(threshold); }
@@ -274,15 +278,25 @@ void Drive::reset_drive_sensors_opcontrol() {
   }
 }
 
-void Drive::joy_thresh_opcontrol(int l_stick, int r_stick) {
-  // Threshold if joysticks don't come back to perfect 0
-  if (abs(l_stick) > JOYSTICK_THRESHOLD || abs(r_stick) > JOYSTICK_THRESHOLD) {
-    set_tank(l_stick, r_stick);
-    //if (active_brake_kp != 0) reset_drive_sensor();
+void Drive::joy_thresh_opcontrol(int l_stick, int r_stick, double l_raw, double r_raw) {
+  
+  double angular = 0;
+  double lateral = 0;
+  double input = 0;
+  if(abs(l_raw) <= JOYSTICK_THRESHOLD) {
+    lateral = l_start - left_sensor() * lateral_active_brake_kp;
   }
-  // When joys are released, run active brake (P) on drive
+  
+  if(abs(r_raw) <= JOYSTICK_THRESHOLD) {
+    angular = Angle::shortest_error(orientation, orientation_start) * angular_active_brake_kp;
+  }
+
+  if(abs(l_raw) > JOYSTICK_THRESHOLD || abs(r_raw) > JOYSTICK_THRESHOLD) {
+    set_tank(l_stick + lateral + angular, r_stick + lateral - angular);
+  }
+
   else {
-    set_tank((l_start - left_sensor()) * active_brake_kp, (r_start - right_sensor()) * active_brake_kp);
+    set_tank(lateral + angular, lateral - angular);
   }
 }
 
@@ -299,7 +313,7 @@ void Drive::tank() {
   int r_stick = right_curve_function(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
-  joy_thresh_opcontrol(l_stick, r_stick);
+  joy_thresh_opcontrol(l_stick, r_stick, l_stick, r_stick);
 }
 
 // Arcade standard
@@ -325,7 +339,7 @@ void Drive::arcade_standard(e_type stick_type) {
   turn_stick = turn_stick * .7;
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
-  joy_thresh_opcontrol(fwd_stick + turn_stick, fwd_stick - turn_stick);
+  joy_thresh_opcontrol(fwd_stick + turn_stick, fwd_stick - turn_stick, fwd_stick, turn_stick);
 }
 
 // Arcade control flipped
@@ -351,5 +365,5 @@ void Drive::arcade_flipped(e_type stick_type) {
   turn_stick = turn_stick * .7;
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
-  joy_thresh_opcontrol(fwd_stick + turn_stick, fwd_stick - turn_stick);
+  joy_thresh_opcontrol(fwd_stick + turn_stick, fwd_stick - turn_stick, fwd_stick, turn_stick);
 }

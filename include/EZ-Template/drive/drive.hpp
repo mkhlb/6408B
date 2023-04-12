@@ -167,8 +167,7 @@ public:
    */
   Drive(double left_width, double right_width, double length, std::vector<int> left_motor_ports,
         std::vector<int> right_motor_ports, int imu_port, double wheel_diameter,
-        double ticks, double ratio, std::vector<int> left_tracker_ports,
-        std::vector<int> right_tracker_ports, std::vector<int> middle_tracker_ports, double middle_tracker_diameter);
+        double ticks, double ratio, int lateral_rotation_port, std::vector<int> middle_tracker_ports, double middle_tracker_diameter);
 
   /**
    * Creates a Drive Controller using encoders plugged into a 3 wire expander.
@@ -312,7 +311,7 @@ public:
    * \param kp
    *        Constant for the p loop.
    */
-  void set_active_brake(double kp);
+  void set_active_brake(double lateral, double angular);
 
   /**
    * Enables/disables modifying the joystick input curves with the controller.
@@ -385,7 +384,7 @@ public:
    * \param r_stick
    *        input for right joystick
    */
-  void joy_thresh_opcontrol(int l_stick, int r_stick);
+  void joy_thresh_opcontrol(int l_stick, int r_stick, double l_raw, double r_raw);
 
   /////
   //
@@ -940,7 +939,8 @@ private: // !Auton
   /**
    * Active brake kp constant.
    */
-  double active_brake_kp = 0;
+  double lateral_active_brake_kp = 0;
+  double angular_active_brake_kp = 0;
 
   /**
    * Tick per inch calculation.
@@ -985,6 +985,8 @@ private: // !Auton
   double r_start = 0;
 
   Vector2 point_start;
+
+  Angle orientation_start;
 
   /**
    * Enable/disable modifying controller curve with controller.

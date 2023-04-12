@@ -45,7 +45,7 @@ Drive chassis(
 
     // IMU Port
     ,
-    12
+    11
 
     // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
     //    (or tracking wheel diameter)
@@ -68,12 +68,8 @@ Drive chassis(
     // Uncomment if using tracking wheels
     
     // Left Tracking Wheel Ports (negative port will reverse it!)
-    ,{-0, -0} // 3 wire encoder
+    ,16 // 3 wire encoder
     // ,8 // Rotation sensor
-
-    // Right Tracking Wheel Ports (negative port will reverse it!)
-    ,{0, 0} // 3 wire encoder
-    // ,-9 // Rotation sensor
 
     ,{0,0}
 
@@ -117,10 +113,12 @@ void initialize() {
 
   // Configure your chassis controls
 
+  chassis.set_joystick_threshold(2);
+
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(.1, .1); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
   chassis.set_deceleration(600, 1900);
   chassis.set_curve_default(3, 3.2); // Defaults for curve. If using tank, only

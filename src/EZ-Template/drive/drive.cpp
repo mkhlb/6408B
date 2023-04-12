@@ -99,15 +99,7 @@ void Drive::reset_drive_sensor() {
   right_motors.front().tare_position();
   right_motors.back().tare_position();
 
-  if (is_tracker == DRIVE_ADI_ENCODER) {
-    left_tracker.reset();
-    right_tracker.reset();
-    return;
-  } else if (is_tracker == DRIVE_ROTATION) {
-    left_rotation.reset_position();
-    right_rotation.reset_position();
-    return;
-  }
+  left_rotation.reset_position();
 
   middle_tracker.reset();
 }
@@ -118,6 +110,7 @@ void Drive::reset_starts() {
 }
 
 int Drive::right_sensor() {
+  return left_sensor();
   if (is_tracker == DRIVE_ADI_ENCODER)
     return right_tracker.get_value();
   else if (is_tracker == DRIVE_ROTATION)
@@ -139,7 +132,7 @@ bool Drive::right_over_current() {
 }
 
 int Drive::left_sensor() {
-  return right_sensor();
+  return right_rotation.get_position() / 100;
   if (is_tracker == DRIVE_ADI_ENCODER)
     return left_tracker.get_value();
   else if (is_tracker == DRIVE_ROTATION)

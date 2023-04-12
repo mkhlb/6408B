@@ -12,6 +12,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #include "EZ-Template/util.hpp"
 #include "main.h"
 #include "pros/llemu.hpp"
+#include "pros/rotation.hpp"
 #include "pros/screen.hpp"
 
 using namespace ez;
@@ -56,24 +57,23 @@ Drive::Drive(double left_width, double right_width, double length, std::vector<i
 Drive::Drive(double left_width, double right_width, double length, std::vector<int> left_motor_ports,
              std::vector<int> right_motor_ports, int imu_port,
              double wheel_diameter, double ticks, double ratio,
-             std::vector<int> left_tracker_ports,
-             std::vector<int> right_tracker_ports,
+             int left_rotation_port,
              std::vector<int> middle_tracker_ports,
              double middle_tracker_diameter)
     : imu(imu_port),
       left_tracker(-1, -1,
-                   util::is_reversed(left_tracker_ports[0])),
-      right_tracker(abs(right_tracker_ports[0]), abs(right_tracker_ports[1]),
-                    util::is_reversed(right_tracker_ports[0])),
+                   false),
+      right_tracker(-1, -1),
       middle_tracker(abs(middle_tracker_ports[0]), abs(middle_tracker_ports[1]),
                     util::is_reversed(middle_tracker_ports[0])),
-      left_rotation(-1), right_rotation(-1),
+      left_rotation(abs(left_rotation_port)), right_rotation(-1),
       ez_auto([this] { this->ez_auto_task(); }),
       ez_position_tracker([this] { this->ez_odometry_task(); }),
       l_width(left_width), r_width(right_width),
       length(length) {
   is_tracker = DRIVE_ADI_ENCODER;
 
+  left_rotation.set_reversed(util::is_reversed(left_rotation_port));
   // Set ports to a global vector
   for (auto i : left_motor_ports) {
     pros::Motor temp(abs(i), util::is_reversed(i));
