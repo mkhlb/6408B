@@ -28,10 +28,10 @@ pros::ADIDigitalOut expansion(2, LOW);
 // Chassis constructor
 Drive chassis(
     // Track width of chassis in inches
-    4.625,
-    4.625
+    0,
+    0
     , 
-    -4.0 // 0, overshoots : 1.4, undershoot
+    4.0 // 0, overshoots : 1.4, undershoot
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
@@ -50,7 +50,7 @@ Drive chassis(
     // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
     //    (or tracking wheel diameter)
     ,
-    3.25
+    2.75
 
     // Cartridge RPM
     //   (or tick per rotation if using tracking wheels)
@@ -63,7 +63,7 @@ Drive chassis(
     // be 2.333. eg. if your drive is 36:60 where the 60t is powered, your RATIO
     // would be 0.6.
     ,
-    1
+    1.0
 
     // Uncomment if using tracking wheels
     
@@ -71,7 +71,7 @@ Drive chassis(
     ,-16 // 3 wire encoder
     // ,8 // Rotation sensor
 
-    ,{0,0}
+    ,{-3,4}
 
     ,2.75
 
@@ -118,7 +118,8 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(.1, 70); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(0, 0);
+  //chassis.set_active_brake(.1, 70); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
   chassis.set_deceleration(600, 1000);
   chassis.set_curve_default(3, 3.2); // Defaults for curve. If using tank, only
@@ -186,11 +187,11 @@ void autonomous() {
                                              // autonomous consistency.
 
 
-  //drive_test();
+  drive_test();
   //skills();
   //prematch_win_point();
-  ez::as::auton_selector
-      .call_selected_auton(); // Calls selected auton from autonomous
+  // ez::as::auton_selector
+  //     .call_selected_auton(); // Calls selected auton from autonomous
   //     selector.
 
   // skills();
@@ -226,7 +227,7 @@ void print_odom() {
     else if(cata_intake.limit.get_value() != 1) {
       limitpresed = false;
     }
-    master.print(0,0, "%f, %f", (float)chassis.orientation.get_deg(), (float)chassis.right_sensor());
+    master.print(0,0, "%f, %f", (float)chassis.position.x, (float)chassis.position.y);
     pros::delay(500);
   }
 }
