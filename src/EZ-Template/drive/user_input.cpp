@@ -218,12 +218,12 @@ double Drive::left_curve_function(double x) {
 double Drive::right_curve_function(double x) {
   double target = x;
   if(abs(target) > JOYSTICK_THRESHOLD) {
-    target -= 4;
-    target = util::sgn(target) * util::clip_num(((abs(target) - 127) * (24 - 127) / -127 + 127), 127, 24);
+    target = util::sgn(target) * util::clip_num(((abs(target) - 127) * (10 - 127) / -127 + 127), 127, 10);
     if(angular_active_brake_kp != 0) orientation_start = orientation;
   }
   else {
-    if(angular_active_brake_kp != 0 && abs(r_stick) > 20) orientation_start = orientation;
+    target = 0;
+    if(angular_active_brake_kp != 0 && abs(r_stick) > 5) orientation_start = orientation;
   }
   
   if (right_curve_scale != 0) {
@@ -284,7 +284,7 @@ void Drive::joy_thresh_opcontrol(int l_stick, int r_stick, double l_raw, double 
   double lateral = 0;
   double input = 0;
   if(abs(l_raw) <= JOYSTICK_THRESHOLD) {
-    lateral = l_start - left_sensor() * lateral_active_brake_kp;
+    lateral = (l_start - left_sensor()) * lateral_active_brake_kp;
   }
   
   if(abs(r_raw) <= JOYSTICK_THRESHOLD) {
@@ -294,7 +294,6 @@ void Drive::joy_thresh_opcontrol(int l_stick, int r_stick, double l_raw, double 
   if(abs(l_raw) > JOYSTICK_THRESHOLD || abs(r_raw) > JOYSTICK_THRESHOLD) {
     set_tank(l_stick + lateral + angular, r_stick + lateral - angular);
   }
-
   else {
     set_tank(lateral + angular, lateral - angular);
   }

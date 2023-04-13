@@ -102,7 +102,7 @@ void Drive::curvatherp(int forward_stick, int turn_stick, double interpolator) {
       right_curvature * interpolator + right_tank * (1.0 - interpolator);
 
   // set to drive motors
-  joy_thresh_opcontrol(left_speed * 127.0, right_speed * 127.0);
+  joy_thresh_opcontrol(left_speed * 127.0, right_speed * 127.0, forward_stick, turn_stick);
 }
 
 void Drive::arcade_normalized_standard(e_type stick_type) {
@@ -137,7 +137,7 @@ void Drive::arcade_normalized_standard(e_type stick_type) {
     right_power /= max_power;
   }
 
-  joy_thresh_opcontrol(left_power, right_power);
+  joy_thresh_opcontrol(left_power, right_power, fwd_stick, turn_stick);
 }
 
 void Drive::arcade_normalized_flipped(e_type stick_type) {
@@ -172,5 +172,5 @@ void Drive::arcade_normalized_flipped(e_type stick_type) {
     right_power /= max_power;
   }
 
-  joy_thresh_opcontrol(left_power, right_power);
+  joy_thresh_opcontrol(left_power, right_power, fwd_stick, turn_stick);
 }

@@ -68,7 +68,7 @@ Drive chassis(
     // Uncomment if using tracking wheels
     
     // Left Tracking Wheel Ports (negative port will reverse it!)
-    ,16 // 3 wire encoder
+    ,-16 // 3 wire encoder
     // ,8 // Rotation sensor
 
     ,{0,0}
@@ -118,9 +118,9 @@ void initialize() {
   chassis.toggle_modify_curve_with_controller(
       false); // Enables modifying the controller curve with buttons on the
               // joysticks
-  chassis.set_active_brake(.1, .1); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_active_brake(.1, 70); // Sets the active brake kP. We recommend 0.1.
   chassis.set_acceleration(0, 0);
-  chassis.set_deceleration(600, 1900);
+  chassis.set_deceleration(600, 1000);
   chassis.set_curve_default(3, 3.2); // Defaults for curve. If using tank, only
                                    // the first parameter is used.
   default_constants(); // Set the drive to your own constants from autons.cpp!
@@ -226,7 +226,7 @@ void print_odom() {
     else if(cata_intake.limit.get_value() != 1) {
       limitpresed = false;
     }
-    master.print(0,0, "%f, %f", (float)chassis.left_sensor(), (float)chassis.right_sensor());
+    master.print(0,0, "%f, %f", (float)chassis.orientation.get_deg(), (float)chassis.right_sensor());
     pros::delay(500);
   }
 }
@@ -361,7 +361,7 @@ void opcontrol() {
     // }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      cata_intake.intake_velocity(.9*1000); // intake
+      cata_intake.intake_velocity(.9 * 1000); // intake
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       cata_intake.intake_velocity(.5 * 1000); // outake
     } else {
