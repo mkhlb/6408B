@@ -8,7 +8,7 @@
 
 extern Drive chassis;
 extern pros::ADIDigitalOut expansion;
-extern pros::ADIDigitalOut boost;
+extern pros::ADIDigitalOut pisstake;
 extern mkhlib::CatapultIntakeController cata_intake;
 
 void drive_test();

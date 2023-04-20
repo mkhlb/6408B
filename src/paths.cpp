@@ -175,3 +175,9 @@ std::list<PathPoint> prematch_near_fourth_shot_path = {
     {Vector2(81, -24), 8},
     {Vector2(77, -42)}
 };
+
+std::list<PathPoint> near_first_triple_path = {
+    {Vector2(24 * 3.5 - 5, -24 * 2.5)},
+    {Vector2(24 * 4 - 5, -24 * 3.0)},
+    {Vector2(24 * 4.5, -24 * 3.5)},
+};

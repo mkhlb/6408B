@@ -41,3 +41,5 @@ extern std::list<PathPoint> prematch_near_fourth_shot_path;
 extern std::list<PathPoint> transposed_far_low_goal_lateral_line_path;
 
 extern std::list<PathPoint> transposed_skills_far_middle_triple_stack_path;
+
+extern std::list<PathPoint> near_first_triple_path;

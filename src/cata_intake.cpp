@@ -106,17 +106,18 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
   {
     //pros::delay(150);
     cata_primed = true;
-    if(_intake_velocity == 0) {
-      for (auto i : motors) {
-        i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-        i.move_velocity(0);
-      }
-      pros::delay(100);
-      for (auto i : motors) {
-        i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-      }
-
+    
+    for (auto i : motors) {
+      i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+      i.move_velocity(0);
     }
+    pros::delay(100);
+    for (auto i : motors) {
+      i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    }
+
+    
+    
     state = e_state::HOLD;
     
   }
@@ -124,26 +125,42 @@ void CatapultIntakeController::cata_prime_task() { // Gets called every tick cat
 }
 
 void CatapultIntakeController::cata_shoot_task() { // move catapult for constant time to fire
-
-
+  
+  int total_delay = 150;
+  if(_boost_time >= total_delay) {
+    boost.set_value(1);
+    cata_move_velocity(-motors_max_speed * .85);
+  }
+  else {
+    cata_move_velocity(-motors_max_speed * .8);
+  }
   cata_primed = false;
-  cata_move_voltage(-127 * .75);
-  if(limit.get_value() == 0) {
-    int total_delay = 250;
-    pros::delay(total_delay - _boost_time);
-    set_boost(_boost_time != 0);
-    pros::delay(_boost_time);
-    for (auto i : motors) {
-      i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  
+  if(limit.get_value() != 1) {
+    cata_move_voltage(-127 * .2);
+    
+    if (_boost_time < total_delay) {
+      pros::delay(total_delay - _boost_time);
+      boost.set_value(1);
+      pros::delay(_boost_time);
     }
-    set_boost(false);
-    cata_move_velocity(0);
-    pros::delay(90);
-    for (auto i : motors) {
-      i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    else {
+      pros::delay(total_delay);
     }
+    
+    
+    // for (auto i : motors) {
+    //   i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    // }
+    boost.set_value(0);
+    // cata_move_velocity(0);
+    // pros::delay(90);
+    // for (auto i : motors) {
+    //   i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    // }
     cata_prime();
   }
+  
 
   
   
@@ -159,7 +176,7 @@ void CatapultIntakeController::cata_spin_degrees_task() {
 }
 
 void CatapultIntakeController::wait_cata_idle() { // Waits until cata state is HOLD
-  while (state == e_state::HOLD || state == e_state::SHOOT) {
+  while (state == e_state::PRIME || state == e_state::SHOOT) {
     pros::delay(util::DELAY_TIME);
   }
 }
@@ -187,7 +204,8 @@ void CatapultIntakeController::cata_shoot(int boost_time) {
 
 void CatapultIntakeController::roller_intake_spin_degrees_task() {
   if(motors.front().get_position() > _roller_target) {
-    intake_stop();
+    _intake_velocity = 0; // Call intake_stop to transition state and stop the intake
+    state = HOLD;
   }
   else {
     intake_move_velocity(_intake_velocity);
@@ -197,10 +215,11 @@ void CatapultIntakeController::roller_intake_spin_degrees_task() {
 void CatapultIntakeController::roller_intake_spin_time_task() {
   if(_roller_timer > 0) {
     intake_move_velocity(_intake_velocity);
-    _roller_timer -= ez::util::DELAY_TIME; // Decrement roller timer by delta time
+    _roller_timer -= 10; // Decrement roller timer by delta time
   }
   else {
-    intake_stop(); // Call intake_stop to transition state and stop the intake
+    _intake_velocity = 0; // Call intake_stop to transition state and stop the intake
+    state = HOLD;
   }
   
 }
@@ -278,5 +297,5 @@ void CatapultIntakeController::wait_intake() {
 }
 
 void CatapultIntakeController::set_boost(bool value) {
-  boost.set_value(int(!value));
+  boost.set_value(int(value));
 }

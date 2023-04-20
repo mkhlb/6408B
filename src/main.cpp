@@ -22,8 +22,10 @@
 // https://ez-robotics.github.io/EZ-Template/
 /////
 
-pros::ADIDigitalOut boost(5, LOW);
-pros::ADIDigitalOut expansion(2, LOW);
+pros::ADIDigitalOut pisstake(2, LOW);
+
+
+pros::ADIDigitalOut expansion(8, LOW);
 
 // Chassis constructor
 Drive chassis(
@@ -86,10 +88,10 @@ mkhlib::CatapultIntakeController cata_intake(
     // Port of the limit switch
     1,
     
-    5,
+    7,
     // Ratio of roller revolutions / motor revolutions, motor revolution *
     // this ratio should = roller revolutions
-    6.0 / 24.0,
+    120.0/600.0,
     // Ratio of intake revolution / motor revolutions
     60.0 / 36.0,
     // gearset of catapult
@@ -187,9 +189,9 @@ void autonomous() {
                                              // autonomous consistency.
 
 
-  drive_test();
+  //drive_test();
   //skills();
-  //prematch_win_point();
+  prematch_near();
   // ez::as::auton_selector
   //     .call_selected_auton(); // Calls selected auton from autonomous
   //     selector.
@@ -290,8 +292,7 @@ void opcontrol() {
   //autonomous();
   //pros::delay(6000);
   //return;
-  boost.set_value(1);
-  bool booststate = true;
+  bool pissstate = false;
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
   cata_intake.cata_hold();
@@ -311,24 +312,12 @@ void opcontrol() {
   while (true) {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      //chassis.plan_point_turn_pid(far_goal, 80, Angle::from_deg(180));
-      chassis.set_point_drive_pid(far_goal + Vector2(0, 5), 127);
-      chassis.wait_until_axes_crossed(Vector2(46.64, -93.77) + Vector2(10,10) + Vector2(14, 14), -1, -1); // low goal corner + some offset
-      chassis.set_drive_pid(-14, 70);
-      chassis.wait_until_distance_travelled(-7);
-      reset_for_driver();
-    }
-
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      booststate = !booststate;
-      boost.set_value(booststate);
+      pissstate = !pissstate;
+      pisstake.set_value(pissstate);
     }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       expansion.set_value(1);
-    }
-    else {
-      //expansion.move_velocity(0);
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
@@ -355,6 +344,14 @@ void opcontrol() {
     }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      cata_intake.cata_shoot(120);
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      cata_intake.cata_shoot(200);
+    }
+
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       cata_intake.cata_hold();
     }
     // else {
