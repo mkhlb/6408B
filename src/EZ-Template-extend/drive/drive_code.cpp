@@ -33,9 +33,48 @@ void Drive::arcade_curvatherp_standard(e_type stick_type,
   double interpolator = (fabs(fwd_stick) - interpolator_start) /
                         (interpolator_end - interpolator_start);
 
+
   curvatherp(fwd_stick, turn_stick * turn_coefficient,
              ez::util::clip_num(interpolator, 1, 0));
 }
+// void arcade_curvatherp_trainer(e_type stick_type,
+//                                        double interpolator_start,
+//                                        double interpolator_end,
+//                                        double turn_coefficient) {
+//   is_tank = false;
+//   reset_drive_sensors_opcontrol();
+
+//   // Toggle for controller curve
+//   modify_curve_with_controller();
+
+//   int fwd_stick, turn_stick;
+//   // Check arcade type (split vs single, normal vs flipped)
+//   if (stick_type == SPLIT) {
+//     // Put the joysticks through the curve function
+//     fwd_stick = left_curve_function(
+//         master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+//     turn_stick = right_curve_function(
+//         master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+//   } else if (stick_type == SINGLE) {
+//     // Put the joysticks through the curve function
+//     fwd_stick = left_curve_function(
+//         master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+//     turn_stick = right_curve_function(
+//         master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
+//   }
+
+//   double interpolator = (fabs(fwd_stick) - interpolator_start) /
+//                         (interpolator_end - interpolator_start);
+
+//   double fwd = 0;
+
+//   if(abs(turn_stick) > JOYSTICK_THRESHOLD || abs(fwd_stick) > JOYSTICK_THRESHOLD) {
+//     fwd = ez::util::sgn2(fwd_stick) * 50;
+//   }
+
+//   curvatherp(fwd, turn_stick * turn_coefficient,
+//              ez::util::clip_num(interpolator, 1, 0));
+//}
 
 void Drive::arcade_curvatherp_flipped(e_type stick_type,
                                       double interpolator_start,

@@ -451,36 +451,6 @@ void prematch_near_first_shot() {
 void prematch_win_point() {
   default_constants();
   exit_condition_defaults();
-  cata_intake.cata_prime();
-  chassis.reset_position(skills_start, Angle::from_deg(90.0));
-  chassis.set_heading_relative_heading_pid(0);
-
-  roll(30, Angle::from_deg(70), -.65, 70, 100);
-
-  cata_intake.intake_velocity(INTK_IN);
-  
-  prematch_near_first_shot();
-  
-  chassis.set_path_pid(win_point_second_shot_path, ACCURATE_DRIVE_SPEED, 12, ez::FORWARD);
-  chassis.wait_drive();
-  aim_and_fire(far_goal, Angle::from_deg(0), -13, -4.5, DRIVE_SPEED);
-  chassis.set_path_pid(win_point_third_shot_path, ACCURATE_DRIVE_SPEED, 12, ez::FORWARD);
-  chassis.wait_drive();
-  aim_and_fire(far_goal, Angle::from_deg(0), -13, -3.5, DRIVE_SPEED);
-  chassis.set_path_pid(win_point_fourth_shot_path, ACCURATE_DRIVE_SPEED, 12, ez::FORWARD);
-  chassis.wait_drive();
-  aim_and_fire(far_goal, Angle::from_deg(1.5), -15, -4.5, DRIVE_SPEED);
-  
-  chassis.set_path_pid(win_point_roller_path, ACCURATE_DRIVE_SPEED, 20, ez::FORWARD);
-  chassis.wait_drive();
-  chassis.set_heading_relative_turn_pid(90, TURN_SPEED);
-  chassis.wait_until_heading_relative(10);
-  roll(30, Angle::from_deg(-2), -.55, 70, 80);
-}
-
-void prematch_near() {
-  default_constants();
-  exit_condition_defaults();
   
   chassis.reset_position(Vector2(35.75, -17.25), Angle::from_deg(-90));
 
@@ -498,18 +468,11 @@ void prematch_near() {
   cata_intake.cata_shoot(220);
   cata_intake.wait_cata_done_shot();
   chassis.plan_orientation_turn_pid(Angle::from_deg(90), TURN_SPEED);
-  //chassis.wait_until_heading_relative(-70);
   pros::delay(200);
   cata_intake.intake_stop();
-  roll_time(19.5, Angle::from_deg(90), -.5, 65, 50);
-  // cata_intake.intake_velocity(INTK_IN);
+  roll_time(19.5, Angle::from_deg(90), -.5, 65, 200);
   chassis.set_heading_relative_swing_pid(ez::LEFT_SWING, -90, SWING_SPEED);
   chassis.wait_until_heading_relative(-14);
-  // chassis.plan_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180) + Angle::from_deg(2), false);
-  // chassis.set_drive_pid(-12, DRIVE_SPEED * .6);
-  // chassis.wait_until_distance_travelled(-3);
-  // cata_intake.cata_shoot(200);
-  // cata_intake.wait_cata_done_shot();
   cata_intake.intake_velocity(0);
   cata_intake.intake_velocity(INTK_IN);
   pisstake.set_value(1);
@@ -520,31 +483,32 @@ void prematch_near() {
   chassis.plan_orientation_heading_pid(Angle::from_deg(-47));
   chassis.set_drive_pid(6, 40);
   chassis.wait_drive();
-  chassis.set_drive_pid(18, 90);
+  chassis.set_drive_pid(15, 110);
   chassis.set_max_speed(90);
   chassis.wait_drive();
   chassis.plan_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180) + Angle::from_deg(-1), true);
   chassis.wait_drive();
-  chassis.set_drive_pid(-8.5, DRIVE_SPEED * .4);
+  chassis.set_drive_pid(-6, DRIVE_SPEED * .4);
   cata_intake.cata_shoot(200);
   cata_intake.wait_cata_idle();
   chassis.set_path_pid(near_first_triple_path, DRIVE_SPEED * .95, 11, ez::FORWARD);
   chassis.wait_drive();
-  // chassis.set_path_pid(near_first_triple_path, DRIVE_SPEED, 14, ez::FORWARD);
-  // chassis.wait_until_absolute_points_passed(3);
-  // chassis.set_max_speed(35);
-  // chassis.wait_until_absolute_points_passed(4);
-  // chassis.set_max_speed(90);
-  // chassis.wait_drive();
-  // chassis.set_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180));
-  // chassis.wait_drive();
   chassis.plan_orientation_heading_pid(Angle::from_deg(-43));
-  chassis.set_drive_pid(-18, 127);
+  chassis.set_drive_pid(-14, 127);
   chassis.wait_drive();
   chassis.plan_point_turn_pid(far_goal, TURN_SPEED, Angle::from_deg(180) + Angle::from_deg(-1), true);
   chassis.wait_drive();
-  chassis.set_drive_pid(-8.5, DRIVE_SPEED * .4);
+  chassis.set_drive_pid(-8, DRIVE_SPEED * .4);
   cata_intake.cata_shoot(200);
+  cata_intake.wait_cata_done_shot();
+  cata_intake.intake_stop();
+  chassis.set_point_drive_pid(Vector2(124, -104), DRIVE_SPEED, ez::FORWARD, .2, Angle::from_deg(0));
+  chassis.wait_until_distance_remaining(4);
+  roll_time(20, Angle::from_deg(0), -.5, 60, 200, 500);
+}
+
+void prematch_near() {
+  
 }
 
 void prematch_far() {
