@@ -37,17 +37,17 @@ Drive chassis(
     // Left Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {-10, 5, -20} // -13 front, -3 back
+    {-9, 8, -7, -10} // -13 front, -3 back
     
     // Right Chassis Ports (negative port will reverse it!)
     //   the first port is the sensored port (when trackers are not used!)
     ,
-    {14, -19, 3} // 18 front, 16 back
+    {2, -3, 4, 1} // 18 front, 16 back
 
 
     // IMU Port
     ,
-    11
+    12
 
     // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
     //    (or tracking wheel diameter)

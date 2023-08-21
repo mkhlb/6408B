@@ -90,7 +90,7 @@ Drive::Drive(double left_width, double right_width, double length, std::vector<i
   CARTRIDGE = ticks;
   TICK_PER_INCH = get_tick_per_inch();
 
-  MIDDLE_TICK_PER_INCH = (ticks * ratio) / (middle_tracker_diameter * M_PI);
+  MIDDLE_TICK_PER_INCH = (ticks * ratio) / (middle_tracker_diameter * 3.1415926);
 
   set_defaults();
 }
